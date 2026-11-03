@@ -1,0 +1,15 @@
+{
+  "id": "E02",
+  "name": "Explains when the money will arrive",
+  "turns": [
+    {
+      "role": "user",
+      "content": "When will my money actually arrive?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It says the arrival estimate is shown on the transfer in the Wise account, and that weekends, bank holidays or wrong recipient details can make it later."
+    }
+  ]
+}
