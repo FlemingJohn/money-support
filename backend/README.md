@@ -40,6 +40,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 | GET | `/health` | Connections tab |
 | GET | `/internal/faqs` | ai/, with the `x-service-secret` header |
 | GET | `/internal/settings` | ai/, with the `x-service-secret` header |
+| POST | `/internal/retention/run` | Supabase Cron, with the `x-cron-secret` header |
 
 ## What happens when a call ends
 
@@ -121,9 +122,10 @@ Fill in `.env`:
 
 | Variable | Value |
 |---|---|
-| `DATABASE_URL` | Supabase pooled connection string (port 6543), or a local database |
-| `DIRECT_URL` | Supabase direct connection string (port 5432), used for migrations |
-| `VAPI_WEBHOOK_SECRET`, `SERVICE_SECRET` | Long random strings |
+| `DATABASE_URL` | Supabase pooler in transaction mode (port 6543), with no `sslmode` in the URL, or a local database |
+| `DATABASE_CA_CERTIFICATE` | Text of `certs/supabase-ca.crt`, so the connection to Supabase is verified. Leave empty for a local database. |
+| `DIRECT_URL` | Supabase pooler in session mode (port 5432) with `?sslmode=verify-full&sslrootcert=certs/supabase-ca.crt`, used for migrations |
+| `VAPI_WEBHOOK_SECRET`, `SERVICE_SECRET`, `CRON_SECRET` | Long random strings |
 | `ENCRYPTION_KEY` | 32 random bytes in base64: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
 | `AI_SERVICE_URL` | Leave empty until ai/ runs |
 | `TWILIO_*` | Leave empty to use the call back simulator |
@@ -145,3 +147,12 @@ The API listens on http://localhost:4000. Vapi needs a public URL for the webhoo
 | `npm test` | Runs the unit tests |
 | `npm run typecheck` | Checks types |
 | `npm run prisma:migrate` | Creates and applies a migration |
+
+## Retention on Supabase
+
+The hourly clean-up runs inside the backend when it runs as one process. On Vercel nothing stays running, so Supabase Cron calls `POST /internal/retention/run` every hour instead. [supabase/schedule-retention.sql](supabase/schedule-retention.sql) turns on `pg_cron` and `pg_net` and schedules the call. It reads two secrets from Supabase Vault, which are added once by hand and never committed:
+
+| Vault secret | Value |
+|---|---|
+| `retention_url` | `https://<backend>.vercel.app/internal/retention/run` |
+| `cron_secret` | Same as `CRON_SECRET` |
