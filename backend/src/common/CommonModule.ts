@@ -1,9 +1,9 @@
 import { Global, Module } from "@nestjs/common";
-import { Clock } from "./Clock";
-import { EncryptionService } from "./EncryptionService";
-import { SecretMatcher } from "./SecretMatcher";
-import { ServiceSecretGuard } from "./ServiceSecretGuard";
-import { VapiSecretGuard } from "./VapiSecretGuard";
+import { Clock } from "./services/Clock";
+import { EncryptionService } from "./services/EncryptionService";
+import { SecretMatcher } from "./services/SecretMatcher";
+import { ServiceSecretGuard } from "./guards/ServiceSecretGuard";
+import { VapiSecretGuard } from "./guards/VapiSecretGuard";
 
 @Global()
 @Module({

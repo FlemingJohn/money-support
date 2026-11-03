@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
-import { Clock } from "../common/Clock";
+import { Clock } from "../common/services/Clock";
 import { CallbackStatus } from "../generated/prisma/client";
 import type { BridgeRequest } from "./BridgeRequest";
 import type { BridgeSimulation } from "./BridgeSimulation";

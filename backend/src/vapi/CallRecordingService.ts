@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CallRepository } from "../calls/repositories/CallRepository";
-import { Clock } from "../common/Clock";
+import { Clock } from "../common/services/Clock";
 import { ReviewTriage } from "../review/ReviewTriage";
 import type { TriageFacts } from "../review/TriageFacts";
 import { CallCompletionBuilder } from "./CallCompletionBuilder";

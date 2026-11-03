@@ -1,4 +1,4 @@
-import type { Clock } from "../src/common/Clock";
+import type { Clock } from "../src/common/services/Clock";
 import { CallChannel, Speaker } from "../src/generated/prisma/client";
 import { VapiCallMissingException } from "../src/vapi/VapiCallMissingException";
 import { VapiReportReader } from "../src/vapi/VapiReportReader";

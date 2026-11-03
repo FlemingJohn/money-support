@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { CustomerNumberProtector } from "../../../src/calls/services/CustomerNumberProtector";
-import { EncryptionService } from "../../../src/common/EncryptionService";
+import { EncryptionService } from "../../../src/common/services/EncryptionService";
 import type { AppConfiguration } from "../../../src/configuration/services/AppConfiguration";
 
 describe("CustomerNumberProtector", () => {

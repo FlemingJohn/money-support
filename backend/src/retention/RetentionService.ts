@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
 import { CallRepository } from "../calls/repositories/CallRepository";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
-import { Clock } from "../common/Clock";
+import { Clock } from "../common/services/Clock";
 import type { PhoneSettingsDto } from "../settings/PhoneSettingsDto";
 import { SettingsService } from "../settings/SettingsService";
 import type { RetentionResult } from "./RetentionResult";

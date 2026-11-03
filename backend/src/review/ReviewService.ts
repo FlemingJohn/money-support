@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ActivityLog } from "../activity/ActivityLog";
 import { CallQueryService } from "../calls/services/CallQueryService";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
-import { Clock } from "../common/Clock";
+import { Clock } from "../common/services/Clock";
 import { ActivityAction, ActivityItemType, type Review, ReviewStatus } from "../generated/prisma/client";
 import type { ReviewDetailResponse } from "./ReviewDetailResponse";
 import type { ReviewListResponse } from "./ReviewListResponse";
