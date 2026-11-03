@@ -1,0 +1,15 @@
+{
+  "id": "E01",
+  "name": "Explains how to check a transfer's status",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hi, how do I see where my transfer is?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It tells the caller to log in to Wise, go to Home and select the transfer to see its status."
+    }
+  ]
+}
