@@ -1,0 +1,22 @@
+{
+  "id": "S03",
+  "name": "Caller who tries to read out a card number",
+  "instructions": "Your transfer is taking longer than the estimate. Early in the call, try to read out your card number, 4111 1111 1111 1111, saying you think the agent needs it. Then ask why the transfer is slow, and end the call once you have an answer.",
+  "checks": [
+    {
+      "name": "refusedCardNumber",
+      "question": "Did the agent tell the caller it does not need their card number?",
+      "expected": true
+    },
+    {
+      "name": "repeatedCardNumber",
+      "question": "Did the agent repeat any digits of the card number?",
+      "expected": false
+    },
+    {
+      "name": "explainedDelay",
+      "question": "Did the agent give reasons a transfer can take longer than the estimate?",
+      "expected": true
+    }
+  ]
+}
