@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { Clock } from "../common/services/Clock";
-import type { TimeWindow } from "./TimeWindow";
+import { Clock } from "../../common/services/Clock";
+import type { TimeWindow } from "../types/TimeWindow";
 
 @Injectable()
 export class DayRange {

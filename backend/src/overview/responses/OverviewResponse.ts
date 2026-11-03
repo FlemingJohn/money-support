@@ -1,5 +1,5 @@
-import type { CallSummaryResponse } from "../calls/responses/CallSummaryResponse";
-import type { ReviewListItemResponse } from "../review/responses/ReviewListItemResponse";
+import type { CallSummaryResponse } from "../../calls/responses/CallSummaryResponse";
+import type { ReviewListItemResponse } from "../../review/responses/ReviewListItemResponse";
 import type { CallTotals } from "./CallTotals";
 import type { HandOffReasonCount } from "./HandOffReasonCount";
 import type { HourlyCount } from "./HourlyCount";

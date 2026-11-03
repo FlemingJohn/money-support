@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { type Call, CallOutcome } from "../generated/prisma/client";
-import type { CallTotals } from "./CallTotals";
-import type { HandOffReasonCount } from "./HandOffReasonCount";
-import type { HourlyCount } from "./HourlyCount";
+import { type Call, CallOutcome } from "../../generated/prisma/client";
+import type { CallTotals } from "../responses/CallTotals";
+import type { HandOffReasonCount } from "../responses/HandOffReasonCount";
+import type { HourlyCount } from "../responses/HourlyCount";
 
 @Injectable()
 export class CallStatistics {

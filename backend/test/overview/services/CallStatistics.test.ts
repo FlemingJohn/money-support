@@ -1,5 +1,5 @@
-import { type Call, CallChannel, CallOutcome, CallStatus } from "../src/generated/prisma/client";
-import { CallStatistics } from "../src/overview/CallStatistics";
+import { type Call, CallChannel, CallOutcome, CallStatus } from "../../../src/generated/prisma/client";
+import { CallStatistics } from "../../../src/overview/services/CallStatistics";
 
 describe("CallStatistics", () => {
   const callStatistics = new CallStatistics();

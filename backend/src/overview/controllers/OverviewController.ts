@@ -1,6 +1,6 @@
 import { Controller, Get } from "@nestjs/common";
-import type { OverviewResponse } from "./OverviewResponse";
-import { OverviewService } from "./OverviewService";
+import type { OverviewResponse } from "../responses/OverviewResponse";
+import { OverviewService } from "../services/OverviewService";
 
 @Controller("overview")
 export class OverviewController {

@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { CallPresenter } from "../calls/presenters/CallPresenter";
-import { CallRepository } from "../calls/repositories/CallRepository";
-import { ReviewStatus } from "../generated/prisma/client";
-import { ReviewPresenter } from "../review/presenters/ReviewPresenter";
-import { ReviewRepository } from "../review/repositories/ReviewRepository";
+import { CallPresenter } from "../../calls/presenters/CallPresenter";
+import { CallRepository } from "../../calls/repositories/CallRepository";
+import { ReviewStatus } from "../../generated/prisma/client";
+import { ReviewPresenter } from "../../review/presenters/ReviewPresenter";
+import { ReviewRepository } from "../../review/repositories/ReviewRepository";
 import { CallStatistics } from "./CallStatistics";
 import { DayRange } from "./DayRange";
-import type { OverviewResponse } from "./OverviewResponse";
+import type { OverviewResponse } from "../responses/OverviewResponse";
 
 @Injectable()
 export class OverviewService {
