@@ -1,4 +1,4 @@
-import type { AssistantSyncResult } from "./AssistantSyncResult";
+import type { AssistantSyncResult } from "../types/AssistantSyncResult";
 
 export abstract class AssistantSyncClient {
   abstract requestSync(): Promise<AssistantSyncResult>;

@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { ActivityModule } from "../activity/ActivityModule";
 import { AppConfiguration } from "../configuration/services/AppConfiguration";
-import { AiAssistantSyncClient } from "./AiAssistantSyncClient";
-import { AssistantSyncClient } from "./AssistantSyncClient";
-import { AssistantSyncService } from "./AssistantSyncService";
-import { PromptVersionRepository } from "./PromptVersionRepository";
-import { SkippedAssistantSyncClient } from "./SkippedAssistantSyncClient";
+import { AiAssistantSyncClient } from "./clients/AiAssistantSyncClient";
+import { AssistantSyncClient } from "./clients/AssistantSyncClient";
+import { AssistantSyncService } from "./services/AssistantSyncService";
+import { PromptVersionRepository } from "./repositories/PromptVersionRepository";
+import { SkippedAssistantSyncClient } from "./clients/SkippedAssistantSyncClient";
 
 @Module({
   imports: [ActivityModule],

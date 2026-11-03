@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PromptVersionRepository } from "../assistant/PromptVersionRepository";
+import { PromptVersionRepository } from "../assistant/repositories/PromptVersionRepository";
 import type { CallCompletion } from "../calls/types/CallCompletion";
 import { CustomerNumberProtector } from "../calls/services/CustomerNumberProtector";
 import { FaqRepository } from "../faqs/FaqRepository";

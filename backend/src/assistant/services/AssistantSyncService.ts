@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { ActivityAction, ActivityItemType } from "../generated/prisma/client";
-import type { AgentSyncResponse } from "./AgentSyncResponse";
-import { AssistantSyncClient } from "./AssistantSyncClient";
-import { PromptVersionRepository } from "./PromptVersionRepository";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { ActivityAction, ActivityItemType } from "../../generated/prisma/client";
+import type { AgentSyncResponse } from "../responses/AgentSyncResponse";
+import { AssistantSyncClient } from "../clients/AssistantSyncClient";
+import { PromptVersionRepository } from "../repositories/PromptVersionRepository";
 
 @Injectable()
 export class AssistantSyncService {

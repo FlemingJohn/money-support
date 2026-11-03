@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ActivityLog } from "../activity/services/ActivityLog";
-import { AssistantSyncService } from "../assistant/AssistantSyncService";
+import { AssistantSyncService } from "../assistant/services/AssistantSyncService";
 import { ActivityAction, ActivityItemType, type Faq } from "../generated/prisma/client";
 import type { CreateFaqDto } from "./CreateFaqDto";
 import type { FaqListResponse } from "./FaqListResponse";
