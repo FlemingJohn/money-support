@@ -1,0 +1,14 @@
+{
+  "id": "E07",
+  "name": "Hands off a question outside the topics",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Can you help me open a business account and order a new debit card?"
+    },
+    {
+      "role": "assistant",
+      "check": "handsOff"
+    }
+  ]
+}
