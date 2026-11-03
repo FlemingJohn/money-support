@@ -1,0 +1,15 @@
+{
+  "id": "E05",
+  "name": "Explains what a proof of payment is",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Wise emailed me asking for a proof of payment. What is that?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It explains that a proof of payment is a bank statement or online banking screenshot showing the payment to Wise, with details such as the sender's name, account, date, amount and reference."
+    }
+  ]
+}
