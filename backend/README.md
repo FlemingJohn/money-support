@@ -39,6 +39,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 | GET | `/activity?limit=` | Activity tab |
 | GET | `/health` | Connections tab |
 | GET | `/internal/faqs` | ai/, with the `x-service-secret` header |
+| GET | `/internal/settings` | ai/, with the `x-service-secret` header |
 
 ## What happens when a call ends
 
