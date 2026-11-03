@@ -1,0 +1,15 @@
+{
+  "id": "E06",
+  "name": "Explains a banking partner reference number",
+  "turns": [
+    {
+      "role": "user",
+      "content": "What's a banking partner reference number?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It explains that it is a number from Wise's local banking partner that the recipient can give their bank to trace the payment, and that some banks call it something else, like a UTR."
+    }
+  ]
+}
