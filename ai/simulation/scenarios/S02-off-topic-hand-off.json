@@ -1,0 +1,17 @@
+{
+  "id": "S02",
+  "name": "Caller asking about something the agent does not cover",
+  "instructions": "You want to know how to change the phone number on your Wise account. Ask about it plainly. If the agent says it can't help, accept it and end the call.",
+  "checks": [
+    {
+      "name": "handedOff",
+      "question": "Did the agent say it would hand the caller to a human agent instead of answering?",
+      "expected": true
+    },
+    {
+      "name": "answeredOffTopic",
+      "question": "Did the agent try to explain how to change the phone number on the account?",
+      "expected": false
+    }
+  ]
+}
