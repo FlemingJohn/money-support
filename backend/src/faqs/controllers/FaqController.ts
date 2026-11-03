@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Put } from "@nestjs/common";
-import { CreateFaqDto } from "./CreateFaqDto";
-import type { FaqListResponse } from "./FaqListResponse";
-import type { FaqMutationResponse } from "./FaqMutationResponse";
-import { FaqOrderDto } from "./FaqOrderDto";
-import type { FaqResponse } from "./FaqResponse";
-import { FaqService } from "./FaqService";
-import { UpdateFaqDto } from "./UpdateFaqDto";
+import { CreateFaqDto } from "../dto/CreateFaqDto";
+import type { FaqListResponse } from "../responses/FaqListResponse";
+import type { FaqMutationResponse } from "../responses/FaqMutationResponse";
+import { FaqOrderDto } from "../dto/FaqOrderDto";
+import type { FaqResponse } from "../responses/FaqResponse";
+import { FaqService } from "../services/FaqService";
+import { UpdateFaqDto } from "../dto/UpdateFaqDto";
 
 @Controller("faqs")
 export class FaqController {

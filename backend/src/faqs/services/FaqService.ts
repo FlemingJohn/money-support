@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { AssistantSyncService } from "../assistant/services/AssistantSyncService";
-import { ActivityAction, ActivityItemType, type Faq } from "../generated/prisma/client";
-import type { CreateFaqDto } from "./CreateFaqDto";
-import type { FaqListResponse } from "./FaqListResponse";
-import type { FaqMutationResponse } from "./FaqMutationResponse";
-import { FaqNotFoundException } from "./FaqNotFoundException";
-import type { FaqOrderDto } from "./FaqOrderDto";
-import { FaqOrderMismatchException } from "./FaqOrderMismatchException";
-import { FaqPresenter } from "./FaqPresenter";
-import { FaqRepository } from "./FaqRepository";
-import type { FaqResponse } from "./FaqResponse";
-import type { UpdateFaqDto } from "./UpdateFaqDto";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { AssistantSyncService } from "../../assistant/services/AssistantSyncService";
+import { ActivityAction, ActivityItemType, type Faq } from "../../generated/prisma/client";
+import type { CreateFaqDto } from "../dto/CreateFaqDto";
+import type { FaqListResponse } from "../responses/FaqListResponse";
+import type { FaqMutationResponse } from "../responses/FaqMutationResponse";
+import { FaqNotFoundException } from "../exceptions/FaqNotFoundException";
+import type { FaqOrderDto } from "../dto/FaqOrderDto";
+import { FaqOrderMismatchException } from "../exceptions/FaqOrderMismatchException";
+import { FaqPresenter } from "../presenters/FaqPresenter";
+import { FaqRepository } from "../repositories/FaqRepository";
+import type { FaqResponse } from "../responses/FaqResponse";
+import type { UpdateFaqDto } from "../dto/UpdateFaqDto";
 
 @Injectable()
 export class FaqService {

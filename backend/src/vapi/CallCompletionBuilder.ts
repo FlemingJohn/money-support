@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PromptVersionRepository } from "../assistant/repositories/PromptVersionRepository";
 import type { CallCompletion } from "../calls/types/CallCompletion";
 import { CustomerNumberProtector } from "../calls/services/CustomerNumberProtector";
-import { FaqRepository } from "../faqs/FaqRepository";
+import { FaqRepository } from "../faqs/repositories/FaqRepository";
 import { CallChannel, CallOutcome, type Faq } from "../generated/prisma/client";
 import { SettingsService } from "../settings/services/SettingsService";
 import type { FinishedCallReport } from "./FinishedCallReport";

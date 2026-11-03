@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { ServiceSecretGuard } from "../common/guards/ServiceSecretGuard";
-import type { FaqResponse } from "./FaqResponse";
-import { FaqService } from "./FaqService";
+import { ServiceSecretGuard } from "../../common/guards/ServiceSecretGuard";
+import type { FaqResponse } from "../responses/FaqResponse";
+import { FaqService } from "../services/FaqService";
 
 @Controller("internal/faqs")
 @UseGuards(ServiceSecretGuard)

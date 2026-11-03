@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { Faq } from "../generated/prisma/client";
-import type { FaqResponse } from "./FaqResponse";
+import type { Faq } from "../../generated/prisma/client";
+import type { FaqResponse } from "../responses/FaqResponse";
 
 @Injectable()
 export class FaqPresenter {
