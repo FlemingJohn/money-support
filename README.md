@@ -111,7 +111,7 @@ money-support/
 │       ├── lib/          logic with no screen attached
 │       └── styles/       theme.css, the only place colours and fonts are defined
 ├── backend/           NestJS API
-├── ai/                Python agent builder and redaction service (planned)
+├── ai/                Python agent builder, redaction and agent tests
 ├── LICENSE
 └── README.md
 ```
@@ -155,7 +155,14 @@ The API listens on http://localhost:4000. Fill in `.env` first; [backend/README.
 
 ### ai/
 
-Not built yet. Its planned structure is in [ai/README.md](ai/README.md).
+```bash
+cd ai
+uv sync
+cp .env.example .env
+uv run uvicorn app.main:application --port 8000
+```
+
+The service listens on http://localhost:8000. Set `AI_SERVICE_URL=http://localhost:8000` in `backend/.env` so the backend uses it. [ai/README.md](ai/README.md) explains each variable, the endpoints and the agent tests.
 
 ## Status
 
@@ -165,7 +172,7 @@ Not built yet. Its planned structure is in [ai/README.md](ai/README.md).
 | Overview page | Done, with sample data |
 | Calls, call detail, review queue, FAQs, test call, settings | Next |
 | backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
-| ai/ | Planned |
+| ai/ | Done: prompt and assistant sync, redaction, Vapi Evals and Simulations |
 
 ## License
 
