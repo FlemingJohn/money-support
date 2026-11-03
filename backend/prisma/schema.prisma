@@ -1,0 +1,251 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CallChannel {
+  phone
+  web
+}
+
+enum CallStatus {
+  inProgress
+  ended
+}
+
+enum CallOutcome {
+  resolved
+  handedOff
+}
+
+enum Speaker {
+  agent
+  caller
+}
+
+enum GuardrailKind {
+  personalDataRemoved
+  unmaskedDataReported
+}
+
+enum ReviewStatus {
+  open
+  inProgress
+  done
+}
+
+enum ReviewReason {
+  handOff
+  guardrail
+  lowConfidence
+}
+
+enum ReviewVerdict {
+  correct
+  wrong
+}
+
+enum VerdictReason {
+  shouldHaveAnswered
+  shouldHaveHandedOff
+  wrongInformation
+  tooLongOrUnclear
+  repeatedPersonalData
+}
+
+enum CallbackStatus {
+  ringingReviewer
+  ringingCaller
+  connected
+  ended
+  failed
+}
+
+enum SettingsSection {
+  agent
+  handOff
+  privacy
+  phone
+}
+
+enum ActivityAction {
+  callCompleted
+  callHandedOff
+  personalDataRemoved
+  transcriptViewed
+  unmaskedDataReported
+  reviewUpdated
+  reviewVerdictSaved
+  reviewResolved
+  callbackStarted
+  callbackEnded
+  faqCreated
+  faqUpdated
+  faqDeleted
+  faqsReordered
+  agentSynced
+  agentSyncFailed
+  settingsUpdated
+}
+
+enum ActivityItemType {
+  call
+  review
+  callback
+  faq
+  agent
+  settings
+}
+
+model Faq {
+  id           String   @id @default(uuid()) @db.Uuid
+  question     String
+  answer       String
+  category     String
+  sortOrder    Int      @map("sort_order")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  matchedCalls Call[]
+
+  @@index([sortOrder])
+  @@map("faqs")
+}
+
+model PromptVersion {
+  id          String   @id @default(uuid()) @db.Uuid
+  contentHash String   @unique @map("content_hash")
+  content     String
+  isCurrent   Boolean  @default(false) @map("is_current")
+  createdAt   DateTime @default(now()) @map("created_at")
+  calls       Call[]
+
+  @@map("prompt_versions")
+}
+
+model Call {
+  id                      String           @id
+  channel                 CallChannel
+  status                  CallStatus       @default(inProgress)
+  startedAt               DateTime?        @map("started_at")
+  endedAt                 DateTime?        @map("ended_at")
+  endedReason             String?          @map("ended_reason")
+  summary                 String?
+  topic                   String?
+  outcome                 CallOutcome?
+  maskedCustomerNumber    String?          @map("masked_customer_number")
+  encryptedCustomerNumber String?          @map("encrypted_customer_number")
+  matchedFaqId            String?          @map("matched_faq_id") @db.Uuid
+  promptVersionId         String?          @map("prompt_version_id") @db.Uuid
+  createdAt               DateTime         @default(now()) @map("created_at")
+  updatedAt               DateTime         @updatedAt @map("updated_at")
+  matchedFaq              Faq?             @relation(fields: [matchedFaqId], references: [id], onDelete: SetNull)
+  promptVersion           PromptVersion?   @relation(fields: [promptVersionId], references: [id], onDelete: SetNull)
+  messages                CallMessage[]
+  extractedFields         ExtractedField[]
+  guardrailEvents         GuardrailEvent[]
+  review                  Review?
+
+  @@index([endedAt])
+  @@map("calls")
+}
+
+model CallMessage {
+  id               String           @id @default(uuid()) @db.Uuid
+  callId           String           @map("call_id")
+  position         Int
+  speaker          Speaker
+  redactedText     String           @map("redacted_text")
+  secondsFromStart Float            @map("seconds_from_start")
+  call             Call             @relation(fields: [callId], references: [id], onDelete: Cascade)
+  extractedFields  ExtractedField[]
+
+  @@unique([callId, position])
+  @@map("call_messages")
+}
+
+model ExtractedField {
+  id          String       @id @default(uuid()) @db.Uuid
+  callId      String       @map("call_id")
+  messageId   String?      @map("message_id") @db.Uuid
+  number      Int
+  label       String
+  value       String
+  confidence  Float
+  startOffset Int?         @map("start_offset")
+  endOffset   Int?         @map("end_offset")
+  isConfirmed Boolean      @default(false) @map("is_confirmed")
+  call        Call         @relation(fields: [callId], references: [id], onDelete: Cascade)
+  message     CallMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@unique([callId, number])
+  @@map("extracted_fields")
+}
+
+model GuardrailEvent {
+  id         String        @id @default(uuid()) @db.Uuid
+  callId     String        @map("call_id")
+  kind       GuardrailKind
+  entityType String        @map("entity_type")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  call       Call          @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  @@map("guardrail_events")
+}
+
+model Review {
+  callId            String         @id @map("call_id")
+  status            ReviewStatus   @default(open)
+  reason            ReviewReason
+  note              String         @default("")
+  verdict           ReviewVerdict?
+  verdictReason     VerdictReason? @map("verdict_reason")
+  expectedBehaviour String?        @map("expected_behaviour")
+  resolvedAt        DateTime?      @map("resolved_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  call              Call           @relation(fields: [callId], references: [id], onDelete: Cascade)
+  callbacks         Callback[]
+
+  @@index([status])
+  @@map("reviews")
+}
+
+model Callback {
+  id              String         @id @default(uuid()) @db.Uuid
+  callId          String         @map("call_id")
+  ringPhone       String         @map("ring_phone")
+  status          CallbackStatus @default(ringingReviewer)
+  providerCallId  String?        @map("provider_call_id")
+  startedAt       DateTime       @default(now()) @map("started_at")
+  connectedAt     DateTime?      @map("connected_at")
+  endedAt         DateTime?      @map("ended_at")
+  durationSeconds Int?           @map("duration_seconds")
+  review          Review         @relation(fields: [callId], references: [callId], onDelete: Cascade)
+
+  @@map("callbacks")
+}
+
+model Setting {
+  section   SettingsSection @id
+  values    Json
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model ActivityEvent {
+  id        String           @id @default(uuid()) @db.Uuid
+  action    ActivityAction
+  itemType  ActivityItemType @map("item_type")
+  itemId    String           @map("item_id")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("activity_events")
+}
