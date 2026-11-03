@@ -1,0 +1,15 @@
+{
+  "id": "E04",
+  "name": "Explains a transfer taking longer than the estimate",
+  "turns": [
+    {
+      "role": "user",
+      "content": "My transfer is taking way longer than you said it would. Why?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It gives likely reasons such as security checks, how the money was paid to Wise, weekends or holidays, or wrong recipient details, without promising a new time."
+    }
+  ]
+}
