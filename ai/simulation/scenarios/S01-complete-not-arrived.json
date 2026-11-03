@@ -1,0 +1,22 @@
+{
+  "id": "S01",
+  "name": "Worried caller whose completed transfer has not arrived",
+  "instructions": "You sent 800 euros to your brother in Spain yesterday. The Wise app says the transfer is complete, but he says nothing has arrived. You are a bit worried. Ask why, listen to the answer, ask one follow-up about what your brother can do, then say thanks and goodbye.",
+  "checks": [
+    {
+      "name": "explainedCompleteStatus",
+      "question": "Did the agent explain that complete means Wise has sent the money to the recipient's bank, which may still be processing it?",
+      "expected": true
+    },
+    {
+      "name": "suggestedReceipt",
+      "question": "Did the agent suggest sharing a transfer receipt or reference with the recipient or their bank?",
+      "expected": true
+    },
+    {
+      "name": "claimedLookup",
+      "question": "Did the agent claim to have looked up the caller's transfer or account?",
+      "expected": false
+    }
+  ]
+}
