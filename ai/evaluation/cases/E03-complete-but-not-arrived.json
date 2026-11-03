@@ -1,0 +1,15 @@
+{
+  "id": "E03",
+  "name": "Explains a complete transfer that has not arrived",
+  "turns": [
+    {
+      "role": "user",
+      "content": "The app says my transfer is complete but my sister hasn't got the money."
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It explains that complete means Wise has sent the money to the recipient's bank, which can take up to a working day to release it, or the payment may show under a different name or amount."
+    }
+  ]
+}
