@@ -1,0 +1,31 @@
+import Link from "next/link";
+import { ArrowLeftRight, ChevronRight, ShieldCheck } from "lucide-react";
+import { IconTile } from "@/components/IconTile";
+import type { NeedsReviewListProps } from "@/types/NeedsReviewListProps";
+
+export function NeedsReviewList({ reviews }: NeedsReviewListProps) {
+  return (
+    <ul className="flex flex-col">
+      {reviews.map((review) => {
+        const hasRemovedCard = review.reason === "handOffWithRemovedCard";
+        return (
+          <li key={review.id} className="border-b border-line-soft last:border-b-0">
+            <Link href="/review" className="flex min-h-17 items-center gap-3 px-5 text-ink hover:bg-surface">
+              <IconTile
+                icon={hasRemovedCard ? ShieldCheck : ArrowLeftRight}
+                className={hasRemovedCard ? "bg-redacted-wash text-redacted-ink" : "bg-handoff-wash text-handoff-ink"}
+              />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-sm font-semibold">{review.topic}</span>
+                <span className="truncate text-[13px] text-ink-muted">
+                  {hasRemovedCard ? "Hand-off and card number removed" : "Hand-off"} · <span className="font-mono">{review.time}</span>
+                </span>
+              </span>
+              <ChevronRight size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-ink-muted" />
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
