@@ -159,7 +159,7 @@ The API listens on http://localhost:4000. Fill in `.env` first; [backend/README.
 cd ai
 uv sync
 cp .env.example .env
-uv run uvicorn app.main:application --port 8000
+uv run uvicorn app.main:app --port 8000
 ```
 
 The service listens on http://localhost:8000. Set `AI_SERVICE_URL=http://localhost:8000` in `backend/.env` so the backend uses it. [ai/README.md](ai/README.md) explains each variable, the endpoints and the agent tests.
