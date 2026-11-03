@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { CallChannel, type Review } from "../generated/prisma/client";
-import type { ReviewListItemResponse } from "./ReviewListItemResponse";
-import type { ReviewResponse } from "./ReviewResponse";
-import type { ReviewWithCall } from "./ReviewWithCall";
+import { CallChannel, type Review } from "../../generated/prisma/client";
+import type { ReviewListItemResponse } from "../responses/ReviewListItemResponse";
+import type { ReviewResponse } from "../responses/ReviewResponse";
+import type { ReviewWithCall } from "../types/ReviewWithCall";
 
 @Injectable()
 export class ReviewPresenter {

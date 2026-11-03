@@ -1,6 +1,6 @@
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
-import { ReviewStatus } from "../generated/prisma/client";
+import { ReviewStatus } from "../../generated/prisma/client";
 
 export class ReviewUpdateDto extends createZodDto(
   z

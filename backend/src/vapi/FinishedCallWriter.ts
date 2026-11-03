@@ -9,7 +9,7 @@ import type { GuardrailEventInput } from "../guardrails/types/GuardrailEventInpu
 import { GuardrailEventRepository } from "../guardrails/repositories/GuardrailEventRepository";
 import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
 import { PrismaService } from "../prisma/services/PrismaService";
-import { ReviewRepository } from "../review/ReviewRepository";
+import { ReviewRepository } from "../review/repositories/ReviewRepository";
 import { FieldLocator } from "./FieldLocator";
 import type { FinishedCallRecording } from "./FinishedCallRecording";
 import type { RedactedReport } from "./RedactedReport";

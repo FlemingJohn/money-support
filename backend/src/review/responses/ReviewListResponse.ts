@@ -1,4 +1,4 @@
-import type { ReviewCounts } from "./ReviewCounts";
+import type { ReviewCounts } from "../types/ReviewCounts";
 import type { ReviewListItemResponse } from "./ReviewListItemResponse";
 
 export interface ReviewListResponse {

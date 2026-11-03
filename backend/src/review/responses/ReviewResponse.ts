@@ -1,4 +1,4 @@
-import type { ReviewReason, ReviewStatus, ReviewVerdict, VerdictReason } from "../generated/prisma/client";
+import type { ReviewReason, ReviewStatus, ReviewVerdict, VerdictReason } from "../../generated/prisma/client";
 
 export interface ReviewResponse {
   callId: string;

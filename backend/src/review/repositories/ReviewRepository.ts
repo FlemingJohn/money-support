@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { type Prisma, type Review, type ReviewReason, ReviewStatus } from "../generated/prisma/client";
-import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
-import { PrismaService } from "../prisma/services/PrismaService";
-import type { ReviewCounts } from "./ReviewCounts";
-import { reviewListInclude } from "./reviewListInclude";
-import type { ReviewWithCall } from "./ReviewWithCall";
+import { type Prisma, type Review, type ReviewReason, ReviewStatus } from "../../generated/prisma/client";
+import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import { PrismaService } from "../../prisma/services/PrismaService";
+import type { ReviewCounts } from "../types/ReviewCounts";
+import { reviewListInclude } from "../queries/reviewListInclude";
+import type { ReviewWithCall } from "../types/ReviewWithCall";
 
 @Injectable()
 export class ReviewRepository {

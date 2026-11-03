@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { CallQueryService } from "../calls/services/CallQueryService";
-import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
-import { Clock } from "../common/services/Clock";
-import { ActivityAction, ActivityItemType, type Review, ReviewStatus } from "../generated/prisma/client";
-import type { ReviewDetailResponse } from "./ReviewDetailResponse";
-import type { ReviewListResponse } from "./ReviewListResponse";
-import { ReviewNotFoundException } from "./ReviewNotFoundException";
-import { ReviewPresenter } from "./ReviewPresenter";
-import { ReviewRepository } from "./ReviewRepository";
-import type { ReviewResponse } from "./ReviewResponse";
-import type { ReviewUpdateDto } from "./ReviewUpdateDto";
-import type { ReviewVerdictDto } from "./ReviewVerdictDto";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { CallQueryService } from "../../calls/services/CallQueryService";
+import { ExtractedFieldRepository } from "../../calls/repositories/ExtractedFieldRepository";
+import { Clock } from "../../common/services/Clock";
+import { ActivityAction, ActivityItemType, type Review, ReviewStatus } from "../../generated/prisma/client";
+import type { ReviewDetailResponse } from "../responses/ReviewDetailResponse";
+import type { ReviewListResponse } from "../responses/ReviewListResponse";
+import { ReviewNotFoundException } from "../exceptions/ReviewNotFoundException";
+import { ReviewPresenter } from "../presenters/ReviewPresenter";
+import { ReviewRepository } from "../repositories/ReviewRepository";
+import type { ReviewResponse } from "../responses/ReviewResponse";
+import type { ReviewUpdateDto } from "../dto/ReviewUpdateDto";
+import type { ReviewVerdictDto } from "../dto/ReviewVerdictDto";
 
 @Injectable()
 export class ReviewService {

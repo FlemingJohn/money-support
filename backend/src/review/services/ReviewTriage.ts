@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { ReviewReason } from "../generated/prisma/client";
-import type { TriageFacts } from "./TriageFacts";
+import { ReviewReason } from "../../generated/prisma/client";
+import type { TriageFacts } from "../types/TriageFacts";
 
 @Injectable()
 export class ReviewTriage {

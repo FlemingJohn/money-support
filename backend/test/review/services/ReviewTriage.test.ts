@@ -1,5 +1,5 @@
-import { ReviewReason } from "../src/generated/prisma/client";
-import { ReviewTriage } from "../src/review/ReviewTriage";
+import { ReviewReason } from "../../../src/generated/prisma/client";
+import { ReviewTriage } from "../../../src/review/services/ReviewTriage";
 
 describe("ReviewTriage", () => {
   const reviewTriage = new ReviewTriage();

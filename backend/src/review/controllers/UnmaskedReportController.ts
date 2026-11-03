@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
-import { UnmaskedReportDto } from "./UnmaskedReportDto";
-import { UnmaskedReportService } from "./UnmaskedReportService";
+import { UnmaskedReportDto } from "../dto/UnmaskedReportDto";
+import { UnmaskedReportService } from "../services/UnmaskedReportService";
 
 @Controller("calls/:callId/unmasked-reports")
 export class UnmaskedReportController {

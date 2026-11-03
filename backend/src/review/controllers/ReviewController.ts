@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Query } from "@nestjs/common";
-import type { ReviewDetailResponse } from "./ReviewDetailResponse";
-import { ReviewFilterDto } from "./ReviewFilterDto";
-import type { ReviewListResponse } from "./ReviewListResponse";
-import type { ReviewResponse } from "./ReviewResponse";
-import { ReviewService } from "./ReviewService";
-import { ReviewUpdateDto } from "./ReviewUpdateDto";
-import { ReviewVerdictDto } from "./ReviewVerdictDto";
+import type { ReviewDetailResponse } from "../responses/ReviewDetailResponse";
+import { ReviewFilterDto } from "../dto/ReviewFilterDto";
+import type { ReviewListResponse } from "../responses/ReviewListResponse";
+import type { ReviewResponse } from "../responses/ReviewResponse";
+import { ReviewService } from "../services/ReviewService";
+import { ReviewUpdateDto } from "../dto/ReviewUpdateDto";
+import { ReviewVerdictDto } from "../dto/ReviewVerdictDto";
 
 @Controller("reviews")
 export class ReviewController {
