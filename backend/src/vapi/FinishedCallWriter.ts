@@ -7,8 +7,8 @@ import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRe
 import { ActivityAction, ActivityItemType, GuardrailKind, type ReviewReason } from "../generated/prisma/client";
 import type { GuardrailEventInput } from "../guardrails/GuardrailEventInput";
 import { GuardrailEventRepository } from "../guardrails/GuardrailEventRepository";
-import type { DatabaseTransaction } from "../prisma/DatabaseTransaction";
-import { PrismaService } from "../prisma/PrismaService";
+import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
+import { PrismaService } from "../prisma/services/PrismaService";
 import { ReviewRepository } from "../review/ReviewRepository";
 import { FieldLocator } from "./FieldLocator";
 import type { FinishedCallRecording } from "./FinishedCallRecording";

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import type { Faq } from "../generated/prisma/client";
-import { PrismaService } from "../prisma/PrismaService";
+import { PrismaService } from "../prisma/services/PrismaService";
 import type { FaqInput } from "./FaqInput";
 
 @Injectable()

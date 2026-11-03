@@ -3,7 +3,7 @@ import { ActivityLog } from "../activity/ActivityLog";
 import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
 import { ActivityAction, ActivityItemType, GuardrailKind, ReviewReason } from "../generated/prisma/client";
 import { GuardrailEventRepository } from "../guardrails/GuardrailEventRepository";
-import { PrismaService } from "../prisma/PrismaService";
+import { PrismaService } from "../prisma/services/PrismaService";
 import { MessageNotFoundException } from "./MessageNotFoundException";
 import { ReviewRepository } from "./ReviewRepository";
 

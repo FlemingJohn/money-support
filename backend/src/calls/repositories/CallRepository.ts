@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { type Call, type CallChannel, CallStatus, type Prisma, ReviewStatus } from "../../generated/prisma/client";
-import type { DatabaseTransaction } from "../../prisma/DatabaseTransaction";
-import { PrismaService } from "../../prisma/PrismaService";
+import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import { PrismaService } from "../../prisma/services/PrismaService";
 import type { CallCompletion } from "../types/CallCompletion";
 import { callDetailInclude } from "../queries/callDetailInclude";
 import type { CallFilterDto } from "../dto/CallFilterDto";

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { DatabaseTransaction } from "../../prisma/DatabaseTransaction";
-import { PrismaService } from "../../prisma/PrismaService";
+import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import { PrismaService } from "../../prisma/services/PrismaService";
 import type { LocatedField } from "../types/LocatedField";
 
 @Injectable()

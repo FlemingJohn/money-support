@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { GuardrailKind } from "../generated/prisma/client";
-import type { DatabaseTransaction } from "../prisma/DatabaseTransaction";
+import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
 import type { GuardrailEventInput } from "./GuardrailEventInput";
 
 @Injectable()
