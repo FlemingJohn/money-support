@@ -1,0 +1,22 @@
+{
+  "id": "E11",
+  "name": "Ends the call when the caller is done",
+  "turns": [
+    {
+      "role": "user",
+      "content": "How do I check my transfer's status?"
+    },
+    {
+      "role": "assistant",
+      "content": "Log in to Wise, go to Home and select the transfer to see its status. Is there anything else about your transfer?"
+    },
+    {
+      "role": "user",
+      "content": "No, that's everything, thanks. Bye!"
+    },
+    {
+      "role": "assistant",
+      "check": "endsCall"
+    }
+  ]
+}
