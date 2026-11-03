@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from "@nestjs/common";
-import type { CallbackResponse } from "./CallbackResponse";
-import { CallbackService } from "./CallbackService";
-import { StartCallbackDto } from "./StartCallbackDto";
+import type { CallbackResponse } from "../responses/CallbackResponse";
+import { CallbackService } from "../services/CallbackService";
+import { StartCallbackDto } from "../dto/StartCallbackDto";
 
 @Controller()
 export class CallbackController {

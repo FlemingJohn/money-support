@@ -1,4 +1,4 @@
-import type { CallbackStatus } from "../generated/prisma/client";
+import type { CallbackStatus } from "../../generated/prisma/client";
 
 export interface CallbackResponse {
   id: string;

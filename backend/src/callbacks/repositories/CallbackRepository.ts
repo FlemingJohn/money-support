@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { type Callback, CallbackStatus, type Prisma } from "../generated/prisma/client";
-import { PrismaService } from "../prisma/services/PrismaService";
-import type { CallbackInput } from "./CallbackInput";
+import { type Callback, CallbackStatus, type Prisma } from "../../generated/prisma/client";
+import { PrismaService } from "../../prisma/services/PrismaService";
+import type { CallbackInput } from "../types/CallbackInput";
 
 @Injectable()
 export class CallbackRepository {

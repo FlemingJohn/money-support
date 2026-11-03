@@ -5,13 +5,13 @@ import { Clock } from "../common/services/Clock";
 import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { ReviewModule } from "../review/ReviewModule";
 import { SettingsModule } from "../settings/SettingsModule";
-import { CallbackController } from "./CallbackController";
-import { CallbackPresenter } from "./CallbackPresenter";
-import { CallbackRepository } from "./CallbackRepository";
-import { CallbackService } from "./CallbackService";
-import { OutboundCallClient } from "./OutboundCallClient";
-import { SimulatedBridgeClient } from "./SimulatedBridgeClient";
-import { TwilioBridgeClient } from "./TwilioBridgeClient";
+import { CallbackController } from "./controllers/CallbackController";
+import { CallbackPresenter } from "./presenters/CallbackPresenter";
+import { CallbackRepository } from "./repositories/CallbackRepository";
+import { CallbackService } from "./services/CallbackService";
+import { OutboundCallClient } from "./clients/OutboundCallClient";
+import { SimulatedBridgeClient } from "./clients/SimulatedBridgeClient";
+import { TwilioBridgeClient } from "./clients/TwilioBridgeClient";
 
 @Module({
   imports: [ActivityModule, CallsModule, ReviewModule, SettingsModule],

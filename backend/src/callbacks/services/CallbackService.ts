@@ -1,19 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { CallRepository } from "../calls/repositories/CallRepository";
-import { CustomerNumberProtector } from "../calls/services/CustomerNumberProtector";
-import { Clock } from "../common/services/Clock";
-import { ActivityAction, ActivityItemType, type Callback, CallbackStatus, type Prisma, ReviewStatus } from "../generated/prisma/client";
-import { ReviewNotFoundException } from "../review/exceptions/ReviewNotFoundException";
-import { ReviewRepository } from "../review/repositories/ReviewRepository";
-import { SettingsService } from "../settings/services/SettingsService";
-import { CallbackNotFoundException } from "./CallbackNotFoundException";
-import { CallbackPresenter } from "./CallbackPresenter";
-import { CallbackRepository } from "./CallbackRepository";
-import type { CallbackResponse } from "./CallbackResponse";
-import { CallbackUnavailableException } from "./CallbackUnavailableException";
-import { OutboundCallClient } from "./OutboundCallClient";
-import type { StartCallbackDto } from "./StartCallbackDto";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { CallRepository } from "../../calls/repositories/CallRepository";
+import { CustomerNumberProtector } from "../../calls/services/CustomerNumberProtector";
+import { Clock } from "../../common/services/Clock";
+import { ActivityAction, ActivityItemType, type Callback, CallbackStatus, type Prisma, ReviewStatus } from "../../generated/prisma/client";
+import { ReviewNotFoundException } from "../../review/exceptions/ReviewNotFoundException";
+import { ReviewRepository } from "../../review/repositories/ReviewRepository";
+import { SettingsService } from "../../settings/services/SettingsService";
+import { CallbackNotFoundException } from "../exceptions/CallbackNotFoundException";
+import { CallbackPresenter } from "../presenters/CallbackPresenter";
+import { CallbackRepository } from "../repositories/CallbackRepository";
+import type { CallbackResponse } from "../responses/CallbackResponse";
+import { CallbackUnavailableException } from "../exceptions/CallbackUnavailableException";
+import { OutboundCallClient } from "../clients/OutboundCallClient";
+import type { StartCallbackDto } from "../dto/StartCallbackDto";
 
 @Injectable()
 export class CallbackService {
