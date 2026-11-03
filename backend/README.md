@@ -52,6 +52,8 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 
 ## Structure
 
+One folder per area. The module sits at the top of each area, and every other file goes in the subfolder for its kind. An area only has the subfolders it needs.
+
 ```
 src/
 ├── main.ts · ApplicationServer.ts · AppModule.ts
@@ -71,6 +73,40 @@ src/
 ├── retention/       hourly clean-up of old transcripts and numbers
 └── health/          health checks
 ```
+
+Inside an area, for example `calls/`:
+
+```
+calls/
+├── CallsModule.ts
+├── controllers/    CallController
+├── services/       CallQueryService · CustomerNumberProtector
+├── repositories/   CallRepository · CallMessageRepository · ExtractedFieldRepository
+├── queries/        callDetailInclude
+├── presenters/     CallPresenter
+├── dto/            CallFilterDto
+├── responses/      CallSummaryResponse · CallDetailResponse · CallPageResponse · …
+├── types/          CallCompletion · CallRows · CallWithDetails · LocatedField · ProtectedCustomerNumber
+└── exceptions/     CallNotFoundException
+```
+
+| Subfolder | Holds |
+|---|---|
+| `controllers/` | HTTP routes |
+| `services/` | Business rules |
+| `repositories/` | Database queries |
+| `queries/` | Prisma include shapes used by repositories |
+| `presenters/` | Turn database rows into API responses |
+| `clients/` | Outside services: an abstract class and its implementations |
+| `handlers/` | One class per Vapi event type |
+| `jobs/` | Scheduled tasks |
+| `guards/` | Request checks |
+| `dto/` | Request validation with Zod |
+| `responses/` | Shapes the API returns to the frontend |
+| `types/` | Data passed between classes inside the backend |
+| `exceptions/` | Named errors |
+
+Tests mirror the source layout: `test/review/services/ReviewTriage.test.ts` tests `src/review/services/ReviewTriage.ts`.
 
 ## Local setup
 
