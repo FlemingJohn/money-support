@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import twilio, { type Twilio } from "twilio";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { CallbackStatus } from "../generated/prisma/client";
 import type { BridgeRequest } from "./BridgeRequest";
 import { OutboundCallClient } from "./OutboundCallClient";

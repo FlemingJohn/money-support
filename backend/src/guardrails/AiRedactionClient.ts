@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { z } from "zod";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { PatternRedactionClient } from "./PatternRedactionClient";
 import type { RedactedLine } from "./RedactedLine";
 import { RedactionClient } from "./RedactionClient";

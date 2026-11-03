@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import type { Request } from "express";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { SecretMatcher } from "./SecretMatcher";
 
 @Injectable()

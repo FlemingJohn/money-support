@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { SettingsService } from "../settings/SettingsService";
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./AppModule";
-import { AppConfiguration } from "./configuration/AppConfiguration";
+import { AppConfiguration } from "./configuration/services/AppConfiguration";
 
 export class ApplicationServer {
   async start(): Promise<void> {

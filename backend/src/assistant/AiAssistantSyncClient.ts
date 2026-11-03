@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { z } from "zod";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { AssistantSyncClient } from "./AssistantSyncClient";
 import type { AssistantSyncResult } from "./AssistantSyncResult";
 

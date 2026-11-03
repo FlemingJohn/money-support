@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { AiRedactionClient } from "./AiRedactionClient";
 import { GuardrailEventRepository } from "./GuardrailEventRepository";
 import { PatternRedactionClient } from "./PatternRedactionClient";

@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { ActivityModule } from "../activity/ActivityModule";
 import { CallsModule } from "../calls/CallsModule";
 import { Clock } from "../common/Clock";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { ReviewModule } from "../review/ReviewModule";
 import { SettingsModule } from "../settings/SettingsModule";
 import { CallbackController } from "./CallbackController";

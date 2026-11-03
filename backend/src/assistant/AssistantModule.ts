@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ActivityModule } from "../activity/ActivityModule";
-import { AppConfiguration } from "../configuration/AppConfiguration";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { AiAssistantSyncClient } from "./AiAssistantSyncClient";
 import { AssistantSyncClient } from "./AssistantSyncClient";
 import { AssistantSyncService } from "./AssistantSyncService";
