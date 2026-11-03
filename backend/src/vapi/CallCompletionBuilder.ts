@@ -4,7 +4,7 @@ import type { CallCompletion } from "../calls/types/CallCompletion";
 import { CustomerNumberProtector } from "../calls/services/CustomerNumberProtector";
 import { FaqRepository } from "../faqs/FaqRepository";
 import { CallChannel, CallOutcome, type Faq } from "../generated/prisma/client";
-import { SettingsService } from "../settings/SettingsService";
+import { SettingsService } from "../settings/services/SettingsService";
 import type { FinishedCallReport } from "./FinishedCallReport";
 import type { RedactedReport } from "./RedactedReport";
 

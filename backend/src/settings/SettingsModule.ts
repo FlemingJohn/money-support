@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { ActivityModule } from "../activity/ActivityModule";
 import { AssistantModule } from "../assistant/AssistantModule";
-import { SettingsController } from "./SettingsController";
-import { SettingsRepository } from "./SettingsRepository";
-import { SettingsService } from "./SettingsService";
+import { SettingsController } from "./controllers/SettingsController";
+import { SettingsRepository } from "./repositories/SettingsRepository";
+import { SettingsService } from "./services/SettingsService";
 
 @Module({
   imports: [ActivityModule, AssistantModule],

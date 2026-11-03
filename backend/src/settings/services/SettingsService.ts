@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import type { ZodType } from "zod";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { AssistantSyncService } from "../assistant/services/AssistantSyncService";
-import { ActivityAction, ActivityItemType, SettingsSection } from "../generated/prisma/client";
-import { AgentSettingsDto } from "./AgentSettingsDto";
-import { HandOffSettingsDto } from "./HandOffSettingsDto";
-import { PhoneSettingsDto } from "./PhoneSettingsDto";
-import { PrivacySettingsDto } from "./PrivacySettingsDto";
-import { SettingsRepository } from "./SettingsRepository";
-import type { SettingsResponse } from "./SettingsResponse";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { AssistantSyncService } from "../../assistant/services/AssistantSyncService";
+import { ActivityAction, ActivityItemType, SettingsSection } from "../../generated/prisma/client";
+import { AgentSettingsDto } from "../dto/AgentSettingsDto";
+import { HandOffSettingsDto } from "../dto/HandOffSettingsDto";
+import { PhoneSettingsDto } from "../dto/PhoneSettingsDto";
+import { PrivacySettingsDto } from "../dto/PrivacySettingsDto";
+import { SettingsRepository } from "../repositories/SettingsRepository";
+import type { SettingsResponse } from "../responses/SettingsResponse";
 
 @Injectable()
 export class SettingsService {

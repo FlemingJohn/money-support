@@ -3,8 +3,8 @@ import { CallMessageRepository } from "../calls/repositories/CallMessageReposito
 import { CallRepository } from "../calls/repositories/CallRepository";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
 import { Clock } from "../common/services/Clock";
-import type { PhoneSettingsDto } from "../settings/PhoneSettingsDto";
-import { SettingsService } from "../settings/SettingsService";
+import type { PhoneSettingsDto } from "../settings/dto/PhoneSettingsDto";
+import { SettingsService } from "../settings/services/SettingsService";
 import type { RetentionResult } from "./RetentionResult";
 
 @Injectable()

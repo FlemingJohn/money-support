@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Put } from "@nestjs/common";
-import { AgentSettingsDto } from "./AgentSettingsDto";
-import { HandOffSettingsDto } from "./HandOffSettingsDto";
-import { PhoneSettingsDto } from "./PhoneSettingsDto";
-import { PrivacySettingsDto } from "./PrivacySettingsDto";
-import type { SettingsResponse } from "./SettingsResponse";
-import { SettingsService } from "./SettingsService";
+import { AgentSettingsDto } from "../dto/AgentSettingsDto";
+import { HandOffSettingsDto } from "../dto/HandOffSettingsDto";
+import { PhoneSettingsDto } from "../dto/PhoneSettingsDto";
+import { PrivacySettingsDto } from "../dto/PrivacySettingsDto";
+import type { SettingsResponse } from "../responses/SettingsResponse";
+import { SettingsService } from "../services/SettingsService";
 
 @Controller("settings")
 export class SettingsController {

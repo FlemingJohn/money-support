@@ -6,7 +6,7 @@ import { Clock } from "../common/services/Clock";
 import { ActivityAction, ActivityItemType, type Callback, CallbackStatus, type Prisma, ReviewStatus } from "../generated/prisma/client";
 import { ReviewNotFoundException } from "../review/ReviewNotFoundException";
 import { ReviewRepository } from "../review/ReviewRepository";
-import { SettingsService } from "../settings/SettingsService";
+import { SettingsService } from "../settings/services/SettingsService";
 import { CallbackNotFoundException } from "./CallbackNotFoundException";
 import { CallbackPresenter } from "./CallbackPresenter";
 import { CallbackRepository } from "./CallbackRepository";
