@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import type { ActivityEvent } from "../generated/prisma/client";
-import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
-import type { ActivityEventInput } from "./ActivityEventInput";
-import { ActivityRepository } from "./ActivityRepository";
+import type { ActivityEvent } from "../../generated/prisma/client";
+import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import type { ActivityEventInput } from "../types/ActivityEventInput";
+import { ActivityRepository } from "../repositories/ActivityRepository";
 
 @Injectable()
 export class ActivityLog {

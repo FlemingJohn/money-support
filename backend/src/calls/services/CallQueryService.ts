@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../../activity/ActivityLog";
+import { ActivityLog } from "../../activity/services/ActivityLog";
 import { ActivityAction, ActivityItemType } from "../../generated/prisma/client";
 import type { CallDetailResponse } from "../responses/CallDetailResponse";
 import type { CallFilterDto } from "../dto/CallFilterDto";

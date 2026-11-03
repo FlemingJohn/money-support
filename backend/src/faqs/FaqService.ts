@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/ActivityLog";
+import { ActivityLog } from "../activity/services/ActivityLog";
 import { AssistantSyncService } from "../assistant/AssistantSyncService";
 import { ActivityAction, ActivityItemType, type Faq } from "../generated/prisma/client";
 import type { CreateFaqDto } from "./CreateFaqDto";

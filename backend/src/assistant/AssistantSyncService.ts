@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ActivityLog } from "../activity/ActivityLog";
+import { ActivityLog } from "../activity/services/ActivityLog";
 import { ActivityAction, ActivityItemType } from "../generated/prisma/client";
 import type { AgentSyncResponse } from "./AgentSyncResponse";
 import { AssistantSyncClient } from "./AssistantSyncClient";

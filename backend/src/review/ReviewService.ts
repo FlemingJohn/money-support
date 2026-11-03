@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/ActivityLog";
+import { ActivityLog } from "../activity/services/ActivityLog";
 import { CallQueryService } from "../calls/services/CallQueryService";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
 import { Clock } from "../common/services/Clock";

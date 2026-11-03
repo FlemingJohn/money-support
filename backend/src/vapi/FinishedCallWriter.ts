@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import type { ActivityEventInput } from "../activity/ActivityEventInput";
-import { ActivityLog } from "../activity/ActivityLog";
+import type { ActivityEventInput } from "../activity/types/ActivityEventInput";
+import { ActivityLog } from "../activity/services/ActivityLog";
 import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
 import { CallRepository } from "../calls/repositories/CallRepository";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";

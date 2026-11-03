@@ -1,4 +1,4 @@
-import type { ActivityAction, ActivityItemType } from "../generated/prisma/client";
+import type { ActivityAction, ActivityItemType } from "../../generated/prisma/client";
 
 export interface ActivityEventInput {
   action: ActivityAction;

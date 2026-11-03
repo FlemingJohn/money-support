@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import type { ZodType } from "zod";
-import { ActivityLog } from "../activity/ActivityLog";
+import { ActivityLog } from "../activity/services/ActivityLog";
 import { AssistantSyncService } from "../assistant/AssistantSyncService";
 import { ActivityAction, ActivityItemType, SettingsSection } from "../generated/prisma/client";
 import { AgentSettingsDto } from "./AgentSettingsDto";

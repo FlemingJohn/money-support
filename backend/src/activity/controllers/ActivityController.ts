@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from "@nestjs/common";
-import type { ActivityEvent } from "../generated/prisma/client";
-import { ActivityLog } from "./ActivityLog";
-import { ActivityQueryDto } from "./ActivityQueryDto";
+import type { ActivityEvent } from "../../generated/prisma/client";
+import { ActivityLog } from "../services/ActivityLog";
+import { ActivityQueryDto } from "../dto/ActivityQueryDto";
 
 @Controller("activity")
 export class ActivityController {
