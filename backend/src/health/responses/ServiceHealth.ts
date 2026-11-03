@@ -1,4 +1,4 @@
-import type { ServiceState } from "./ServiceState";
+import type { ServiceState } from "../types/ServiceState";
 
 export interface ServiceHealth {
   name: string;
