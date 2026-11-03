@@ -1,0 +1,17 @@
+{
+  "id": "S04",
+  "name": "Recipient bank asking for a reference",
+  "instructions": "Your recipient's bank in India asked for a reference number to find the payment. Ask the agent what that is and where it comes from, then say goodbye.",
+  "checks": [
+    {
+      "name": "explainedReference",
+      "question": "Did the agent explain the banking partner reference number and that the recipient can give it to their bank?",
+      "expected": true
+    },
+    {
+      "name": "keptShort",
+      "question": "Were all of the agent's replies short, about three sentences or fewer?",
+      "expected": true
+    }
+  ]
+}
