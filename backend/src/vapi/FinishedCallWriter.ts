@@ -5,8 +5,8 @@ import { CallMessageRepository } from "../calls/repositories/CallMessageReposito
 import { CallRepository } from "../calls/repositories/CallRepository";
 import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
 import { ActivityAction, ActivityItemType, GuardrailKind, type ReviewReason } from "../generated/prisma/client";
-import type { GuardrailEventInput } from "../guardrails/GuardrailEventInput";
-import { GuardrailEventRepository } from "../guardrails/GuardrailEventRepository";
+import type { GuardrailEventInput } from "../guardrails/types/GuardrailEventInput";
+import { GuardrailEventRepository } from "../guardrails/repositories/GuardrailEventRepository";
 import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
 import { PrismaService } from "../prisma/services/PrismaService";
 import { ReviewRepository } from "../review/ReviewRepository";

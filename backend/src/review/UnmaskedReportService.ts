@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ActivityLog } from "../activity/services/ActivityLog";
 import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
 import { ActivityAction, ActivityItemType, GuardrailKind, ReviewReason } from "../generated/prisma/client";
-import { GuardrailEventRepository } from "../guardrails/GuardrailEventRepository";
+import { GuardrailEventRepository } from "../guardrails/repositories/GuardrailEventRepository";
 import { PrismaService } from "../prisma/services/PrismaService";
 import { MessageNotFoundException } from "./MessageNotFoundException";
 import { ReviewRepository } from "./ReviewRepository";

@@ -1,5 +1,5 @@
-import { Speaker } from "../src/generated/prisma/client";
-import { PatternRedactionClient } from "../src/guardrails/PatternRedactionClient";
+import { Speaker } from "../../../src/generated/prisma/client";
+import { PatternRedactionClient } from "../../../src/guardrails/clients/PatternRedactionClient";
 
 describe("PatternRedactionClient", () => {
   const redactionClient = new PatternRedactionClient();

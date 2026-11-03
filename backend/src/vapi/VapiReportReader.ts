@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { z } from "zod";
 import { Clock } from "../common/services/Clock";
 import { CallChannel, Speaker } from "../generated/prisma/client";
-import type { TranscriptLine } from "../guardrails/TranscriptLine";
+import type { TranscriptLine } from "../guardrails/types/TranscriptLine";
 import type { FinishedCallReport } from "./FinishedCallReport";
 import { VapiCallMissingException } from "./VapiCallMissingException";
 import type { VapiMessage } from "./VapiMessage";

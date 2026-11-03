@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import type { PersonalDataPattern } from "./PersonalDataPattern";
-import type { RedactedLine } from "./RedactedLine";
+import type { PersonalDataPattern } from "../types/PersonalDataPattern";
+import type { RedactedLine } from "../types/RedactedLine";
 import { RedactionClient } from "./RedactionClient";
-import type { TranscriptLine } from "./TranscriptLine";
+import type { TranscriptLine } from "../types/TranscriptLine";
 
 @Injectable()
 export class PatternRedactionClient extends RedactionClient {

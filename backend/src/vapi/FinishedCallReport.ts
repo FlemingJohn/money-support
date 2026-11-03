@@ -1,5 +1,5 @@
 import type { CallChannel } from "../generated/prisma/client";
-import type { TranscriptLine } from "../guardrails/TranscriptLine";
+import type { TranscriptLine } from "../guardrails/types/TranscriptLine";
 import type { ReportedField } from "./ReportedField";
 
 export interface FinishedCallReport {

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { z } from "zod";
-import { AppConfiguration } from "../configuration/services/AppConfiguration";
+import { AppConfiguration } from "../../configuration/services/AppConfiguration";
 import { PatternRedactionClient } from "./PatternRedactionClient";
-import type { RedactedLine } from "./RedactedLine";
+import type { RedactedLine } from "../types/RedactedLine";
 import { RedactionClient } from "./RedactionClient";
-import type { TranscriptLine } from "./TranscriptLine";
+import type { TranscriptLine } from "../types/TranscriptLine";
 
 @Injectable()
 export class AiRedactionClient extends RedactionClient {

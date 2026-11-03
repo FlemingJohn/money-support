@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common";
 import { AppConfiguration } from "../configuration/services/AppConfiguration";
-import { AiRedactionClient } from "./AiRedactionClient";
-import { GuardrailEventRepository } from "./GuardrailEventRepository";
-import { PatternRedactionClient } from "./PatternRedactionClient";
-import { RedactionClient } from "./RedactionClient";
+import { AiRedactionClient } from "./clients/AiRedactionClient";
+import { GuardrailEventRepository } from "./repositories/GuardrailEventRepository";
+import { PatternRedactionClient } from "./clients/PatternRedactionClient";
+import { RedactionClient } from "./clients/RedactionClient";
 
 @Module({
   providers: [
