@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Speaker } from "../generated/prisma/client";
-import { RedactionClient } from "../guardrails/clients/RedactionClient";
-import type { TranscriptLine } from "../guardrails/types/TranscriptLine";
-import type { FinishedCallReport } from "./FinishedCallReport";
-import type { RedactedReport } from "./RedactedReport";
+import { Speaker } from "../../generated/prisma/client";
+import { RedactionClient } from "../../guardrails/clients/RedactionClient";
+import type { TranscriptLine } from "../../guardrails/types/TranscriptLine";
+import type { FinishedCallReport } from "../types/FinishedCallReport";
+import type { RedactedReport } from "../types/RedactedReport";
 
 @Injectable()
 export class ReportRedactor {

@@ -1,4 +1,4 @@
-import type { VapiMessage } from "./VapiMessage";
+import type { VapiMessage } from "../types/VapiMessage";
 
 export abstract class VapiEventHandler {
   abstract readonly eventType: string;

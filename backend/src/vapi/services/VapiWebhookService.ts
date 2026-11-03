@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { EndOfCallReportHandler } from "./EndOfCallReportHandler";
-import { StatusUpdateHandler } from "./StatusUpdateHandler";
-import type { VapiEventHandler } from "./VapiEventHandler";
-import type { VapiMessage } from "./VapiMessage";
+import { EndOfCallReportHandler } from "../handlers/EndOfCallReportHandler";
+import { StatusUpdateHandler } from "../handlers/StatusUpdateHandler";
+import type { VapiEventHandler } from "../handlers/VapiEventHandler";
+import type { VapiMessage } from "../types/VapiMessage";
 
 @Injectable()
 export class VapiWebhookService {

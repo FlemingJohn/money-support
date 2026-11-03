@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { AppConfiguration } from "../configuration/services/AppConfiguration";
-import { SettingsService } from "../settings/services/SettingsService";
+import { AppConfiguration } from "../../configuration/services/AppConfiguration";
+import { SettingsService } from "../../settings/services/SettingsService";
 
 @Injectable()
 export class VapiCallArchive {

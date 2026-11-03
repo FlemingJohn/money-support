@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { CallRepository } from "../calls/repositories/CallRepository";
-import { Clock } from "../common/services/Clock";
-import { ReviewTriage } from "../review/services/ReviewTriage";
-import type { TriageFacts } from "../review/types/TriageFacts";
+import { CallRepository } from "../../calls/repositories/CallRepository";
+import { Clock } from "../../common/services/Clock";
+import { ReviewTriage } from "../../review/services/ReviewTriage";
+import type { TriageFacts } from "../../review/types/TriageFacts";
 import { CallCompletionBuilder } from "./CallCompletionBuilder";
-import type { FinishedCallReport } from "./FinishedCallReport";
+import type { FinishedCallReport } from "../types/FinishedCallReport";
 import { FinishedCallWriter } from "./FinishedCallWriter";
-import type { RedactedReport } from "./RedactedReport";
+import type { RedactedReport } from "../types/RedactedReport";
 import { ReportRedactor } from "./ReportRedactor";
-import { VapiCallArchive } from "./VapiCallArchive";
-import type { VapiMessage } from "./VapiMessage";
+import { VapiCallArchive } from "../clients/VapiCallArchive";
+import type { VapiMessage } from "../types/VapiMessage";
 import { VapiReportReader } from "./VapiReportReader";
 
 @Injectable()

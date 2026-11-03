@@ -1,4 +1,4 @@
-import type { RedactedLine } from "../guardrails/types/RedactedLine";
+import type { RedactedLine } from "../../guardrails/types/RedactedLine";
 import type { ReportedField } from "./ReportedField";
 
 export interface RedactedReport {

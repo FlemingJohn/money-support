@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { z } from "zod";
-import { Clock } from "../common/services/Clock";
-import { CallChannel, Speaker } from "../generated/prisma/client";
-import type { TranscriptLine } from "../guardrails/types/TranscriptLine";
-import type { FinishedCallReport } from "./FinishedCallReport";
-import { VapiCallMissingException } from "./VapiCallMissingException";
-import type { VapiMessage } from "./VapiMessage";
-import type { VapiTranscriptEntry } from "./VapiTranscriptEntry";
+import { Clock } from "../../common/services/Clock";
+import { CallChannel, Speaker } from "../../generated/prisma/client";
+import type { TranscriptLine } from "../../guardrails/types/TranscriptLine";
+import type { FinishedCallReport } from "../types/FinishedCallReport";
+import { VapiCallMissingException } from "../exceptions/VapiCallMissingException";
+import type { VapiMessage } from "../types/VapiMessage";
+import type { VapiTranscriptEntry } from "../types/VapiTranscriptEntry";
 
 @Injectable()
 export class VapiReportReader {

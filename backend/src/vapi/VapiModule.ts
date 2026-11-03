@@ -6,17 +6,17 @@ import { FaqsModule } from "../faqs/FaqsModule";
 import { GuardrailsModule } from "../guardrails/GuardrailsModule";
 import { ReviewModule } from "../review/ReviewModule";
 import { SettingsModule } from "../settings/SettingsModule";
-import { CallCompletionBuilder } from "./CallCompletionBuilder";
-import { CallRecordingService } from "./CallRecordingService";
-import { EndOfCallReportHandler } from "./EndOfCallReportHandler";
-import { FieldLocator } from "./FieldLocator";
-import { FinishedCallWriter } from "./FinishedCallWriter";
-import { ReportRedactor } from "./ReportRedactor";
-import { StatusUpdateHandler } from "./StatusUpdateHandler";
-import { VapiCallArchive } from "./VapiCallArchive";
-import { VapiReportReader } from "./VapiReportReader";
-import { VapiWebhookController } from "./VapiWebhookController";
-import { VapiWebhookService } from "./VapiWebhookService";
+import { CallCompletionBuilder } from "./services/CallCompletionBuilder";
+import { CallRecordingService } from "./services/CallRecordingService";
+import { EndOfCallReportHandler } from "./handlers/EndOfCallReportHandler";
+import { FieldLocator } from "./services/FieldLocator";
+import { FinishedCallWriter } from "./services/FinishedCallWriter";
+import { ReportRedactor } from "./services/ReportRedactor";
+import { StatusUpdateHandler } from "./handlers/StatusUpdateHandler";
+import { VapiCallArchive } from "./clients/VapiCallArchive";
+import { VapiReportReader } from "./services/VapiReportReader";
+import { VapiWebhookController } from "./controllers/VapiWebhookController";
+import { VapiWebhookService } from "./services/VapiWebhookService";
 
 @Module({
   imports: [ActivityModule, AssistantModule, CallsModule, FaqsModule, GuardrailsModule, ReviewModule, SettingsModule],

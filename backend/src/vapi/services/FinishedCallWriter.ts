@@ -1,18 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import type { ActivityEventInput } from "../activity/types/ActivityEventInput";
-import { ActivityLog } from "../activity/services/ActivityLog";
-import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
-import { CallRepository } from "../calls/repositories/CallRepository";
-import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
-import { ActivityAction, ActivityItemType, GuardrailKind, type ReviewReason } from "../generated/prisma/client";
-import type { GuardrailEventInput } from "../guardrails/types/GuardrailEventInput";
-import { GuardrailEventRepository } from "../guardrails/repositories/GuardrailEventRepository";
-import type { DatabaseTransaction } from "../prisma/types/DatabaseTransaction";
-import { PrismaService } from "../prisma/services/PrismaService";
-import { ReviewRepository } from "../review/repositories/ReviewRepository";
+import type { ActivityEventInput } from "../../activity/types/ActivityEventInput";
+import { ActivityLog } from "../../activity/services/ActivityLog";
+import { CallMessageRepository } from "../../calls/repositories/CallMessageRepository";
+import { CallRepository } from "../../calls/repositories/CallRepository";
+import { ExtractedFieldRepository } from "../../calls/repositories/ExtractedFieldRepository";
+import { ActivityAction, ActivityItemType, GuardrailKind, type ReviewReason } from "../../generated/prisma/client";
+import type { GuardrailEventInput } from "../../guardrails/types/GuardrailEventInput";
+import { GuardrailEventRepository } from "../../guardrails/repositories/GuardrailEventRepository";
+import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import { PrismaService } from "../../prisma/services/PrismaService";
+import { ReviewRepository } from "../../review/repositories/ReviewRepository";
 import { FieldLocator } from "./FieldLocator";
-import type { FinishedCallRecording } from "./FinishedCallRecording";
-import type { RedactedReport } from "./RedactedReport";
+import type { FinishedCallRecording } from "../types/FinishedCallRecording";
+import type { RedactedReport } from "../types/RedactedReport";
 
 @Injectable()
 export class FinishedCallWriter {

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { CallRecordingService } from "./CallRecordingService";
+import { CallRecordingService } from "../services/CallRecordingService";
 import { VapiEventHandler } from "./VapiEventHandler";
-import type { VapiMessage } from "./VapiMessage";
+import type { VapiMessage } from "../types/VapiMessage";
 
 @Injectable()
 export class EndOfCallReportHandler extends VapiEventHandler {

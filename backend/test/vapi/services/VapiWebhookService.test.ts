@@ -1,6 +1,6 @@
-import type { EndOfCallReportHandler } from "../src/vapi/EndOfCallReportHandler";
-import type { StatusUpdateHandler } from "../src/vapi/StatusUpdateHandler";
-import { VapiWebhookService } from "../src/vapi/VapiWebhookService";
+import type { EndOfCallReportHandler } from "../../../src/vapi/handlers/EndOfCallReportHandler";
+import type { StatusUpdateHandler } from "../../../src/vapi/handlers/StatusUpdateHandler";
+import { VapiWebhookService } from "../../../src/vapi/services/VapiWebhookService";
 
 describe("VapiWebhookService", () => {
   const statusUpdateHandler = { eventType: "status-update", handle: jest.fn().mockResolvedValue(undefined) };
