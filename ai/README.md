@@ -75,7 +75,7 @@ Needs Python 3.12 and [uv](https://docs.astral.sh/uv/).
 cd ai
 uv sync
 cp .env.example .env
-uv run uvicorn app.main:application --port 8000
+uv run uvicorn app.main:app --port 8000
 ```
 
 | Variable | Value |
@@ -93,4 +93,4 @@ Then set `AI_SERVICE_URL=http://localhost:8000` in `backend/.env` so the backend
 | Command | What it does |
 |---|---|
 | `uv run pytest` | Runs the tests |
-| `uv run uvicorn app.main:application --reload --port 8000` | Starts the service and restarts on changes |
+| `uv run uvicorn app.main:app --reload --port 8000` | Starts the service and restarts on changes |
