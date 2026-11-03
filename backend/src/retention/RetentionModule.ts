@@ -1,11 +1,13 @@
 import { Module } from "@nestjs/common";
 import { CallsModule } from "../calls/CallsModule";
 import { SettingsModule } from "../settings/SettingsModule";
+import { RetentionController } from "./controllers/RetentionController";
 import { RetentionJob } from "./jobs/RetentionJob";
 import { RetentionService } from "./services/RetentionService";
 
 @Module({
   imports: [CallsModule, SettingsModule],
+  controllers: [RetentionController],
   providers: [RetentionJob, RetentionService],
 })
 export class RetentionModule {}
