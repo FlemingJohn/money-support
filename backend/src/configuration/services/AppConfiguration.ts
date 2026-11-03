@@ -18,6 +18,10 @@ export class AppConfiguration {
     return this.configService.get("DATABASE_URL", { infer: true });
   }
 
+  get databaseCaCertificate(): string {
+    return this.configService.get("DATABASE_CA_CERTIFICATE", { infer: true }).replaceAll("\\n", "\n");
+  }
+
   get vapiWebhookSecret(): string {
     return this.configService.get("VAPI_WEBHOOK_SECRET", { infer: true });
   }
@@ -28,6 +32,10 @@ export class AppConfiguration {
 
   get serviceSecret(): string {
     return this.configService.get("SERVICE_SECRET", { infer: true });
+  }
+
+  get cronSecret(): string {
+    return this.configService.get("CRON_SECRET", { infer: true });
   }
 
   get aiServiceUrl(): string {
@@ -48,6 +56,10 @@ export class AppConfiguration {
 
   get twilioCallerNumber(): string {
     return this.configService.get("TWILIO_CALLER_NUMBER", { infer: true });
+  }
+
+  get hasDatabaseCaCertificate(): boolean {
+    return this.databaseCaCertificate.length > 0;
   }
 
   get isAiServiceConfigured(): boolean {
