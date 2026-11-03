@@ -90,7 +90,7 @@ The six topics the agent answers:
 |---|---|
 | Voice and model | Vapi, gpt-4o, Deepgram speech to text |
 | frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, lucide-react |
-| backend | NestJS, TypeScript, Prisma, Zod |
+| backend | NestJS 11, TypeScript, Prisma 7, Zod 4, nestjs-zod, Twilio, Jest |
 | ai | Python 3.12, FastAPI, Pydantic, Jinja2, Microsoft Presidio, pytest |
 | Database | Supabase Postgres |
 
@@ -110,7 +110,7 @@ money-support/
 │       ├── icons/        custom SVG marks
 │       ├── lib/          logic with no screen attached
 │       └── styles/       theme.css, the only place colours and fonts are defined
-├── backend/           NestJS API (planned)
+├── backend/           NestJS API
 ├── ai/                Python agent builder and redaction service (planned)
 ├── LICENSE
 └── README.md
@@ -141,9 +141,21 @@ Open http://localhost:3000. The dashboard uses sample data until the backend is 
 | `npm run start` | Serves the production build |
 | `npm run lint` | Checks the code |
 
-### Backend and ai/
+### Backend
 
-Not built yet. Their planned structure is in [backend/README.md](backend/README.md) and [ai/README.md](ai/README.md).
+```bash
+cd backend
+npm install
+cp .env.example .env
+npx prisma migrate dev
+npm run dev
+```
+
+The API listens on http://localhost:4000. Fill in `.env` first; [backend/README.md](backend/README.md) explains each variable, the endpoints and how to run a local database without Supabase.
+
+### ai/
+
+Not built yet. Its planned structure is in [ai/README.md](ai/README.md).
 
 ## Status
 
@@ -152,7 +164,7 @@ Not built yet. Their planned structure is in [backend/README.md](backend/README.
 | Dashboard shell: sidebar with collapse, header, theme | Done |
 | Overview page | Done, with sample data |
 | Calls, call detail, review queue, FAQs, test call, settings | Next |
-| backend/ | Planned |
+| backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
 | ai/ | Planned |
 
 ## License
