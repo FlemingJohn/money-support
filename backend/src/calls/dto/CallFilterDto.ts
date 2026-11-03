@@ -1,6 +1,6 @@
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
-import { CallOutcome } from "../generated/prisma/client";
+import { CallOutcome } from "../../generated/prisma/client";
 
 export class CallFilterDto extends createZodDto(
   z.object({

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { CallMessageRepository } from "../calls/CallMessageRepository";
-import { CallRepository } from "../calls/CallRepository";
-import { ExtractedFieldRepository } from "../calls/ExtractedFieldRepository";
+import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
+import { CallRepository } from "../calls/repositories/CallRepository";
+import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
 import { Clock } from "../common/Clock";
 import type { PhoneSettingsDto } from "../settings/PhoneSettingsDto";
 import { SettingsService } from "../settings/SettingsService";

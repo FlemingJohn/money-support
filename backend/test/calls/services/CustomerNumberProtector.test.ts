@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import { CustomerNumberProtector } from "../src/calls/CustomerNumberProtector";
-import { EncryptionService } from "../src/common/EncryptionService";
-import type { AppConfiguration } from "../src/configuration/AppConfiguration";
+import { CustomerNumberProtector } from "../../../src/calls/services/CustomerNumberProtector";
+import { EncryptionService } from "../../../src/common/EncryptionService";
+import type { AppConfiguration } from "../../../src/configuration/AppConfiguration";
 
 describe("CustomerNumberProtector", () => {
   const appConfiguration = { encryptionKey: randomBytes(32).toString("base64") } as AppConfiguration;

@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query } from "@nestjs/common";
-import type { CallDetailResponse } from "./CallDetailResponse";
-import { CallFilterDto } from "./CallFilterDto";
-import type { CallPageResponse } from "./CallPageResponse";
-import { CallQueryService } from "./CallQueryService";
+import type { CallDetailResponse } from "../responses/CallDetailResponse";
+import { CallFilterDto } from "../dto/CallFilterDto";
+import type { CallPageResponse } from "../responses/CallPageResponse";
+import { CallQueryService } from "../services/CallQueryService";
 
 @Controller("calls")
 export class CallController {

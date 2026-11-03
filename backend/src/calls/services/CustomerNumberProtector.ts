@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { EncryptionService } from "../common/EncryptionService";
-import type { ProtectedCustomerNumber } from "./ProtectedCustomerNumber";
+import { EncryptionService } from "../../common/EncryptionService";
+import type { ProtectedCustomerNumber } from "../types/ProtectedCustomerNumber";
 
 @Injectable()
 export class CustomerNumberProtector {

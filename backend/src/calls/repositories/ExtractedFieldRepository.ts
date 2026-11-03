@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import type { DatabaseTransaction } from "../prisma/DatabaseTransaction";
-import { PrismaService } from "../prisma/PrismaService";
-import type { LocatedField } from "./LocatedField";
+import type { DatabaseTransaction } from "../../prisma/DatabaseTransaction";
+import { PrismaService } from "../../prisma/PrismaService";
+import type { LocatedField } from "../types/LocatedField";
 
 @Injectable()
 export class ExtractedFieldRepository {

@@ -1,4 +1,4 @@
-import type { CallChannel, CallOutcome } from "../generated/prisma/client";
+import type { CallChannel, CallOutcome } from "../../generated/prisma/client";
 
 export interface CallCompletion {
   callId: string;

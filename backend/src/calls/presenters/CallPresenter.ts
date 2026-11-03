@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { type Call, CallChannel } from "../generated/prisma/client";
-import type { CallDetailResponse } from "./CallDetailResponse";
-import type { CallSummaryResponse } from "./CallSummaryResponse";
-import type { CallWithDetails } from "./CallWithDetails";
+import { type Call, CallChannel } from "../../generated/prisma/client";
+import type { CallDetailResponse } from "../responses/CallDetailResponse";
+import type { CallSummaryResponse } from "../responses/CallSummaryResponse";
+import type { CallWithDetails } from "../types/CallWithDetails";
 
 @Injectable()
 export class CallPresenter {

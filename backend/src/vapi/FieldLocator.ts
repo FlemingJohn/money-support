@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { LocatedField } from "../calls/LocatedField";
+import type { LocatedField } from "../calls/types/LocatedField";
 import type { CallMessage } from "../generated/prisma/client";
 import type { FieldPosition } from "./FieldPosition";
 import type { ReportedField } from "./ReportedField";

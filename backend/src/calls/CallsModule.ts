@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { ActivityModule } from "../activity/ActivityModule";
-import { CallController } from "./CallController";
-import { CallMessageRepository } from "./CallMessageRepository";
-import { CallPresenter } from "./CallPresenter";
-import { CallQueryService } from "./CallQueryService";
-import { CallRepository } from "./CallRepository";
-import { CustomerNumberProtector } from "./CustomerNumberProtector";
-import { ExtractedFieldRepository } from "./ExtractedFieldRepository";
+import { CallController } from "./controllers/CallController";
+import { CallMessageRepository } from "./repositories/CallMessageRepository";
+import { CallPresenter } from "./presenters/CallPresenter";
+import { CallQueryService } from "./services/CallQueryService";
+import { CallRepository } from "./repositories/CallRepository";
+import { CustomerNumberProtector } from "./services/CustomerNumberProtector";
+import { ExtractedFieldRepository } from "./repositories/ExtractedFieldRepository";
 
 @Module({
   imports: [ActivityModule],

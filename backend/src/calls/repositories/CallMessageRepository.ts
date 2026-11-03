@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import type { CallMessage } from "../generated/prisma/client";
-import type { RedactedLine } from "../guardrails/RedactedLine";
-import type { DatabaseTransaction } from "../prisma/DatabaseTransaction";
-import { PrismaService } from "../prisma/PrismaService";
+import type { CallMessage } from "../../generated/prisma/client";
+import type { RedactedLine } from "../../guardrails/RedactedLine";
+import type { DatabaseTransaction } from "../../prisma/DatabaseTransaction";
+import { PrismaService } from "../../prisma/PrismaService";
 
 @Injectable()
 export class CallMessageRepository {

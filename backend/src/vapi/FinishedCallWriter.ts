@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import type { ActivityEventInput } from "../activity/ActivityEventInput";
 import { ActivityLog } from "../activity/ActivityLog";
-import { CallMessageRepository } from "../calls/CallMessageRepository";
-import { CallRepository } from "../calls/CallRepository";
-import { ExtractedFieldRepository } from "../calls/ExtractedFieldRepository";
+import { CallMessageRepository } from "../calls/repositories/CallMessageRepository";
+import { CallRepository } from "../calls/repositories/CallRepository";
+import { ExtractedFieldRepository } from "../calls/repositories/ExtractedFieldRepository";
 import { ActivityAction, ActivityItemType, GuardrailKind, type ReviewReason } from "../generated/prisma/client";
 import type { GuardrailEventInput } from "../guardrails/GuardrailEventInput";
 import { GuardrailEventRepository } from "../guardrails/GuardrailEventRepository";

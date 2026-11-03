@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ActivityLog } from "../activity/ActivityLog";
-import { CallRepository } from "../calls/CallRepository";
-import { CustomerNumberProtector } from "../calls/CustomerNumberProtector";
+import { CallRepository } from "../calls/repositories/CallRepository";
+import { CustomerNumberProtector } from "../calls/services/CustomerNumberProtector";
 import { Clock } from "../common/Clock";
 import { ActivityAction, ActivityItemType, type Callback, CallbackStatus, type Prisma, ReviewStatus } from "../generated/prisma/client";
 import { ReviewNotFoundException } from "../review/ReviewNotFoundException";

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { CallPresenter } from "../calls/CallPresenter";
-import { CallRepository } from "../calls/CallRepository";
+import { CallPresenter } from "../calls/presenters/CallPresenter";
+import { CallRepository } from "../calls/repositories/CallRepository";
 import { ReviewStatus } from "../generated/prisma/client";
 import { ReviewPresenter } from "../review/ReviewPresenter";
 import { ReviewRepository } from "../review/ReviewRepository";

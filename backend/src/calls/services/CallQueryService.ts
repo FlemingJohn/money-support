@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { ActivityLog } from "../activity/ActivityLog";
-import { ActivityAction, ActivityItemType } from "../generated/prisma/client";
-import type { CallDetailResponse } from "./CallDetailResponse";
-import type { CallFilterDto } from "./CallFilterDto";
-import { CallNotFoundException } from "./CallNotFoundException";
-import type { CallPageResponse } from "./CallPageResponse";
-import { CallPresenter } from "./CallPresenter";
-import { CallRepository } from "./CallRepository";
+import { ActivityLog } from "../../activity/ActivityLog";
+import { ActivityAction, ActivityItemType } from "../../generated/prisma/client";
+import type { CallDetailResponse } from "../responses/CallDetailResponse";
+import type { CallFilterDto } from "../dto/CallFilterDto";
+import { CallNotFoundException } from "../exceptions/CallNotFoundException";
+import type { CallPageResponse } from "../responses/CallPageResponse";
+import { CallPresenter } from "../presenters/CallPresenter";
+import { CallRepository } from "../repositories/CallRepository";
 
 @Injectable()
 export class CallQueryService {

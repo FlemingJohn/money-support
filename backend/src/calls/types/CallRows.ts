@@ -1,4 +1,4 @@
-import type { Call } from "../generated/prisma/client";
+import type { Call } from "../../generated/prisma/client";
 
 export interface CallRows {
   calls: Call[];

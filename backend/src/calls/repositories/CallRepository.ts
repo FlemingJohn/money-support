@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { type Call, type CallChannel, CallStatus, type Prisma, ReviewStatus } from "../generated/prisma/client";
-import type { DatabaseTransaction } from "../prisma/DatabaseTransaction";
-import { PrismaService } from "../prisma/PrismaService";
-import type { CallCompletion } from "./CallCompletion";
-import { callDetailInclude } from "./callDetailInclude";
-import type { CallFilterDto } from "./CallFilterDto";
-import type { CallRows } from "./CallRows";
-import type { CallWithDetails } from "./CallWithDetails";
+import { type Call, type CallChannel, CallStatus, type Prisma, ReviewStatus } from "../../generated/prisma/client";
+import type { DatabaseTransaction } from "../../prisma/DatabaseTransaction";
+import { PrismaService } from "../../prisma/PrismaService";
+import type { CallCompletion } from "../types/CallCompletion";
+import { callDetailInclude } from "../queries/callDetailInclude";
+import type { CallFilterDto } from "../dto/CallFilterDto";
+import type { CallRows } from "../types/CallRows";
+import type { CallWithDetails } from "../types/CallWithDetails";
 
 @Injectable()
 export class CallRepository {

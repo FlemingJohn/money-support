@@ -1,4 +1,4 @@
-import type { GuardrailKind } from "../generated/prisma/client";
+import type { GuardrailKind } from "../../generated/prisma/client";
 
 export interface GuardrailEventResponse {
   id: string;

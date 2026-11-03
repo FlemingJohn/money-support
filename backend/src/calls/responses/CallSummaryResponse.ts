@@ -1,4 +1,4 @@
-import type { CallChannel, CallOutcome, CallStatus } from "../generated/prisma/client";
+import type { CallChannel, CallOutcome, CallStatus } from "../../generated/prisma/client";
 
 export interface CallSummaryResponse {
   id: string;
