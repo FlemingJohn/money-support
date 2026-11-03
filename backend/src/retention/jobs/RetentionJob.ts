@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { RetentionService } from "./RetentionService";
+import { RetentionService } from "../services/RetentionService";
 
 @Injectable()
 export class RetentionJob {
