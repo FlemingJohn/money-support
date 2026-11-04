@@ -13,6 +13,7 @@ import { FieldLocator } from "./services/FieldLocator";
 import { FinishedCallWriter } from "./services/FinishedCallWriter";
 import { ReportRedactor } from "./services/ReportRedactor";
 import { StatusUpdateHandler } from "./handlers/StatusUpdateHandler";
+import { StructuredDataReader } from "./services/StructuredDataReader";
 import { VapiCallArchive } from "./clients/VapiCallArchive";
 import { VapiReportReader } from "./services/VapiReportReader";
 import { VapiWebhookController } from "./controllers/VapiWebhookController";
@@ -29,6 +30,7 @@ import { VapiWebhookService } from "./services/VapiWebhookService";
     FinishedCallWriter,
     ReportRedactor,
     StatusUpdateHandler,
+    StructuredDataReader,
     VapiCallArchive,
     VapiReportReader,
     VapiWebhookService,
