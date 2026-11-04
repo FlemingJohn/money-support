@@ -23,6 +23,7 @@ from app.evaluation.factories.MockConversationFactory import MockConversationFac
 from app.evaluation.routes.EvaluationRouter import EvaluationRouter
 from app.evaluation.services.EvaluationCaseLoader import EvaluationCaseLoader
 from app.evaluation.services.EvaluationRunner import EvaluationRunner
+from app.guardrails.catalogs.CommonWordCatalog import CommonWordCatalog
 from app.guardrails.catalogs.EntityLabelCatalog import EntityLabelCatalog
 from app.guardrails.routes.GuardrailRouter import GuardrailRouter
 from app.guardrails.services.AnalyzerEngineFactory import AnalyzerEngineFactory
@@ -93,7 +94,7 @@ class ServiceContainer:
         return AssistantRouter(sync_service, self.service_secret_guard).make()
 
     def make_guardrail_router(self) -> APIRouter:
-        redactor = PersonalDataRedactor(self.analyzer, AnonymizerEngine(), EntityLabelCatalog())
+        redactor = PersonalDataRedactor(self.analyzer, AnonymizerEngine(), EntityLabelCatalog(), CommonWordCatalog())
         return GuardrailRouter(redactor, self.service_secret_guard).make()
 
     def make_evaluation_router(self) -> APIRouter:
