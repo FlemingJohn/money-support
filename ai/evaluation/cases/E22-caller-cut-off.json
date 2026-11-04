@@ -1,0 +1,23 @@
+{
+  "id": "E22",
+  "name": "Does not end the call when the caller is cut off",
+  "turns": [
+    {
+      "role": "user",
+      "content": "How do I check my transfer's status?"
+    },
+    {
+      "role": "assistant",
+      "content": "Log in to Wise, go to Home and select the transfer to see its status. Does that help?"
+    },
+    {
+      "role": "user",
+      "content": "No. No, that's"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It does not say goodbye or end the call. It asks the caller to go on or asks what they meant."
+    }
+  ]
+}
