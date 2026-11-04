@@ -69,7 +69,7 @@ The six topics the agent answers:
                         ▼                              │
  ┌─────────── backend/ (NestJS) ──────────┐     ┌──────┴──── ai/ (Python) ────────┐
  │ webhooks · calls · review queue        │────▶│ prompt and agent builder        │
- │ call backs · FAQs · settings · activity│◀────│ PII redaction · behaviour tests │
+ │ call backs · FAQs · settings · activity│◀────│ LangGraph call analysis · tests │
  └───────────┬────────────────────────────┘     └─────────────────────────────────┘
              │ Prisma
              ▼
@@ -82,7 +82,7 @@ The six topics the agent answers:
 
 **When an admin edits an FAQ:** frontend → backend saves it → ai/ rebuilds the prompt → Vapi is updated.
 
-**When a customer calls:** Vapi handles the whole call → backend receives the end-of-call report → ai/ redacts the transcript → backend saves it → the dashboard shows it.
+**When a customer calls:** Vapi handles the whole call → backend receives the end-of-call report → ai/'s LangGraph graph masks personal data and writes the summary, topic, matched FAQ and fields on Azure OpenAI → backend saves it → the dashboard shows it.
 
 ## Tech stack
 
@@ -91,7 +91,8 @@ The six topics the agent answers:
 | Voice and model | Vapi, gpt-4o, Deepgram speech to text |
 | frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, lucide-react |
 | backend | NestJS 11, TypeScript, Prisma 7, Zod 4, nestjs-zod, Twilio, Jest |
-| ai | Python 3.12, FastAPI, Pydantic, Jinja2, Microsoft Presidio, pytest |
+| ai | Python 3.12, FastAPI, Pydantic, Jinja2, LangGraph, LangChain Azure OpenAI, pytest, DeepEval |
+| Call analysis model | Azure OpenAI gpt-4o |
 | Database | Supabase Postgres, Supabase Cron |
 | Hosting | Vercel, three projects from this one repository |
 
@@ -116,7 +117,7 @@ money-support/
 │       ├── lib/          logic with no screen attached
 │       └── styles/       theme.css, the only place colours and fonts are defined
 ├── backend/           NestJS API
-├── ai/                Python agent builder, redaction and agent tests
+├── ai/                Python agent builder, LangGraph call analysis and agent tests
 ├── LICENSE
 └── README.md
 ```
@@ -205,7 +206,7 @@ The backend connects through the transaction pooler and verifies Supabase's cert
 | Project | Variables |
 |---|---|
 | backend | `DATABASE_URL`, `DATABASE_CA_CERTIFICATE`, `VAPI_WEBHOOK_SECRET`, `VAPI_API_KEY`, `SERVICE_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`, `AI_SERVICE_URL`, `FRONTEND_ORIGIN` |
-| ai | `SERVICE_SECRET`, `BACKEND_URL`, `VAPI_API_KEY`, `VAPI_WEBHOOK_URL`, `VAPI_WEBHOOK_SECRET` |
+| ai | `SERVICE_SECRET`, `BACKEND_URL`, `VAPI_API_KEY`, `VAPI_WEBHOOK_URL`, `VAPI_WEBHOOK_SECRET`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT`, `AZURE_OPENAI_API_VERSION` |
 | frontend | `BACKEND_URL` for the `/api` rewrite, `VAPI_PUBLIC_KEY` and `VAPI_ASSISTANT_ID` for the Test call page |
 
 **Retention.** Supabase Cron calls the backend's retention endpoint every hour. [backend/README.md](backend/README.md#retention-on-supabase) has the setup.
@@ -220,7 +221,7 @@ Run on 4 November 2026 against the live assistant.
 |---|---|
 | Evals, 11 cases | 10 to 11 passing per run. E03 and E05 sometimes answer longer than the three-sentence limit. |
 | Simulations, 4 scenarios | 4 passing |
-| Redaction unit tests | Passing |
+| DeepEval: masking (52 lines) and whole-call analysis (4 calls) | 56 passing |
 
 ## Status
 
@@ -230,7 +231,7 @@ Run on 4 November 2026 against the live assistant.
 | Overview page | Done, with live data from the backend |
 | Calls, call detail, review queue, FAQs, test call, settings | Done, with live data from the backend |
 | backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
-| ai/ | Done: prompt and assistant sync, redaction, Vapi Evals and Simulations |
+| ai/ | Done: prompt and assistant sync, LangGraph call analysis, live masking, Vapi Evals, Simulations and DeepEval |
 | Deployment | Done: Vercel and Supabase, deploys from `main` |
 
 ## Known limitations
