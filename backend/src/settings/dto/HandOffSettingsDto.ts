@@ -10,7 +10,7 @@ export class HandOffSettingsDto extends createZodDto(
         .trim()
         .min(1)
         .max(300)
-        .default("That's not something I can help with on this line, so I'm transferring you to a human agent."),
+        .default("I'm not able to help with that on this line, so please contact the Wise support team through the Help section of the Wise app or website."),
       transferNumber: z.union([z.string().regex(/^\+\d{8,15}$/), z.literal("")]).default(""),
       teamHours: z.enum(["weekdays", "always"]).default("weekdays"),
     })
