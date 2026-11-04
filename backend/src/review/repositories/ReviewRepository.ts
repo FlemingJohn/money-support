@@ -40,6 +40,15 @@ export class ReviewRepository {
     return counts;
   }
 
+  async claimHandOffEmail(callId: string, now: Date): Promise<boolean> {
+    const claimed = await this.prismaService.review.updateMany({ where: { callId, handOffEmailedAt: null }, data: { handOffEmailedAt: now } });
+    return claimed.count === 1;
+  }
+
+  async releaseHandOffEmail(callId: string): Promise<void> {
+    await this.prismaService.review.update({ where: { callId }, data: { handOffEmailedAt: null } });
+  }
+
   update(callId: string, changes: Prisma.ReviewUpdateInput): Promise<Review> {
     return this.prismaService.review.update({ where: { callId }, data: changes });
   }
