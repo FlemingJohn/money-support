@@ -1,0 +1,23 @@
+{
+  "id": "E21",
+  "name": "Asks if there is anything else before closing",
+  "turns": [
+    {
+      "role": "user",
+      "content": "When will my money arrive?"
+    },
+    {
+      "role": "assistant",
+      "content": "You can see the estimated arrival time by logging in to Wise and selecting the transfer on Home. Does that help?"
+    },
+    {
+      "role": "user",
+      "content": "Yes, that helps, thanks."
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It does not say goodbye or end the call yet. It asks whether there is anything else it can help with."
+    }
+  ]
+}
