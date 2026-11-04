@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeftRight, ChevronRight, ShieldCheck } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { IconTile } from "@/components/IconTile";
+import { reviewReasonLabels } from "@/lib/reviewReasonLabels";
 import type { ReviewPreview } from "@/types/ReviewPreview";
 import type { NeedsReviewListProps } from "@/types/NeedsReviewListProps";
 
@@ -34,13 +35,7 @@ export function NeedsReviewList({ reviews }: NeedsReviewListProps) {
   );
 }
 
-const reasonLabels: Record<ReviewPreview["reason"], string> = {
-  handOff: "Hand-off",
-  guardrail: "Personal data removed",
-  lowConfidence: "Unclear detail",
-};
-
 function describeReview(review: ReviewPreview): string {
-  const label = reasonLabels[review.reason];
+  const label = reviewReasonLabels[review.reason];
   return review.hasRemovedData && review.reason !== "guardrail" ? `${label} and personal data removed` : label;
 }
