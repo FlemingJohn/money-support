@@ -9,7 +9,7 @@
     {
       "role": "assistant",
       "check": "answers",
-      "expectation": "It explains that it is a number from Wise's local banking partner that the recipient can give their bank to trace the payment, and that some banks call it something else, like a UTR."
+      "expectation": "It explains that the recipient can give this number to their bank to find or trace the payment."
     }
   ]
 }
