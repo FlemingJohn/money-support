@@ -51,7 +51,20 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 4. `ReviewTriage` decides whether a person needs to look at it: hand-off, removed or unchecked data, a field under 75% confidence, or a possible mistake suggested by ai/.
 5. `CallCompletionBuilder` masks the caller's number, and encrypts it only when a review needs a call back.
 6. `FinishedCallWriter` saves the call, messages, fields, guardrail events, review and activity in one transaction.
-7. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on and the analysis is complete.
+7. `HandOffEmailService` emails the team when the call was handed off, a transfer was not answered, the caller hung up during a transfer, or the caller rang out of hours. It sends once per call, using only masked details, and never stops the call being saved if Gmail fails.
+8. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on and the analysis is complete.
+
+## Hand-off emails
+
+| Case | Vapi `endedReason` | Subject starts with |
+|---|---|---|
+| Handed off | the hand-off sentence was said | Follow up a handed-off call |
+| Transfer not answered | `call.forwarding.no-answer`, `call.forwarding.operator-busy`, `call.in-progress.error-transfer-failed` | ⚠ Missed transfer, please call back |
+| Caller left during transfer | `customer-ended-call-during-transfer` | ⚠ Caller hung up during transfer, please call back |
+| Out of hours | transfer mode, weekday hours, outside Mon–Fri 9am–5pm UK | Out-of-hours caller, follow up next working day |
+| Transfer answered | `assistant-forwarded-call` | no email |
+
+Emails go through Gmail SMTP with an app password (`MAIL_USER`, `MAIL_APP_PASSWORD`) to the address in Settings → Hand-off. `reviews.hand_off_emailed_at` is claimed in one update before sending, so a repeated report never sends twice; a failed send clears it and logs `handOffEmailFailed`.
 
 ## Structure
 
@@ -71,6 +84,7 @@ src/
 ├── assistant/       agent sync with ai/ and prompt versions
 ├── guardrails/      guardrail events and the kinds of data to mask
 ├── masking/         live masking of test call lines
+├── hand-off-email/  emails the team after hand-offs and missed transfers
 ├── overview/        statistics for the overview page
 ├── settings/        settings sections with defaults
 ├── activity/        activity log
