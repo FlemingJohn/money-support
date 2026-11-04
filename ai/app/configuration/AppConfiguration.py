@@ -15,7 +15,7 @@ class AppConfiguration(BaseSettings):
     assistant_tag: str = "money-support"
     assistant_model: str = "gpt-4o"
     judge_model: str = "gpt-4.1"
-    run_timeout_seconds: float = 300
+    run_timeout_seconds: float = 240
     poll_interval_seconds: float = 3
     project_folder: Path = Path(__file__).resolve().parents[2]
 
