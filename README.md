@@ -92,7 +92,8 @@ The six topics the agent answers:
 | frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, lucide-react |
 | backend | NestJS 11, TypeScript, Prisma 7, Zod 4, nestjs-zod, Twilio, Jest |
 | ai | Python 3.12, FastAPI, Pydantic, Jinja2, Microsoft Presidio, pytest |
-| Database | Supabase Postgres |
+| Database | Supabase Postgres, Supabase Cron |
+| Hosting | Vercel, three projects from this one repository |
 
 ## Project structure
 
@@ -164,6 +165,59 @@ uv run uvicorn app.main:app --port 8000
 
 The service listens on http://localhost:8000. Set `AI_SERVICE_URL=http://localhost:8000` in `backend/.env` so the backend uses it. [ai/README.md](ai/README.md) explains each variable, the endpoints and the agent tests.
 
+## Deployment
+
+Everything runs in Tokyo, next to the database.
+
+```
+GitHub: this repository, branch main
+        │ every push
+        ▼
+Vercel ─┬─ money-support-frontend   Root Directory: frontend   Next.js
+        ├─ money-support-backend    Root Directory: backend    NestJS
+        └─ money-support-ai         Root Directory: ai         FastAPI
+                     │
+                     ▼
+Supabase (ap-northeast-1) ── Postgres · Vault · Cron
+```
+
+**How a deploy works.** Each push to `main` builds only the projects whose folder changed; the check is the `ignoreCommand` in each `vercel.json`. A build that fails never replaces production. To roll back, promote the previous deployment:
+
+```bash
+vercel promote <previous-deployment-url> --scope <team>
+```
+
+**Database.** Tables and the six FAQs come from the Prisma migrations:
+
+```bash
+cd backend
+DIRECT_URL="<session pooler url>?sslmode=verify-full&sslrootcert=certs/supabase-ca.crt" npx prisma migrate deploy
+```
+
+The backend connects through the transaction pooler and verifies Supabase's certificate from `DATABASE_CA_CERTIFICATE`.
+
+**Environment variables**, set per project with `vercel env add <name> production`:
+
+| Project | Variables |
+|---|---|
+| backend | `DATABASE_URL`, `DATABASE_CA_CERTIFICATE`, `VAPI_WEBHOOK_SECRET`, `VAPI_API_KEY`, `SERVICE_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`, `AI_SERVICE_URL`, `FRONTEND_ORIGIN` |
+| ai | `SERVICE_SECRET`, `BACKEND_URL`, `VAPI_API_KEY`, `VAPI_WEBHOOK_URL`, `VAPI_WEBHOOK_SECRET` |
+| frontend | `BACKEND_URL`, used by the `/api` rewrite |
+
+**Retention.** Supabase Cron calls the backend's retention endpoint every hour. [backend/README.md](backend/README.md#retention-on-supabase) has the setup.
+
+**Vapi.** Saving FAQs or agent settings in the dashboard syncs the assistant. The first sync creates it; later syncs update only the assistant tagged `money-support`.
+
+## Agent test results
+
+Run on 4 November 2026 against the live assistant.
+
+| Test | Result |
+|---|---|
+| Evals, 11 cases | 10 to 11 passing per run. E03 and E05 sometimes answer longer than the three-sentence limit. |
+| Simulations, 4 scenarios | 4 passing |
+| Redaction unit tests | Passing |
+
 ## Status
 
 | Part | State |
@@ -173,6 +227,16 @@ The service listens on http://localhost:8000. Set `AI_SERVICE_URL=http://localho
 | Calls, call detail, review queue, FAQs, test call, settings | Next |
 | backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
 | ai/ | Done: prompt and assistant sync, redaction, Vapi Evals and Simulations |
+| Deployment | Done: Vercel and Supabase, deploys from `main` |
+
+## Known limitations
+
+| Limitation | Effect |
+|---|---|
+| No login yet | The dashboard and its API are open to anyone with the URL. The webhook, internal and retention routes are protected by secrets. |
+| Team hours are fixed | In transfer mode with weekday hours, the agent transfers Monday to Friday, 9am to 5pm UK time. |
+| Call backs use the simulator | Real call backs need the Twilio variables. |
+| No phone number attached | Calls are made from the Vapi dashboard or the web until a Vapi number is assigned. |
 
 ## License
 
