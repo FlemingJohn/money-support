@@ -26,20 +26,20 @@ export class AiRedactionClient extends RedactionClient {
     super();
   }
 
-  async redactLines(lines: TranscriptLine[]): Promise<RedactedLine[]> {
+  async redactLines(lines: TranscriptLine[], entityTypes: string[]): Promise<RedactedLine[]> {
     try {
-      return await this.requestRedaction(lines);
+      return await this.requestRedaction(lines, entityTypes);
     } catch (error) {
       this.logger.warn(`ai/ redaction failed, using pattern redaction instead: ${String(error)}`);
-      return this.fallbackClient.redactLines(lines);
+      return this.fallbackClient.redactLines(lines, entityTypes);
     }
   }
 
-  private async requestRedaction(lines: TranscriptLine[]): Promise<RedactedLine[]> {
+  private async requestRedaction(lines: TranscriptLine[], entityTypes: string[]): Promise<RedactedLine[]> {
     const response = await fetch(`${this.appConfiguration.aiServiceUrl}/guardrails/redact`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-service-secret": this.appConfiguration.serviceSecret },
-      body: JSON.stringify({ texts: lines.map((line) => line.text) }),
+      body: JSON.stringify({ texts: lines.map((line) => line.text), entityTypes }),
       signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) throw new Error(`ai/ answered ${response.status}`);
