@@ -44,7 +44,7 @@ class AssistantConfigurationBuilder:
         return {
             "provider": "openai",
             "model": self.configuration.assistant_model,
-            "temperature": 0.3,
+            "temperature": 0.2,
             "maxTokens": 250,
             "messages": [{"role": "system", "content": draft.prompt_content}],
             "tools": self.tool_catalog.make_tools(draft.settings.hand_off),
