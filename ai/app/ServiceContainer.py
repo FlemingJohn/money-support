@@ -1,12 +1,25 @@
 import httpx
 from fastapi import APIRouter
-from presidio_analyzer import AnalyzerEngine
-from presidio_anonymizer import AnonymizerEngine
 
+from app.analysis.catalogs.MaskKindCatalog import MaskKindCatalog
+from app.analysis.clients.AzureStructuredModel import AzureStructuredModel
+from app.analysis.clients.StructuredModel import StructuredModel
+from app.analysis.routes.AnalysisRouter import AnalysisRouter
+from app.analysis.services.CallAnalysisGraph import CallAnalysisGraph
+from app.analysis.services.CallAnalysisService import CallAnalysisService
+from app.analysis.services.CheckNode import CheckNode
+from app.analysis.services.FieldsNode import FieldsNode
+from app.analysis.services.HandOffDetector import HandOffDetector
+from app.analysis.services.LineMasker import LineMasker
+from app.analysis.services.LineMaskingNode import LineMaskingNode
+from app.analysis.services.PieceMasker import PieceMasker
+from app.analysis.services.ReviewSuggester import ReviewSuggester
+from app.analysis.services.SummaryNode import SummaryNode
+from app.analysis.services.TopicNode import TopicNode
+from app.analysis.services.TranscriptFormatter import TranscriptFormatter
 from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
 from app.assistant.clients.VapiAssistantClient import VapiAssistantClient
-from app.assistant.factories.AnalysisPlanFactory import AnalysisPlanFactory
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
 from app.assistant.routes.AssistantRouter import AssistantRouter
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
@@ -23,11 +36,6 @@ from app.evaluation.factories.MockConversationFactory import MockConversationFac
 from app.evaluation.routes.EvaluationRouter import EvaluationRouter
 from app.evaluation.services.EvaluationCaseLoader import EvaluationCaseLoader
 from app.evaluation.services.EvaluationRunner import EvaluationRunner
-from app.guardrails.catalogs.CommonWordCatalog import CommonWordCatalog
-from app.guardrails.catalogs.EntityLabelCatalog import EntityLabelCatalog
-from app.guardrails.routes.GuardrailRouter import GuardrailRouter
-from app.guardrails.services.AnalyzerEngineFactory import AnalyzerEngineFactory
-from app.guardrails.services.PersonalDataRedactor import PersonalDataRedactor
 from app.health.routes.HealthRouter import HealthRouter
 from app.simulation.clients.VapiSimulationClient import VapiSimulationClient
 from app.simulation.factories.SimulationEntryFactory import SimulationEntryFactory
@@ -43,11 +51,11 @@ class ServiceContainer:
         configuration: AppConfiguration,
         backend_http_client: httpx.AsyncClient,
         vapi_http_client: httpx.AsyncClient,
-        analyzer: AnalyzerEngine,
+        structured_model: StructuredModel,
     ) -> None:
         self.configuration = configuration
         self.http_clients = [backend_http_client, vapi_http_client]
-        self.analyzer = analyzer
+        self.structured_model = structured_model
         self.template_renderer = TemplateRenderer(configuration.prompts_folder)
         self.service_secret_guard = ServiceSecretGuard(configuration)
         self.backend_client = BackendClient(backend_http_client)
@@ -66,13 +74,13 @@ class ServiceContainer:
             headers={"Authorization": f"Bearer {configuration.vapi_api_key}"},
             timeout=20,
         )
-        return cls(configuration, backend_http_client, vapi_http_client, AnalyzerEngineFactory().make())
+        return cls(configuration, backend_http_client, vapi_http_client, AzureStructuredModel(configuration))
 
     def make_routers(self) -> list[APIRouter]:
         return [
             HealthRouter().make(),
             self.make_assistant_router(),
-            self.make_guardrail_router(),
+            self.make_analysis_router(),
             self.make_evaluation_router(),
             self.make_simulation_router(),
         ]
@@ -83,7 +91,6 @@ class ServiceContainer:
             ToolCatalog(),
             HookCatalog(),
             CompliancePlanFactory(),
-            AnalysisPlanFactory(self.template_renderer),
         )
         sync_service = AssistantSyncService(
             self.backend_client,
@@ -93,9 +100,18 @@ class ServiceContainer:
         )
         return AssistantRouter(sync_service, self.service_secret_guard).make()
 
-    def make_guardrail_router(self) -> APIRouter:
-        redactor = PersonalDataRedactor(self.analyzer, AnonymizerEngine(), EntityLabelCatalog(), CommonWordCatalog())
-        return GuardrailRouter(redactor, self.service_secret_guard).make()
+    def make_analysis_router(self) -> APIRouter:
+        line_masker = LineMasker(self.structured_model, self.template_renderer, PieceMasker(MaskKindCatalog()), MaskKindCatalog())
+        transcript_formatter = TranscriptFormatter()
+        graph = CallAnalysisGraph(
+            LineMaskingNode(line_masker),
+            SummaryNode(self.structured_model, self.template_renderer, transcript_formatter),
+            TopicNode(self.structured_model, self.template_renderer, transcript_formatter),
+            FieldsNode(self.structured_model, self.template_renderer, transcript_formatter),
+            CheckNode(self.structured_model, self.template_renderer, transcript_formatter),
+        )
+        call_analysis_service = CallAnalysisService(graph, HandOffDetector(), ReviewSuggester())
+        return AnalysisRouter(call_analysis_service, line_masker, self.service_secret_guard).make()
 
     def make_evaluation_router(self) -> APIRouter:
         runner = EvaluationRunner(
