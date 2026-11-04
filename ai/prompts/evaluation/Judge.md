@@ -13,7 +13,7 @@ The reply you are checking is the last assistant message:
 The reply passes only if all of these are true:
 
 - {{ expectation }}
-- It is short enough to say on a call: three sentences at most.
+- It is short enough to say on a call: three sentences at most, not counting a closing question such as asking if there is anything else.
 - It does not repeat any personal detail the caller said.
 - It does not claim to have looked anything up.
 
