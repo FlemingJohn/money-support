@@ -1,4 +1,4 @@
-import { Clock } from "lucide-react";
+import { Clock, Mail } from "lucide-react";
 import { toCallRow } from "@/calls/toCallRow";
 import { CallerLabel } from "@/components/CallerLabel";
 import { formatClockTime } from "@/lib/formatClockTime";
@@ -24,6 +24,12 @@ export function ReviewHeader({ detail, phone }: ReviewHeaderProps) {
             {formatClockTime(call.startedAt)} · {formatDuration(call.durationSeconds)}
           </span>
           <CallerLabel call={toCallRow(call)} />
+          {review.handOffEmailedAt && (
+            <span className="inline-flex items-center gap-1.5">
+              <Mail size={14} strokeWidth={1.9} aria-hidden="true" />
+              Emailed the team at <span className="font-mono">{formatClockTime(review.handOffEmailedAt)}</span>
+            </span>
+          )}
         </div>
       </div>
       {isPhoneCall ? (
