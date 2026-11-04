@@ -4,5 +4,4 @@ import type { TestCallSetup } from "@/types/TestCallSetup";
 export interface TestCallPanelProps {
   setup: TestCallSetup;
   agent: AgentSettings;
-  maskedEntityTypes: string[];
 }
