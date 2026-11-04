@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type Vapi from "@vapi-ai/web";
+import { checkMicrophoneAccess } from "@/lib/checkMicrophoneAccess";
+import { readCallErrorMessage } from "@/lib/readCallErrorMessage";
 import { addTranscript } from "@/test-call/addTranscript";
 import { isTranscriptMessage } from "@/test-call/isTranscriptMessage";
 import type { LiveLine } from "@/types/LiveLine";
@@ -32,8 +34,11 @@ export function useTestCall(setup: TestCallSetup): TestCall {
     setLines([]);
     setSeconds(0);
     setErrorMessage("");
-    const vapi = vapiRef.current ?? (await makeVapi());
-    await vapi.start(setup.assistantId).catch((error: unknown) => fail(error));
+    const microphoneProblem = await checkMicrophoneAccess();
+    if (microphoneProblem) return showFailure(microphoneProblem);
+    await endPreviousCall();
+    const vapi = await makeVapi();
+    await vapi.start(setup.assistantId).catch(fail);
   }
 
   async function makeVapi(): Promise<Vapi> {
@@ -55,9 +60,21 @@ export function useTestCall(setup: TestCallSetup): TestCall {
     return vapi;
   }
 
+  async function endPreviousCall() {
+    const previous = vapiRef.current;
+    vapiRef.current = null;
+    previous?.removeAllListeners();
+    await previous?.stop().catch(() => undefined);
+  }
+
   function fail(error: unknown) {
+    console.error("Test call failed", error);
+    showFailure(readCallErrorMessage(error));
+  }
+
+  function showFailure(message: string) {
     setStatus("failed");
-    setErrorMessage(readErrorMessage(error));
+    setErrorMessage(message);
   }
 
   function toggleMute() {
@@ -68,9 +85,4 @@ export function useTestCall(setup: TestCallSetup): TestCall {
   }
 
   return { status, lines, isMuted, volume, seconds, errorMessage, start, stop: async () => vapiRef.current?.stop(), toggleMute };
-}
-
-function readErrorMessage(error: unknown): string {
-  const message = (error as { error?: { message?: string }; message?: string } | null)?.error?.message ?? (error as { message?: string } | null)?.message;
-  return typeof message === "string" ? message : "The call could not connect. Check that the browser can use your microphone.";
 }
