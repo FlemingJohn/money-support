@@ -1,6 +1,6 @@
 # ai
 
-Python service that decides how the agent behaves. It builds the prompt and the Vapi assistant from the FAQs and settings, removes personal data from transcripts before the backend stores them, and tests the agent with Vapi Evals and Simulations. It never touches the database, and nothing here runs during a live call.
+Python service that decides how the agent behaves. It builds the prompt and the Vapi assistant from the FAQs and settings, analyses every finished call with a LangGraph graph on Azure OpenAI (masking personal data, summary, topic, matched FAQ, fields and checks), masks live test-call lines, and tests the agent with Vapi Evals, Simulations and DeepEval. It never touches the database, and nothing here runs during a live call.
 
 ## How it is built
 
@@ -15,7 +15,8 @@ Python service that decides how the agent behaves. It builds the prompt and the 
 |---|---|---|---|
 | GET | `/health` | backend Connections tab | Says the service is up |
 | POST | `/assistant/sync` | backend, after FAQ or settings changes | Rebuilds the prompt and creates or updates the assistant in Vapi |
-| POST | `/guardrails/redact` | backend, when a call ends | Removes personal data from each text. `entityTypes` lists the kinds to remove, following the privacy settings; phone numbers are always removed. |
+| POST | `/analysis` | backend, when a call ends | Runs the call analysis graph and returns masked lines, summary, topic, matched FAQ, fields, checks and a suggested review |
+| POST | `/masking/line` | backend, for the Test call page | Masks one finished caller line |
 | POST | `/evaluations/run` | a person, on demand | Runs every case in `evaluation/cases/` as a Vapi Eval and waits for the results |
 | POST | `/simulations/run` | a person, on demand | Starts one Vapi Simulation run with every scenario in `simulation/scenarios/` |
 | GET | `/simulations/runs/{runId}` | a person, on demand | Shows how many simulations passed, failed or are still running |
@@ -31,15 +32,32 @@ Everything except `/health` needs the `x-service-secret` header, with the same v
    - a Vapi voice and Deepgram nova-3 speech to text
    - the hand-off sentence as an end-call phrase, so Vapi ends the call when the agent says it
    - silence and unclear-speech hooks from `HookCatalog`
-   - the prompt-injection and number filters from `CompliancePlanFactory`
-   - the summary and the extracted fields from `AnalysisPlanFactory`, in the shape the backend reads
+   - the prompt-injection filter from `CompliancePlanFactory`
+   - Vapi's own summary and structured data turned off, because ai/ analyses the call instead
    - recording off, and the backend webhook when `VAPI_WEBHOOK_URL` is set
 4. `VapiAssistantClient` finds our assistant by its `metadata.service` tag and updates it, or creates it the first time. Other assistants in the Vapi account are never touched.
 5. The prompt and its hash go back to the backend, which saves them as the current prompt version.
 
-## Redaction
+## Call analysis
 
-Presidio finds personal data in two ways. Fixed formats such as card numbers, IBANs, emails, phone numbers and sort codes are found by patterns, which catch every match the same way each time. Names have no format, so spaCy's English model finds them, with two additions: a pattern for names after "my name is", "this is", "I am" or "I'm", and a list of everyday words, such as "Email" or "Thanks", that the model must not mistake for names.
+There are no patterns or regular expressions. Azure OpenAI gpt-4o reads each line in context and returns the exact personal pieces with their kind; code checks each piece is really in the line and replaces it, so the model never rewrites what the caller said.
+
+```
+START ─▶ fan out lines ══Send × each line══▶ mask_line ─▶ join_lines
+join_lines ─┬─▶ summarise ──────┐
+            ├─▶ classify_topic ─┼─▶ check_call ─▶ END
+            └─▶ extract_fields ─┘
+```
+
+| Node | Does | Output schema |
+|---|---|---|
+| `mask_line` | Finds names, card and account numbers (even a few spoken digits), emails, phone numbers and addresses in one line | `MaskingOutput { pieces: [{ text, kind }] }` |
+| `summarise` | Two or three sentences from the masked transcript | `SummaryOutput { summary }` |
+| `classify_topic` | Topic and the FAQ the agent answered from, `0` for none | `TopicOutput { topic, matched_faq_number }` |
+| `extract_fields` | Amount, currency, date, country, status, each with a confidence and its line | `FieldsOutput { fields }` |
+| `check_call` | Whether a hand-off was expected, whether the agent repeated personal data, and whether it made a mistake | `CheckOutput` |
+
+Every model call uses a strict JSON schema and retries three times. A step that still fails is listed in `failedSteps`; a line that could not be checked is returned as "[waiting for privacy check]" and never in its raw form.
 
 ## Tests of the agent
 
@@ -47,8 +65,9 @@ Presidio finds personal data in two ways. Fixed formats such as card numbers, IB
 |---|---|---|
 | Evals | `evaluation/cases/E01…E11` | A scripted chat with the real assistant. Each checked reply is judged by an AI judge against an expectation, by a pattern for the exact hand-off sentence, or by the tool it calls. |
 | Simulations | `simulation/scenarios/S01…S04` | A pretend caller has a whole conversation with the assistant over Vapi web chat. Yes or no questions about the conversation decide the result. `transferCall` is mocked. |
+| DeepEval | `evaluation/masking/cases.json` (52 lines), `evaluation/analysis/calls.json` (4 calls) | `tests/live/`: masking checked line by line, and whole calls checked for matched FAQ, hand-off, review reason and fields, plus a GEval judge for summary quality. Run with `uv run pytest -m live`. |
 
-Both cost Vapi credits, so they only run when asked.
+Evals and Simulations cost Vapi credits and DeepEval calls Azure OpenAI, so they only run when asked. `uv run pytest` runs only the fast tests, which use a scripted model.
 
 ## Structure
 
@@ -61,7 +80,7 @@ ai/
 │   ├── backend/        BackendClient and the FAQ and settings models
 │   ├── vapi/           VapiClient
 │   ├── assistant/      prompt, assistant configuration, tools, hooks, plans, sync
-│   ├── guardrails/     Presidio redaction with extra recognizers
+│   ├── analysis/       LangGraph call analysis graph, its nodes, schemas and Azure client
 │   ├── evaluation/     Vapi Evals from the case files
 │   ├── simulation/     Vapi Simulations from the scenario files
 │   └── health/
