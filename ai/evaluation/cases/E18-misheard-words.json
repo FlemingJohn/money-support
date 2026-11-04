@@ -1,0 +1,15 @@
+{
+  "id": "E18",
+  "name": "Checks what the caller meant when the words are unclear",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I had an issue with my back around should I contact?"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It does not guess, does not hand off and does not end the call. It checks what the caller meant, for example by asking whether they meant their bank account."
+    }
+  ]
+}
