@@ -95,7 +95,7 @@ class ApplicationFactoryTest:
             }
         )
         report = self.make_client(analyzer, self.make_backend(), vapi).post("/evaluations/run", headers=secret_header).json()
-        assert report["passedCount"] == 12
+        assert report["passedCount"] == 25
         assert report["failedCount"] == 0
         assert vapi.get_sent_bodies("POST", "/eval/run")[0]["target"] == {"type": "assistant", "assistantId": "assistant-1"}
 
@@ -108,7 +108,7 @@ class ApplicationFactoryTest:
         )
         started = self.make_client(analyzer, self.make_backend(), vapi).post("/simulations/run", headers=secret_header).json()
         sent = vapi.get_sent_bodies("POST", "/eval/simulation/run")[0]
-        assert started == {"runId": "simulation-1", "url": "https://dashboard.vapi.ai/run", "scenarioCount": 4}
+        assert started == {"runId": "simulation-1", "url": "https://dashboard.vapi.ai/run", "scenarioCount": 5}
         assert sent["transport"] == {"provider": "vapi.webchat"}
 
     def test_evaluations_need_a_synced_assistant(self, analyzer: ScriptedStructuredModel) -> None:
