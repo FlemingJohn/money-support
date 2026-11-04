@@ -27,8 +27,7 @@ class JudgePlanFactoryTest:
 
     def test_expects_the_end_call_tool(self) -> None:
         plan = self.make_factory().make(EvaluationTurn(role="assistant", check="endsCall"), self.sample_data.make_settings().hand_off)
-        assert plan["toolCalls"] == [{"name": "endCall"}]
-        assert plan["content"] == ".+"
+        assert plan == {"type": "exact", "content": "", "toolCalls": [{"name": "endCall"}]}
 
     def test_asks_the_judge_about_the_expectation(self) -> None:
         turn = EvaluationTurn(role="assistant", check="answers", expectation="It explains the status.")
