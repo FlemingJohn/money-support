@@ -4,4 +4,5 @@ export const reviewReasonLabels: Record<ReviewReason, string> = {
   handOff: "Hand-off",
   guardrail: "Personal data removed",
   lowConfidence: "Unclear detail",
+  possibleMistake: "Possible mistake",
 };
