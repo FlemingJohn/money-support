@@ -13,13 +13,14 @@ export class PatternRedactionClient extends RedactionClient {
     { entityType: "phone number", expression: /\+?\d[\d ()-]{7,}\d/g },
   ];
 
-  async redactLines(lines: TranscriptLine[]): Promise<RedactedLine[]> {
-    return lines.map((line) => this.redactLine(line));
+  async redactLines(lines: TranscriptLine[], entityTypes: string[]): Promise<RedactedLine[]> {
+    const patterns = this.patterns.filter((pattern) => entityTypes.includes(pattern.entityType));
+    return lines.map((line) => this.redactLine(line, patterns));
   }
 
-  private redactLine(line: TranscriptLine): RedactedLine {
+  private redactLine(line: TranscriptLine, patterns: PersonalDataPattern[]): RedactedLine {
     const removedEntityTypes: string[] = [];
-    const redactedText = this.patterns.reduce(
+    const redactedText = patterns.reduce(
       (text, pattern) => text.replace(pattern.expression, () => this.replacement(pattern, removedEntityTypes)),
       line.text,
     );
