@@ -5,4 +5,5 @@ export interface DataTableProps<Row extends RowData> {
   label: string;
   columns: ColumnDef<ListTableFeatures, Row>[];
   rows: Row[];
+  emptyMessage: string;
 }
