@@ -17,7 +17,7 @@ class JudgePlanFactoryTest:
         plan = self.make_factory().make(EvaluationTurn(role="assistant", check="handsOff"), self.sample_data.make_settings().hand_off)
         curly_sentence = self.sample_data.hand_off_sentence.replace("'", "’")
         assert plan["type"] == "regex"
-        assert plan["toolCalls"] == [{"name": "endCall"}]
+        assert "toolCalls" not in plan
         assert re.fullmatch(plan["content"], self.sample_data.hand_off_sentence)
         assert re.fullmatch(plan["content"], f"Sorry. {curly_sentence}")
 
