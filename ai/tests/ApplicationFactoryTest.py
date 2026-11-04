@@ -85,7 +85,7 @@ class ApplicationFactoryTest:
             }
         )
         report = self.make_client(analyzer, self.make_backend(), vapi).post("/evaluations/run", headers=secret_header).json()
-        assert report["passedCount"] == 11
+        assert report["passedCount"] == 12
         assert report["failedCount"] == 0
         assert vapi.get_sent_bodies("POST", "/eval/run")[0]["target"] == {"type": "assistant", "assistantId": "assistant-1"}
 
