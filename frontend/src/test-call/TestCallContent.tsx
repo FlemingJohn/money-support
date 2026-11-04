@@ -1,5 +1,4 @@
 import { EmptyState } from "@/components/EmptyState";
-import { getMaskedEntityTypes } from "@/lib/getMaskedEntityTypes";
 import { getSettings } from "@/lib/getSettings";
 import { TestCallPanel } from "@/test-call/TestCallPanel";
 
@@ -16,5 +15,5 @@ export async function TestCallContent() {
     );
   }
 
-  return <TestCallPanel setup={{ publicKey, assistantId }} agent={settings.agent} maskedEntityTypes={getMaskedEntityTypes(settings.privacy)} />;
+  return <TestCallPanel setup={{ publicKey, assistantId }} agent={settings.agent} />;
 }
