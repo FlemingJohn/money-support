@@ -3,11 +3,17 @@ import { PatternRedactionClient } from "../../../src/guardrails/clients/PatternR
 
 describe("PatternRedactionClient", () => {
   const redactionClient = new PatternRedactionClient();
+  const allEntityTypes = ["card number", "bank account number", "email address", "phone number"];
 
-  async function redact(text: string) {
-    const [line] = await redactionClient.redactLines([{ position: 0, speaker: Speaker.caller, text, secondsFromStart: 0 }]);
+  async function redact(text: string, entityTypes: string[] = allEntityTypes) {
+    const [line] = await redactionClient.redactLines([{ position: 0, speaker: Speaker.caller, text, secondsFromStart: 0 }], entityTypes);
     return line;
   }
+
+  it("only removes the chosen kinds", async () => {
+    const line = await redact("Card 4111 1111 1111 1111, email sam@example.com", ["email address"]);
+    expect(line.redactedText).toBe("Card 4111 1111 1111 1111, email [email address removed]");
+  });
 
   it("removes a spaced card number", async () => {
     const line = await redact("My card is 4111 1111 1111 1111 thanks");
