@@ -6,20 +6,14 @@ import type { FinishedCallReport } from "../types/FinishedCallReport";
 import { VapiCallMissingException } from "../exceptions/VapiCallMissingException";
 import type { VapiMessage } from "../types/VapiMessage";
 import type { VapiTranscriptEntry } from "../types/VapiTranscriptEntry";
-import { StructuredDataReader } from "./StructuredDataReader";
 
 @Injectable()
 export class VapiReportReader {
-  private readonly handOffEndedReason = "assistant-said-end-call-phrase";
   private readonly speakersByRole: Record<string, Speaker> = { user: Speaker.caller, bot: Speaker.agent, assistant: Speaker.agent };
 
-  constructor(
-    private readonly clock: Clock,
-    private readonly structuredDataReader: StructuredDataReader,
-  ) {}
+  constructor(private readonly clock: Clock) {}
 
   read(message: VapiMessage): FinishedCallReport {
-    const structuredData = this.structuredDataReader.read(message.analysis?.structuredData);
     return {
       callId: this.readCallId(message),
       channel: this.readChannel(message),
@@ -27,12 +21,7 @@ export class VapiReportReader {
       startedAt: this.readDate(message.startedAt),
       endedAt: this.readDate(message.endedAt) ?? this.clock.now(),
       endedReason: message.endedReason ?? null,
-      summary: message.analysis?.summary ?? null,
-      topic: structuredData.topic ?? null,
-      matchedFaqNumber: structuredData.matchedFaqNumber ?? null,
-      isHandedOff: structuredData.isHandedOff ?? message.endedReason === this.handOffEndedReason,
       lines: this.readLines(message),
-      fields: structuredData.fields,
     };
   }
 
