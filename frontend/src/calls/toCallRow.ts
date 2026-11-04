@@ -3,7 +3,7 @@ import { formatDuration } from "@/lib/formatDuration";
 import type { Call } from "@/types/Call";
 import type { CallSummary } from "@/types/CallSummary";
 
-export function toRecentCall(summary: CallSummary): Call {
+export function toCallRow(summary: CallSummary): Call {
   return {
     id: summary.id,
     time: formatClockTime(summary.startedAt),
