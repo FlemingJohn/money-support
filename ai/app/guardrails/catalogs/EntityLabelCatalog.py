@@ -15,6 +15,13 @@ class EntityLabelCatalog:
     def entity_types(self) -> list[str]:
         return list(self.labels)
 
+    @property
+    def all_labels(self) -> list[str]:
+        return sorted(set(self.labels.values()))
+
+    def get_entity_types_for(self, labels: list[str]) -> list[str]:
+        return [entity_type for entity_type, label in self.labels.items() if label in labels]
+
     def get_label(self, entity_type: str) -> str:
         return self.labels.get(entity_type, "personal detail")
 
