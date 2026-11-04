@@ -6,8 +6,9 @@ export class MaskedEntityTypeResolver {
   resolve(privacy: PrivacySettingsDto): string[] {
     return [
       "phone number",
+      "address",
       ...(privacy.maskCardNumbers ? ["card number"] : []),
-      ...(privacy.maskBankAccountNumbers ? ["bank account number", "sort code"] : []),
+      ...(privacy.maskBankAccountNumbers ? ["bank account number"] : []),
       ...(privacy.maskEmailAddresses ? ["email address"] : []),
       ...(privacy.maskNames ? ["name"] : []),
     ];
