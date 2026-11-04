@@ -8,5 +8,5 @@ export interface Call {
   channel: CallChannel;
   length: string;
   topic: string;
-  outcome: CallOutcome;
+  outcome: CallOutcome | null;
 }
