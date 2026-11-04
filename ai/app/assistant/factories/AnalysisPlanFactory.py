@@ -56,5 +56,5 @@ class AnalysisPlanFactory:
                     },
                 },
             },
-            "required": ["topic", "isHandedOff", "fields"],
+            "required": ["topic", "matchedFaqNumber", "isHandedOff", "fields"],
         }
