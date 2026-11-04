@@ -9,7 +9,7 @@ import { LiveTranscript } from "@/test-call/LiveTranscript";
 import { TestScenarioList } from "@/test-call/TestScenarioList";
 import type { TestCallPanelProps } from "@/types/TestCallPanelProps";
 
-export function TestCallPanel({ setup, agent }: TestCallPanelProps) {
+export function TestCallPanel({ setup, agent, maskedEntityTypes }: TestCallPanelProps) {
   const testCall = useTestCall(setup);
 
   return (
@@ -26,7 +26,7 @@ export function TestCallPanel({ setup, agent }: TestCallPanelProps) {
         </SectionCard>
       </div>
       <SectionCard title="Live transcript" icon={MessageSquare} className="flex-[2_1_520px]">
-        <LiveTranscript lines={testCall.lines} />
+        <LiveTranscript lines={testCall.lines} maskedEntityTypes={maskedEntityTypes} />
       </SectionCard>
     </div>
   );
