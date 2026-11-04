@@ -4,5 +4,6 @@ export interface ReviewPreview {
   id: string;
   topic: string;
   reason: ReviewReason;
+  hasRemovedData: boolean;
   time: string;
 }
