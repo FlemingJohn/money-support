@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { AgentStatus } from "@/types/AgentStatus";
-import type { ServiceHealth } from "@/types/ServiceHealth";
+import type { HealthReport } from "@/types/HealthReport";
 
 export function useAgentStatus(): AgentStatus {
   const [agentStatus, setAgentStatus] = useState<AgentStatus>("checking");
@@ -10,7 +10,7 @@ export function useAgentStatus(): AgentStatus {
   useEffect(() => {
     const controller = new AbortController();
     fetch("/api/health", { signal: controller.signal })
-      .then((response) => (response.ok ? (response.json() as Promise<ServiceHealth>) : null))
+      .then((response) => (response.ok ? (response.json() as Promise<HealthReport>) : null))
       .then((health) => setAgentStatus(health?.isHealthy ? "live" : "issue"))
       .catch(() => {
         if (!controller.signal.aborted) setAgentStatus("issue");
