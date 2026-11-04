@@ -6,7 +6,7 @@ import { FaqRepository } from "../../faqs/repositories/FaqRepository";
 import { CallChannel, CallOutcome, type Faq } from "../../generated/prisma/client";
 import { SettingsService } from "../../settings/services/SettingsService";
 import type { FinishedCallReport } from "../types/FinishedCallReport";
-import type { RedactedReport } from "../types/RedactedReport";
+import type { CallAnalysis } from "../types/CallAnalysis";
 
 @Injectable()
 export class CallCompletionBuilder {
@@ -17,10 +17,10 @@ export class CallCompletionBuilder {
     private readonly customerNumberProtector: CustomerNumberProtector,
   ) {}
 
-  async build(report: FinishedCallReport, redactedReport: RedactedReport, needsReview: boolean): Promise<CallCompletion> {
+  async build(report: FinishedCallReport, analysis: CallAnalysis, needsReview: boolean): Promise<CallCompletion> {
     const [privacy, matchedFaq, promptVersion] = await Promise.all([
       this.settingsService.getPrivacy(),
-      this.findMatchedFaq(report.matchedFaqNumber),
+      this.findMatchedFaq(analysis.matchedFaqNumber),
       this.promptVersionRepository.findCurrent(),
     ]);
     const shouldKeepNumber = needsReview && privacy.keepNumbersForCallbacks && report.channel === CallChannel.phone;
@@ -31,9 +31,9 @@ export class CallCompletionBuilder {
       startedAt: report.startedAt,
       endedAt: report.endedAt,
       endedReason: report.endedReason,
-      summary: redactedReport.summary,
-      topic: redactedReport.topic,
-      outcome: report.isHandedOff ? CallOutcome.handedOff : CallOutcome.resolved,
+      summary: analysis.summary,
+      topic: analysis.topic,
+      outcome: analysis.isHandedOff ? CallOutcome.handedOff : CallOutcome.resolved,
       maskedCustomerNumber: customerNumber.masked,
       encryptedCustomerNumber: customerNumber.encrypted,
       matchedFaqId: matchedFaq?.id ?? null,
