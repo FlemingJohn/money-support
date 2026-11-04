@@ -16,4 +16,6 @@ export const environmentSchema = z.object({
   TWILIO_ACCOUNT_SID: z.string().default(""),
   TWILIO_AUTH_TOKEN: z.string().default(""),
   TWILIO_CALLER_NUMBER: z.string().default(""),
+  MAIL_USER: z.union([z.email(), z.literal("")]).default(""),
+  MAIL_APP_PASSWORD: z.string().default(""),
 });
