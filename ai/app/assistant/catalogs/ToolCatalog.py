@@ -18,7 +18,6 @@ class ToolCatalog:
                 {
                     "type": "number",
                     "number": hand_off.transfer_number,
-                    "message": hand_off.hand_off_sentence,
                     "description": "The Wise support team",
                 }
             ],
