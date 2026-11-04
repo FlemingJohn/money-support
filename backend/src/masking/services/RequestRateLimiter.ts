@@ -4,7 +4,7 @@ import { Clock } from "../../common/services/Clock";
 @Injectable()
 export class RequestRateLimiter {
   private readonly windowMilliseconds = 60_000;
-  private readonly requestsPerWindow = 60;
+  private readonly requestsPerWindow = 180;
   private readonly requestTimesByCaller = new Map<string, number[]>();
 
   constructor(private readonly clock: Clock) {}
