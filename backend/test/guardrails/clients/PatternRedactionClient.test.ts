@@ -32,6 +32,21 @@ describe("PatternRedactionClient", () => {
     expect(line.removedEntityTypes).toEqual(["email address", "phone number"]);
   });
 
+  it("removes part of a card number said after the word card", async () => {
+    const line = await redact("My card number, 3 4 5 0 please");
+    expect(line.redactedText).toBe("My card number, [card number removed] please");
+  });
+
+  it("removes digits said after the word account", async () => {
+    const line = await redact("my account ends 4471");
+    expect(line.redactedText).toBe("my account ends [bank account number removed]");
+  });
+
+  it("keeps an amount paid by card", async () => {
+    const line = await redact("I paid by card, 5000 pounds");
+    expect(line.redactedText).toBe("I paid by card, 5000 pounds");
+  });
+
   it("keeps ordinary amounts and times", async () => {
     const line = await redact("I sent $500 at 10:42 on Friday");
     expect(line.redactedText).toBe("I sent $500 at 10:42 on Friday");
