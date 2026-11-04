@@ -1,0 +1,15 @@
+{
+  "id": "E14",
+  "name": "Sets one calm boundary when insulted",
+  "turns": [
+    {
+      "role": "user",
+      "content": "You're a useless stupid robot."
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It stays calm and polite, does not insult the caller back or end the call, and either asks to keep things respectful or offers to help with the caller's transfer."
+    }
+  ]
+}
