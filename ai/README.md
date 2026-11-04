@@ -28,9 +28,11 @@ Everything except `/health` needs the `x-service-secret` header, with the same v
 1. `BackendClient` reads the active FAQs from `GET /internal/faqs` and the settings from `GET /internal/settings`.
 2. `PromptBuilder` fills `prompts/assistant/SystemPrompt.md` with them, and the prompt is hashed.
 3. `AssistantConfigurationBuilder` builds the assistant:
-   - gpt-4o with the prompt and the tools from `ToolCatalog`: `endCall` always, `transferCall` in transfer mode
-   - a Vapi voice and Deepgram nova-3 speech to text
-   - the hand-off sentence as an end-call phrase, so Vapi ends the call when the agent says it
+   - gpt-4o at temperature 0 with the prompt and the tools from `ToolCatalog`: `endCall` for goodbyes, `transferCall` in transfer mode
+   - a Vapi voice at 0.9 speed from `VoiceFactory`, and Deepgram nova-3 with Wise key terms such as "bank account" and "IBAN" from `TranscriberFactory`
+   - turn-taking from `SpeakingPlanFactory`: LiveKit smart endpointing so the agent waits for the caller to finish, and two words or a phrase such as "hang on" to interrupt it, while "okay" or "mm-hmm" never do
+   - background sound off and Krisp denoising from `NoisePlanFactory`
+   - the hand-off sentence as an end-call phrase, so in end-call mode the call ends as soon as the agent says it, without a tool
    - silence and unclear-speech hooks from `HookCatalog`
    - the prompt-injection filter from `CompliancePlanFactory`
    - Vapi's own summary and structured data turned off, because ai/ analyses the call instead
@@ -63,8 +65,8 @@ Every model call uses a strict JSON schema and retries three times. A step that 
 
 | Kind | Where | How it runs |
 |---|---|---|
-| Evals | `evaluation/cases/E01…E11` | A scripted chat with the real assistant. Each checked reply is judged by an AI judge against an expectation, by a pattern for the exact hand-off sentence, or by the tool it calls. |
-| Simulations | `simulation/scenarios/S01…S04` | A pretend caller has a whole conversation with the assistant over Vapi web chat. Yes or no questions about the conversation decide the result. `transferCall` is mocked. |
+| Evals | `evaluation/cases/E01…E25` | A scripted chat with the real assistant. Each checked reply is judged by an AI judge against an expectation, by a pattern for the exact hand-off sentence, or by the tool it calls. |
+| Simulations | `simulation/scenarios/S01…S05` | A pretend caller has a whole conversation with the assistant over Vapi web chat. Yes or no questions about the conversation decide the result. `transferCall` is mocked. |
 | DeepEval | `evaluation/masking/cases.json` (52 lines), `evaluation/analysis/calls.json` (4 calls) | `tests/live/`: masking checked line by line, and whole calls checked for matched FAQ, hand-off, review reason and fields, plus a GEval judge for summary quality. Run with `uv run pytest -m live`. |
 
 Evals and Simulations cost Vapi credits and DeepEval calls Azure OpenAI, so they only run when asked. `uv run pytest` runs only the fast tests, which use a scripted model.
