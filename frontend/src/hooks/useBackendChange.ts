@@ -12,18 +12,18 @@ export function useBackendChange(): BackendChange {
   const [savingState, setSavingState] = useState<SavingState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function send(method: HttpMethod, path: string, body?: unknown): Promise<boolean> {
+  async function send<Result>(method: HttpMethod, path: string, body?: unknown): Promise<Result | null> {
     setSavingState("saving");
     setErrorMessage("");
     try {
-      await sendToBackend(method, path, body);
+      const result = await sendToBackend<Result>(method, path, body);
       setSavingState("saved");
       router.refresh();
-      return true;
+      return result;
     } catch (error) {
       setSavingState("failed");
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong");
-      return false;
+      return null;
     }
   }
 
