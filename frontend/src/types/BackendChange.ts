@@ -1,0 +1,8 @@
+import type { HttpMethod } from "@/types/HttpMethod";
+import type { SavingState } from "@/types/SavingState";
+
+export interface BackendChange {
+  savingState: SavingState;
+  errorMessage: string;
+  send: (method: HttpMethod, path: string, body?: unknown) => Promise<boolean>;
+}
