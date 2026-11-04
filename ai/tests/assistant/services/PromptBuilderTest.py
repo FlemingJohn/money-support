@@ -17,12 +17,13 @@ class PromptBuilderTest:
     def test_uses_the_exact_hand_off_sentence_when_ending_the_call(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings())
         assert f'"{self.sample_data.hand_off_sentence}"' in prompt
+        assert "then use the endCall tool in the same reply" in prompt
         assert "transferCall" not in prompt
 
     def test_uses_the_transfer_tool_when_transferring(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings("transfer"))
-        assert "transferCall" in prompt
-        assert self.sample_data.hand_off_sentence not in prompt
+        assert f'"{self.sample_data.hand_off_sentence}"' in prompt
+        assert "then use the transferCall tool in the same reply" in prompt
 
     def test_only_transfers_in_team_hours_on_weekdays(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings("transfer"))
