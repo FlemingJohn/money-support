@@ -1,0 +1,14 @@
+{
+  "id": "E23",
+  "name": "Hands off a caller speaking another language",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hola, no hablo inglés. ¿Dónde está mi dinero?"
+    },
+    {
+      "role": "assistant",
+      "check": "handsOff"
+    }
+  ]
+}
