@@ -10,6 +10,7 @@ export function OutcomeDonutChart({ shares }: OutcomeDonutChartProps) {
   return (
     <div className="relative size-33 shrink-0" role="img" aria-label={`${total} calls: ${description}`}>
       <PieChart width={132} height={132}>
+        <Pie data={emptyRing} dataKey="count" innerRadius={46} outerRadius={62} stroke="none" fill="var(--color-line-soft)" isAnimationActive={false} />
         <Pie data={shares} dataKey="count" nameKey="label" innerRadius={46} outerRadius={62} startAngle={90} endAngle={-270} stroke="none" isAnimationActive={false}>
           {shares.map((share) => (
             <Cell key={share.label} fill={`var(--color-${share.color})`} />
@@ -23,3 +24,5 @@ export function OutcomeDonutChart({ shares }: OutcomeDonutChartProps) {
     </div>
   );
 }
+
+const emptyRing = [{ count: 1 }];
