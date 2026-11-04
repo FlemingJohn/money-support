@@ -17,7 +17,7 @@ class PromptBuilderTest:
     def test_uses_the_exact_hand_off_sentence_when_ending_the_call(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings())
         assert f'"{self.sample_data.hand_off_sentence}"' in prompt
-        assert "then use the endCall tool in the same reply" in prompt
+        assert "The call ends by itself as soon as you say it" in prompt
         assert "transferCall" not in prompt
 
     def test_uses_the_transfer_tool_when_transferring(self) -> None:
