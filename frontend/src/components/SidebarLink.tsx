@@ -1,14 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { SidebarBadge } from "@/components/SidebarBadge";
-import { isActivePath } from "@/lib/isActivePath";
 import type { SidebarLinkProps } from "@/types/SidebarLinkProps";
 
-export function SidebarLink({ item, isCollapsed }: SidebarLinkProps) {
-  const pathname = usePathname();
-  const isActive = isActivePath(pathname, item.href);
+export function SidebarLink({ item, isCollapsed, isActive }: SidebarLinkProps) {
   const Icon = item.icon;
   const background = isActive ? "bg-yellow-soft" : "hover:bg-surface";
   const accessibleName = item.badgeCount ? `${item.label}, ${item.badgeCount} waiting` : item.label;
