@@ -33,11 +33,10 @@ class JudgePlanFactory:
         }
 
     def make_hand_off_plan(self, hand_off: HandOffSettings) -> dict:
-        tool_name = "transferCall" if hand_off.is_transfer else "endCall"
-        return self.make_tool_call_plan(self.make_sentence_pattern(hand_off.hand_off_sentence), tool_name)
-
-    def make_tool_call_plan(self, content_pattern: str, tool_name: str) -> dict:
-        return {"type": "regex", "content": content_pattern, "toolCalls": [{"name": tool_name}]}
+        sentence_plan = {"type": "regex", "content": self.make_sentence_pattern(hand_off.hand_off_sentence)}
+        if not hand_off.is_transfer:
+            return sentence_plan
+        return {**sentence_plan, "toolCalls": [{"name": "transferCall"}]}
 
     def make_sentence_pattern(self, sentence: str) -> str:
         escaped_sentence = re.escape(sentence).replace("'", "['’]")
