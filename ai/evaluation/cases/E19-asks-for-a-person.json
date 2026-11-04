@@ -1,0 +1,14 @@
+{
+  "id": "E19",
+  "name": "Hands off when the caller asks for a person",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I don't want a machine. I want to speak to a real person, please."
+    },
+    {
+      "role": "assistant",
+      "check": "handsOff"
+    }
+  ]
+}
