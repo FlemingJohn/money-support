@@ -1,14 +1,13 @@
 import type { Clock } from "../../../src/common/services/Clock";
 import { CallChannel, Speaker } from "../../../src/generated/prisma/client";
 import { VapiCallMissingException } from "../../../src/vapi/exceptions/VapiCallMissingException";
-import { StructuredDataReader } from "../../../src/vapi/services/StructuredDataReader";
 import { VapiReportReader } from "../../../src/vapi/services/VapiReportReader";
 
 describe("VapiReportReader", () => {
   const fixedNow = new Date("2026-11-03T10:00:00Z");
-  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock, new StructuredDataReader());
+  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock);
 
-  it("reads a finished web call with structured data", () => {
+  it("reads the transcript and call details of a finished web call", () => {
     const report = vapiReportReader.read({
       type: "end-of-call-report",
       call: { id: "call-1", type: "webCall" },
@@ -21,11 +20,9 @@ describe("VapiReportReader", () => {
           { role: "user", message: "   " },
         ],
       },
-      analysis: { summary: "Asked about a transfer", structuredData: { topic: "Transfer status", matchedFaqNumber: 1, fields: [] } },
     });
     expect(report.channel).toBe(CallChannel.web);
-    expect(report.isHandedOff).toBe(false);
-    expect(report.matchedFaqNumber).toBe(1);
+    expect(report.endedReason).toBe("assistant-ended-call");
     expect(report.endedAt).toBe(fixedNow);
     expect(report.lines).toEqual([
       { position: 0, speaker: Speaker.agent, text: "Hi there", secondsFromStart: 1 },
@@ -33,17 +30,13 @@ describe("VapiReportReader", () => {
     ]);
   });
 
-  it("treats the end-call phrase as a hand-off when structured data is missing", () => {
+  it("reads the caller number of a phone call", () => {
     const report = vapiReportReader.read({
       type: "end-of-call-report",
       call: { id: "call-2", type: "inboundPhoneCall", customer: { number: "+14155557781" } },
-      endedReason: "assistant-said-end-call-phrase",
-      analysis: { structuredData: "not an object" },
     });
-    expect(report.isHandedOff).toBe(true);
     expect(report.channel).toBe(CallChannel.phone);
     expect(report.customerNumber).toBe("+14155557781");
-    expect(report.fields).toEqual([]);
   });
 
   it("refuses a message without a call", () => {
