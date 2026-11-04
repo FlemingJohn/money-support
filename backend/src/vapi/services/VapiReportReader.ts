@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { z } from "zod";
 import { Clock } from "../../common/services/Clock";
 import { CallChannel, Speaker } from "../../generated/prisma/client";
 import type { TranscriptLine } from "../../guardrails/types/TranscriptLine";
@@ -7,23 +6,20 @@ import type { FinishedCallReport } from "../types/FinishedCallReport";
 import { VapiCallMissingException } from "../exceptions/VapiCallMissingException";
 import type { VapiMessage } from "../types/VapiMessage";
 import type { VapiTranscriptEntry } from "../types/VapiTranscriptEntry";
+import { StructuredDataReader } from "./StructuredDataReader";
 
 @Injectable()
 export class VapiReportReader {
-  private static readonly structuredDataSchema = z.object({
-    topic: z.string().optional(),
-    matchedFaqNumber: z.number().int().positive().nullable().optional(),
-    isHandedOff: z.boolean().optional(),
-    fields: z.array(z.object({ label: z.string(), value: z.string(), confidence: z.number().min(0).max(1) })).optional(),
-  });
-
   private readonly handOffEndedReason = "assistant-said-end-call-phrase";
   private readonly speakersByRole: Record<string, Speaker> = { user: Speaker.caller, bot: Speaker.agent, assistant: Speaker.agent };
 
-  constructor(private readonly clock: Clock) {}
+  constructor(
+    private readonly clock: Clock,
+    private readonly structuredDataReader: StructuredDataReader,
+  ) {}
 
   read(message: VapiMessage): FinishedCallReport {
-    const structuredData = this.readStructuredData(message);
+    const structuredData = this.structuredDataReader.read(message.analysis?.structuredData);
     return {
       callId: this.readCallId(message),
       channel: this.readChannel(message),
@@ -36,7 +32,7 @@ export class VapiReportReader {
       matchedFaqNumber: structuredData.matchedFaqNumber ?? null,
       isHandedOff: structuredData.isHandedOff ?? message.endedReason === this.handOffEndedReason,
       lines: this.readLines(message),
-      fields: structuredData.fields ?? [],
+      fields: structuredData.fields,
     };
   }
 
@@ -47,11 +43,6 @@ export class VapiReportReader {
 
   readChannel(message: VapiMessage): CallChannel {
     return message.call?.type === "webCall" ? CallChannel.web : CallChannel.phone;
-  }
-
-  private readStructuredData(message: VapiMessage) {
-    const result = VapiReportReader.structuredDataSchema.safeParse(message.analysis?.structuredData ?? {});
-    return result.success ? result.data : VapiReportReader.structuredDataSchema.parse({});
   }
 
   private readDate(value: string | undefined): Date | null {
