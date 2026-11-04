@@ -1,0 +1,15 @@
+{
+  "id": "E16",
+  "name": "Reassures a worried caller before helping",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Please help me, I sent money to my mum yesterday and it still hasn't arrived. I'm really worried."
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It first reassures the caller or acknowledges their worry in a few words, then helps with when the money will arrive, either by giving the most useful step in plain words or by asking one short question."
+    }
+  ]
+}
