@@ -76,3 +76,8 @@ class AssistantConfigurationBuilderTest:
         assistant = self.build()
         assert assistant["backgroundSound"] == "off"
         assert assistant["backgroundSpeechDenoisingPlan"] == {"smartDenoisingPlan": {"enabled": True}}
+
+    def test_only_ends_the_call_after_a_closing_question_or_a_goodbye(self) -> None:
+        conditions = self.build()["model"]["tools"][0]["rejectionPlan"]["conditions"]
+        assert [condition["target"]["role"] for condition in conditions] == ["assistant", "user"]
+        assert all(condition["negate"] for condition in conditions)
