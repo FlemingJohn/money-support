@@ -16,6 +16,8 @@ const descriptions: Record<string, string> = {
   agentSynced: "Agent updated",
   agentSyncFailed: "Agent update failed",
   settingsUpdated: "Settings changed",
+  handOffEmailSent: "Hand-off emailed to the team",
+  handOffEmailFailed: "Hand-off email failed",
 };
 
 export function describeActivity(action: string): string {
