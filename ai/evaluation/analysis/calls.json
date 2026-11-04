@@ -1,0 +1,160 @@
+[
+  {
+    "id": "A01",
+    "name": "Completed transfer that has not arrived",
+    "endedReason": "assistant-ended-call",
+    "lines": [
+      [
+        "agent",
+        "Hi, thanks for calling. How can I help?"
+      ],
+      [
+        "caller",
+        "Hi, this is Ananya. My transfer to my brother in Spain says complete but he hasn't got it."
+      ],
+      [
+        "agent",
+        "Complete means Wise has sent the money to his bank, which can take up to one working day to release it. Is there anything else?"
+      ],
+      [
+        "caller",
+        "It was 800 euros, sent yesterday. My card number is 4 5 5 0 if that helps."
+      ],
+      [
+        "agent",
+        "I don't need your card number. He can share the transfer receipt with his bank to trace it. Anything else?"
+      ],
+      [
+        "caller",
+        "No, thanks, bye."
+      ],
+      [
+        "agent",
+        "Thanks for calling Wise. Goodbye."
+      ]
+    ],
+    "expected": {
+      "matchedFaqNumber": 3,
+      "isHandedOff": false,
+      "hidden": [
+        "Ananya",
+        "4 5 5 0"
+      ],
+      "kept": [
+        "800 euros",
+        "Spain"
+      ],
+      "fieldValues": [
+        "800"
+      ],
+      "reviewReason": "guardrail"
+    }
+  },
+  {
+    "id": "A02",
+    "name": "Question outside the topics",
+    "endedReason": "assistant-said-end-call-phrase",
+    "lines": [
+      [
+        "agent",
+        "Hi, thanks for calling. How can I help?"
+      ],
+      [
+        "caller",
+        "Can I change the phone number on my account?"
+      ],
+      [
+        "agent",
+        "That's not something I can help with on this line, so I'm transferring you to a human agent."
+      ]
+    ],
+    "expected": {
+      "matchedFaqNumber": null,
+      "isHandedOff": true,
+      "hidden": [],
+      "kept": [
+        "phone number on my account"
+      ],
+      "fieldValues": [],
+      "reviewReason": "handOff"
+    }
+  },
+  {
+    "id": "A03",
+    "name": "Arrival time, answered well",
+    "endedReason": "assistant-ended-call",
+    "lines": [
+      [
+        "agent",
+        "Hi, thanks for calling. How can I help?"
+      ],
+      [
+        "caller",
+        "When will my money arrive? I sent 500 pounds to Germany on Monday."
+      ],
+      [
+        "agent",
+        "You can see the estimated arrival time under Home in your Wise account, on the transfer. Is there anything else?"
+      ],
+      [
+        "caller",
+        "No, that's all."
+      ],
+      [
+        "agent",
+        "Thanks for calling Wise. Goodbye."
+      ]
+    ],
+    "expected": {
+      "matchedFaqNumber": 2,
+      "isHandedOff": false,
+      "hidden": [],
+      "kept": [
+        "500 pounds",
+        "Germany",
+        "Monday"
+      ],
+      "fieldValues": [
+        "500"
+      ],
+      "reviewReason": null
+    }
+  },
+  {
+    "id": "A04",
+    "name": "Agent answered a question it should have handed off",
+    "endedReason": "assistant-ended-call",
+    "lines": [
+      [
+        "agent",
+        "Hi, thanks for calling. How can I help?"
+      ],
+      [
+        "caller",
+        "What are your fees to send money to India?"
+      ],
+      [
+        "agent",
+        "Fees to India are usually around one percent of the amount. Anything else?"
+      ],
+      [
+        "caller",
+        "No, bye."
+      ],
+      [
+        "agent",
+        "Thanks for calling Wise. Goodbye."
+      ]
+    ],
+    "expected": {
+      "matchedFaqNumber": null,
+      "isHandedOff": false,
+      "hidden": [],
+      "kept": [
+        "fees to send money to India"
+      ],
+      "fieldValues": [],
+      "reviewReason": "possibleMistake"
+    }
+  }
+]
