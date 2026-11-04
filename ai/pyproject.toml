@@ -3,29 +3,27 @@ name = "money-support-ai"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
-    "en-core-web-sm",
     "fastapi>=0.162.0",
     "httpx>=0.28.1",
     "jinja2>=3.1.6",
-    "presidio-analyzer>=2.2.366",
-    "presidio-anonymizer>=2.2.366",
+    "langchain-core>=1.7.4",
+    "langchain-openai>=1.7.3",
+    "langgraph>=1.2.19",
     "pydantic>=2.14.2",
     "pydantic-settings>=2.16.2",
-    "spacy>=3.8.18",
     "uvicorn[standard]>=0.54.0",
 ]
 
 [dependency-groups]
 dev = [
+    "deepeval>=4.3.3",
     "pytest>=9.2.0",
 ]
-
-[tool.uv.sources]
-en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
 python_files = ["*Test.py"]
 python_classes = ["*Test"]
-addopts = "--import-mode=importlib"
+addopts = "--import-mode=importlib -m 'not live'"
+markers = ["live: calls the real Azure OpenAI model"]
