@@ -32,6 +32,7 @@ class AssistantConfigurationBuilderTest:
         assistant = self.build()
         assert assistant["endCallPhrases"] == [self.sample_data.hand_off_sentence]
         assert [tool["type"] for tool in assistant["model"]["tools"]] == ["endCall"]
+        assert assistant["model"]["tools"][0]["messages"][0]["content"] == "Thanks for calling Wise. Goodbye."
 
     def test_adds_the_transfer_tool_when_transferring(self) -> None:
         assistant = self.build("transfer")
