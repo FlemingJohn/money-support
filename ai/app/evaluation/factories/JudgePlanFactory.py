@@ -8,7 +8,6 @@ from app.evaluation.models.EvaluationTurn import EvaluationTurn
 
 class JudgePlanFactory:
     any_content = ".*"
-    some_content = ".+"
 
     def __init__(self, configuration: AppConfiguration, template_renderer: TemplateRenderer) -> None:
         self.configuration = configuration
@@ -18,7 +17,7 @@ class JudgePlanFactory:
         if turn.check == "handsOff":
             return self.make_hand_off_plan(hand_off)
         if turn.check == "endsCall":
-            return self.make_tool_call_plan(self.some_content, "endCall")
+            return {"type": "exact", "content": "", "toolCalls": [{"name": "endCall"}]}
         return self.make_answer_plan(turn.expectation)
 
     def make_answer_plan(self, expectation: str) -> dict:
