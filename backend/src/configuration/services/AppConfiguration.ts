@@ -58,6 +58,14 @@ export class AppConfiguration {
     return this.configService.get("TWILIO_CALLER_NUMBER", { infer: true });
   }
 
+  get mailUser(): string {
+    return this.configService.get("MAIL_USER", { infer: true });
+  }
+
+  get mailAppPassword(): string {
+    return this.configService.get("MAIL_APP_PASSWORD", { infer: true }).replaceAll(" ", "");
+  }
+
   get hasDatabaseCaCertificate(): boolean {
     return this.databaseCaCertificate.length > 0;
   }
@@ -68,6 +76,10 @@ export class AppConfiguration {
 
   get isTwilioConfigured(): boolean {
     return [this.twilioAccountSid, this.twilioAuthToken, this.twilioCallerNumber].every((value) => value.length > 0);
+  }
+
+  get isMailConfigured(): boolean {
+    return this.mailUser.length > 0 && this.mailAppPassword.length > 0;
   }
 
   get isVapiApiConfigured(): boolean {
