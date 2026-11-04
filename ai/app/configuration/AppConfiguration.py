@@ -15,6 +15,10 @@ class AppConfiguration(BaseSettings):
     assistant_tag: str = "money-support"
     assistant_model: str = "gpt-4o"
     judge_model: str = "gpt-4.1"
+    azure_openai_endpoint: str = ""
+    azure_openai_api_key: str = ""
+    azure_openai_deployment: str = "gpt-4o"
+    azure_openai_api_version: str = "2025-01-01-preview"
     run_timeout_seconds: float = 240
     poll_interval_seconds: float = 3
     project_folder: Path = Path(__file__).resolve().parents[2]
