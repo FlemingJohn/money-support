@@ -6,6 +6,8 @@ import type { ServiceHealth } from "../responses/ServiceHealth";
 
 @Injectable()
 export class HealthService {
+  private readonly aiServiceTimeoutMilliseconds = 10_000;
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly appConfiguration: AppConfiguration,
@@ -25,7 +27,7 @@ export class HealthService {
   private checkAiService(): Promise<ServiceHealth> {
     if (!this.appConfiguration.isAiServiceConfigured) return Promise.resolve(this.notConfigured("ai"));
     return this.measure("ai", async () => {
-      const response = await fetch(`${this.appConfiguration.aiServiceUrl}/health`, { signal: AbortSignal.timeout(3000) });
+      const response = await fetch(`${this.appConfiguration.aiServiceUrl}/health`, { signal: AbortSignal.timeout(this.aiServiceTimeoutMilliseconds) });
       if (!response.ok) throw new Error(`ai/ answered ${response.status}`);
     });
   }
