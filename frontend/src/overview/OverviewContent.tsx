@@ -1,4 +1,5 @@
 import { BarChart3, Flag, Phone, PieChart } from "lucide-react";
+import { CallTable } from "@/calls/CallTable";
 import { CardLink } from "@/components/CardLink";
 import { ChartLegendItem } from "@/components/ChartLegendItem";
 import { SectionCard } from "@/components/SectionCard";
@@ -11,8 +12,7 @@ import { NeedsReviewList } from "@/overview/NeedsReviewList";
 import { OutcomeDonutChart } from "@/overview/OutcomeDonutChart";
 import { OutcomeLegend } from "@/overview/OutcomeLegend";
 import { OverviewStats } from "@/overview/OverviewStats";
-import { RecentCallsTable } from "@/overview/RecentCallsTable";
-import { toRecentCall } from "@/overview/toRecentCall";
+import { toCallRow } from "@/calls/toCallRow";
 import { toReviewPreview } from "@/overview/toReviewPreview";
 
 export async function OverviewContent() {
@@ -53,7 +53,7 @@ export async function OverviewContent() {
 
       <div className="flex flex-1 flex-wrap items-stretch gap-4">
         <SectionCard title="Recent calls" icon={Phone} className="flex-[2_1_560px]" action={<CardLink href="/calls" label="View all" />}>
-          <RecentCallsTable calls={overview.recentCalls.map(toRecentCall)} />
+          <CallTable label="Recent calls" calls={overview.recentCalls.map(toCallRow)} emptyMessage="No calls yet. Calls appear here when they end." />
         </SectionCard>
 
         <SectionCard title="Needs review" icon={Flag} className="flex-[1_1_320px]" action={<CardLink href="/review" label="Open queue" />}>
