@@ -1,11 +1,12 @@
 import type { Clock } from "../../../src/common/services/Clock";
 import { CallChannel, Speaker } from "../../../src/generated/prisma/client";
 import { VapiCallMissingException } from "../../../src/vapi/exceptions/VapiCallMissingException";
+import { StructuredDataReader } from "../../../src/vapi/services/StructuredDataReader";
 import { VapiReportReader } from "../../../src/vapi/services/VapiReportReader";
 
 describe("VapiReportReader", () => {
   const fixedNow = new Date("2026-11-03T10:00:00Z");
-  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock);
+  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock, new StructuredDataReader());
 
   it("reads a finished web call with structured data", () => {
     const report = vapiReportReader.read({
