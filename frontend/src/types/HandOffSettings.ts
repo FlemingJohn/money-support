@@ -3,4 +3,6 @@ export interface HandOffSettings {
   handOffSentence: string;
   transferNumber: string;
   teamHours: "weekdays" | "always";
+  emailTeam: boolean;
+  teamEmail: string;
 }
