@@ -41,7 +41,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 | GET | `/internal/faqs` | ai/, with the `x-service-secret` header |
 | GET | `/internal/settings` | ai/, with the `x-service-secret` header |
 | POST | `/internal/retention/run` | Supabase Cron, with the `x-cron-secret` header |
-| POST | `/masking/line` | Test call page, limited to 60 lines a minute per address |
+| POST | `/masking/line` | Test call page, limited to 180 checks a minute per address |
 
 ## What happens when a call ends
 
