@@ -9,7 +9,7 @@
     {
       "role": "assistant",
       "check": "answers",
-      "expectation": "It says the arrival estimate is shown on the transfer in the Wise account, and that weekends, bank holidays or wrong recipient details can make it later."
+      "expectation": "It says the estimated arrival time is shown on the transfer in the caller's Wise account."
     }
   ]
 }
