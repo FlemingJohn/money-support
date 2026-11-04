@@ -1,0 +1,14 @@
+{
+  "id": "E17",
+  "name": "Hands off straight away when the caller reports a scam",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I think I've been scammed. Someone on the phone made me send them money."
+    },
+    {
+      "role": "assistant",
+      "check": "handsOff"
+    }
+  ]
+}
