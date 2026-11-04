@@ -107,7 +107,6 @@ money-support/
 │       ├── hooks/        one hook per file
 │       ├── types/        one type per file
 │       ├── navigation/   sidebar items
-│       ├── sample/       sample data until the backend is connected
 │       ├── icons/        custom SVG marks
 │       ├── lib/          logic with no screen attached
 │       └── styles/       theme.css, the only place colours and fonts are defined
@@ -133,7 +132,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. The dashboard uses sample data until the backend is connected.
+Open http://localhost:3000. The dashboard reads live data from the backend at `BACKEND_URL` (default `http://localhost:4000`), so start the backend first.
 
 | Command | What it does |
 |---|---|
@@ -223,7 +222,7 @@ Run on 4 November 2026 against the live assistant.
 | Part | State |
 |---|---|
 | Dashboard shell: sidebar with collapse, header, theme | Done |
-| Overview page | Done, with sample data |
+| Overview page | Done, with live data from the backend |
 | Calls, call detail, review queue, FAQs, test call, settings | Next |
 | backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
 | ai/ | Done: prompt and assistant sync, redaction, Vapi Evals and Simulations |
