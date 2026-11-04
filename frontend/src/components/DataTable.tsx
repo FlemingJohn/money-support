@@ -1,11 +1,14 @@
 "use client";
 
 import { useTable, type RowData } from "@tanstack/react-table";
+import { EmptyState } from "@/components/EmptyState";
 import { listTableFeatures } from "@/lib/listTableFeatures";
 import type { DataTableProps } from "@/types/DataTableProps";
 
-export function DataTable<Row extends RowData>({ label, columns, rows }: DataTableProps<Row>) {
+export function DataTable<Row extends RowData>({ label, columns, rows, emptyMessage }: DataTableProps<Row>) {
   const table = useTable({ features: listTableFeatures, columns, data: rows });
+
+  if (rows.length === 0) return <EmptyState message={emptyMessage} />;
 
   return (
     <div className="overflow-x-auto">
