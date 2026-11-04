@@ -18,5 +18,5 @@ class GuardrailRouter:
         return router
 
     async def redact(self, request: RedactionRequest) -> RedactionResponse:
-        results = await run_in_threadpool(self.personal_data_redactor.redact_texts, request.texts)
+        results = await run_in_threadpool(self.personal_data_redactor.redact_texts, request.texts, request.entity_types)
         return RedactionResponse(results=results)
