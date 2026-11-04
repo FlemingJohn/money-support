@@ -4,6 +4,8 @@ from presidio_analyzer.nlp_engine import NlpEngine, NlpEngineProvider
 from app.guardrails.recognizers.BankAccountRecognizer import BankAccountRecognizer
 from app.guardrails.recognizers.CardNumberRecognizer import CardNumberRecognizer
 from app.guardrails.recognizers.IntroducedNameRecognizer import IntroducedNameRecognizer
+from app.guardrails.recognizers.MentionedAccountNumberRecognizer import MentionedAccountNumberRecognizer
+from app.guardrails.recognizers.MentionedCardNumberRecognizer import MentionedCardNumberRecognizer
 from app.guardrails.recognizers.PhoneNumberRecognizer import PhoneNumberRecognizer
 from app.guardrails.recognizers.SortCodeRecognizer import SortCodeRecognizer
 
@@ -24,6 +26,8 @@ class AnalyzerEngineFactory:
             SortCodeRecognizer(),
             PhoneNumberRecognizer(),
             IntroducedNameRecognizer(),
+            MentionedCardNumberRecognizer(),
+            MentionedAccountNumberRecognizer(),
         ]
 
     def make_nlp_engine(self) -> NlpEngine:
