@@ -21,6 +21,10 @@ from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
 from app.assistant.clients.VapiAssistantClient import VapiAssistantClient
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
+from app.assistant.factories.NoisePlanFactory import NoisePlanFactory
+from app.assistant.factories.SpeakingPlanFactory import SpeakingPlanFactory
+from app.assistant.factories.TranscriberFactory import TranscriberFactory
+from app.assistant.factories.VoiceFactory import VoiceFactory
 from app.assistant.routes.AssistantRouter import AssistantRouter
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
 from app.assistant.services.AssistantSyncService import AssistantSyncService
@@ -91,6 +95,10 @@ class ServiceContainer:
             ToolCatalog(),
             HookCatalog(),
             CompliancePlanFactory(),
+            VoiceFactory(),
+            TranscriberFactory(),
+            SpeakingPlanFactory(),
+            NoisePlanFactory(),
         )
         sync_service = AssistantSyncService(
             self.backend_client,
