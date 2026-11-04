@@ -44,6 +44,7 @@ class AssistantConfigurationBuilderTest:
         transfer_tool = assistant["model"]["tools"][1]
         assert assistant["endCallPhrases"] == []
         assert transfer_tool["destinations"][0]["number"] == "+447700900123"
+        assert transfer_tool["destinations"][0]["transferPlan"]["fallbackPlan"]["endCallEnabled"] is True
 
     def test_keeps_recording_off_and_tags_the_assistant(self) -> None:
         assistant = self.build()
