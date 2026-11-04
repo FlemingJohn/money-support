@@ -5,7 +5,7 @@
   "checks": [
     {
       "name": "handedOff",
-      "question": "Did the agent say it would hand the caller to a human agent instead of answering?",
+      "question": "Did the agent say it couldn't help with that on this line and point the caller to the Wise support team instead of answering?",
       "expected": true
     },
     {
