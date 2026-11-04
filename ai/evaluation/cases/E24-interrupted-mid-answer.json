@@ -1,0 +1,23 @@
+{
+  "id": "E24",
+  "name": "Replies to an interruption without starting again",
+  "turns": [
+    {
+      "role": "user",
+      "content": "When will my money arrive?"
+    },
+    {
+      "role": "assistant",
+      "content": "You can see the estimated arrival time by logging in to"
+    },
+    {
+      "role": "user",
+      "content": "Sorry, wait. I don't have the app, I only use the website."
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It replies to the caller's point about only using the website, for example by saying they can log in on the website too, and does not repeat its whole earlier answer from the start."
+    }
+  ]
+}
