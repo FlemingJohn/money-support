@@ -9,7 +9,7 @@
     {
       "role": "assistant",
       "check": "answers",
-      "expectation": "It says it cannot see the caller's transfers and explains how to check the status in the Wise account, or hands off. It does not invent a status."
+      "expectation": "It says it cannot see the caller's transfers and explains how the caller can check the status in their Wise account. It does not hand off and does not invent a status."
     }
   ]
 }
