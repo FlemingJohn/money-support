@@ -11,9 +11,13 @@ import { CallRecordingService } from "./services/CallRecordingService";
 import { EndOfCallReportHandler } from "./handlers/EndOfCallReportHandler";
 import { FieldLocator } from "./services/FieldLocator";
 import { FinishedCallWriter } from "./services/FinishedCallWriter";
-import { ReportRedactor } from "./services/ReportRedactor";
+import { AiCallAnalysisClient } from "./clients/AiCallAnalysisClient";
+import { CallAnalysisClient } from "./clients/CallAnalysisClient";
+import { PendingCallAnalysisClient } from "./clients/PendingCallAnalysisClient";
+import { PendingAnalysisBuilder } from "./services/PendingAnalysisBuilder";
+import { ReportAnalyser } from "./services/ReportAnalyser";
 import { StatusUpdateHandler } from "./handlers/StatusUpdateHandler";
-import { StructuredDataReader } from "./services/StructuredDataReader";
+import { AppConfiguration } from "../configuration/services/AppConfiguration";
 import { VapiCallArchive } from "./clients/VapiCallArchive";
 import { VapiReportReader } from "./services/VapiReportReader";
 import { VapiWebhookController } from "./controllers/VapiWebhookController";
@@ -28,12 +32,20 @@ import { VapiWebhookService } from "./services/VapiWebhookService";
     EndOfCallReportHandler,
     FieldLocator,
     FinishedCallWriter,
-    ReportRedactor,
+    PendingAnalysisBuilder,
+    ReportAnalyser,
     StatusUpdateHandler,
-    StructuredDataReader,
     VapiCallArchive,
     VapiReportReader,
     VapiWebhookService,
+    {
+      provide: CallAnalysisClient,
+      inject: [AppConfiguration, PendingAnalysisBuilder],
+      useFactory: (appConfiguration: AppConfiguration, pendingAnalysisBuilder: PendingAnalysisBuilder) =>
+        appConfiguration.isAiServiceConfigured
+          ? new AiCallAnalysisClient(appConfiguration, pendingAnalysisBuilder)
+          : new PendingCallAnalysisClient(pendingAnalysisBuilder),
+    },
   ],
 })
 export class VapiModule {}
