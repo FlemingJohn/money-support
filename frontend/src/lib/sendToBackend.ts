@@ -1,4 +1,6 @@
-export async function sendToBackend<Result>(method: "POST" | "PUT" | "PATCH" | "DELETE", path: string, body?: unknown): Promise<Result> {
+import type { HttpMethod } from "@/types/HttpMethod";
+
+export async function sendToBackend<Result>(method: HttpMethod, path: string, body?: unknown): Promise<Result> {
   const response = await fetch(`/api${path}`, {
     method,
     headers: body === undefined ? undefined : { "content-type": "application/json" },
@@ -10,6 +12,8 @@ export async function sendToBackend<Result>(method: "POST" | "PUT" | "PATCH" | "
 
 async function readErrorMessage(response: Response): Promise<string> {
   const body = await response.json().catch(() => null);
+  const validationMessages = Array.isArray(body?.errors) ? body.errors.map((error: { message?: string }) => error.message).filter(Boolean) : [];
+  if (validationMessages.length > 0) return validationMessages.join(", ");
   const message = body?.message;
   if (Array.isArray(message)) return message.join(", ");
   return typeof message === "string" ? message : `The backend answered ${response.status}`;
