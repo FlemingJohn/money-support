@@ -1,10 +1,8 @@
 from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
-from app.assistant.factories.AnalysisPlanFactory import AnalysisPlanFactory
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
 from app.assistant.models.AssistantDraft import AssistantDraft
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
-from app.common.services.TemplateRenderer import TemplateRenderer
 from tests.support.SampleData import SampleData
 
 
@@ -18,7 +16,6 @@ class AssistantConfigurationBuilderTest:
             ToolCatalog(),
             HookCatalog(),
             CompliancePlanFactory(),
-            AnalysisPlanFactory(TemplateRenderer(configuration.prompts_folder)),
         )
         draft = AssistantDraft(
             faqs=self.sample_data.make_faqs(),
@@ -51,8 +48,7 @@ class AssistantConfigurationBuilderTest:
         assert assistant["server"]["headers"] == {"x-vapi-secret": "hook"}
         assert assistant["serverMessages"] == ["status-update", "end-of-call-report"]
 
-    def test_keeps_vapi_placeholders_in_the_analysis_messages(self) -> None:
-        analysis_plan = self.build()["analysisPlan"]
-        transcript_message = analysis_plan["summaryPlan"]["messages"][1]["content"]
-        assert "{{transcript}}" in transcript_message
-        assert "{{endedReason}}" in transcript_message
+    def test_turns_off_vapi_analysis_and_number_filters(self) -> None:
+        assistant = self.build()
+        assert assistant["analysisPlan"] == {"summaryPlan": {"enabled": False}, "structuredDataPlan": {"enabled": False}}
+        assert assistant["compliancePlan"]["securityFilterPlan"]["filters"] == [{"type": "prompt-injection"}]
