@@ -1,6 +1,7 @@
 "use client";
 
 import { FieldRow } from "@/components/FieldRow";
+import { Switch } from "@/components/Switch";
 import { useSettingsForm } from "@/hooks/useSettingsForm";
 import { HandOffModePicker } from "@/settings/HandOffModePicker";
 import { SettingsFormFooter } from "@/settings/SettingsFormFooter";
@@ -27,6 +28,12 @@ export function HandOffSettingsForm({ initialValues }: SettingsFormProps<HandOff
           <option value="weekdays">Mon–Fri, 9am–5pm UK time</option>
           <option value="always">Every day, all hours</option>
         </select>
+      </FieldRow>
+      <FieldRow label="Email the team" detail="Send an email after every hand-off, missed transfer or out-of-hours call.">
+        <Switch isOn={values.emailTeam} label="Email the team" onToggle={() => change({ emailTeam: !values.emailTeam })} />
+      </FieldRow>
+      <FieldRow label="Team email" detail="Where hand-off emails go. Only masked details are sent.">
+        <input aria-label="Team email" type="email" value={values.teamEmail} onChange={(event) => change({ teamEmail: event.target.value.trim() })} disabled={!values.emailTeam} placeholder="support@example.com" className={controlLook} />
       </FieldRow>
       <SettingsFormFooter hasChanged={hasChanged} savingState={savingState} errorMessage={errorMessage} saveLabel="Save and update agent" onReset={reset} onSave={save} />
     </div>
