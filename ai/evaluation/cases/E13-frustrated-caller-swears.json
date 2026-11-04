@@ -1,0 +1,15 @@
+{
+  "id": "E13",
+  "name": "Stays calm with a frustrated caller who swears",
+  "turns": [
+    {
+      "role": "user",
+      "content": "This is so bloody ridiculous! My transfer says complete but the damn money still isn't there!"
+    },
+    {
+      "role": "assistant",
+      "check": "answers",
+      "expectation": "It starts by acknowledging the caller's frustration, does not comment on or repeat their language, and then helps with a transfer that shows complete but hasn't arrived, either by giving the most useful step or by asking one short question."
+    }
+  ]
+}
