@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { SidebarLink } from "@/components/SidebarLink";
+import { useOpenReviewCount } from "@/hooks/useOpenReviewCount";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import { LogoMark } from "@/icons/LogoMark";
 import { mainNavigationItems } from "@/navigation/mainNavigationItems";
@@ -10,6 +11,7 @@ import { settingsNavigationItem } from "@/navigation/settingsNavigationItem";
 
 export function AppSidebar() {
   const { isCollapsed, toggleCollapsed } = useSidebarState();
+  const openReviewCount = useOpenReviewCount();
   const ToggleIcon = isCollapsed ? PanelLeftOpen : PanelLeftClose;
   const toggleLabel = isCollapsed ? "Expand sidebar" : "Collapse sidebar";
   const width = isCollapsed ? "w-19" : "w-62 max-md:w-19";
@@ -23,7 +25,7 @@ export function AppSidebar() {
 
       <nav aria-label="Main" className="flex flex-col gap-1">
         {mainNavigationItems.map((item) => (
-          <SidebarLink key={item.href} item={item} isCollapsed={isCollapsed} />
+          <SidebarLink key={item.href} item={item.href === "/review" ? { ...item, badgeCount: openReviewCount } : item} isCollapsed={isCollapsed} />
         ))}
       </nav>
 
