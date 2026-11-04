@@ -4,6 +4,7 @@ import { AssistantModule } from "../assistant/AssistantModule";
 import { CallsModule } from "../calls/CallsModule";
 import { FaqsModule } from "../faqs/FaqsModule";
 import { GuardrailsModule } from "../guardrails/GuardrailsModule";
+import { HandOffEmailModule } from "../hand-off-email/HandOffEmailModule";
 import { ReviewModule } from "../review/ReviewModule";
 import { SettingsModule } from "../settings/SettingsModule";
 import { CallCompletionBuilder } from "./services/CallCompletionBuilder";
@@ -24,7 +25,7 @@ import { VapiWebhookController } from "./controllers/VapiWebhookController";
 import { VapiWebhookService } from "./services/VapiWebhookService";
 
 @Module({
-  imports: [ActivityModule, AssistantModule, CallsModule, FaqsModule, GuardrailsModule, ReviewModule, SettingsModule],
+  imports: [ActivityModule, AssistantModule, CallsModule, FaqsModule, GuardrailsModule, HandOffEmailModule, ReviewModule, SettingsModule],
   controllers: [VapiWebhookController],
   providers: [
     CallCompletionBuilder,
