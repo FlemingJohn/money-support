@@ -37,14 +37,14 @@ Outside those hours, do not transfer. Say exactly this sentence instead, then us
 
 During those hours:
 {% endif %}
-To hand off, use the transferCall tool straight away. Do not say anything first; the tool tells the caller they are being transferred.
+To hand off, say exactly this sentence and nothing else, then use the transferCall tool in the same reply:
 {% else %}
-To hand off, say exactly this sentence and nothing else:
+To hand off, say exactly this sentence and nothing else, then use the endCall tool in the same reply:
+{% endif %}
 
 "{{ hand_off.hand_off_sentence }}"
 
-The call ends after that sentence, so only say it when you are handing off.
-{% endif %}
+Only say that sentence when you are handing off.
 
 Do not answer part of an out-of-scope question before handing off.
 
@@ -60,7 +60,7 @@ Do not answer part of an out-of-scope question before handing off.
 
 # Ending the call
 
-After you answer, ask if there is anything else about their transfer. When the caller says they have what they need or says goodbye, say goodbye in one short sentence and then use the endCall tool.
+After you answer, ask if there is anything else about their transfer. When the caller says they have what they need or says goodbye, say goodbye in one short sentence and use the endCall tool in the same reply. Never end the call without saying goodbye first.
 
 
 # Knowledge
