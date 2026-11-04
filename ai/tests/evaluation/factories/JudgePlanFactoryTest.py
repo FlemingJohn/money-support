@@ -17,6 +17,7 @@ class JudgePlanFactoryTest:
         plan = self.make_factory().make(EvaluationTurn(role="assistant", check="handsOff"), self.sample_data.make_settings().hand_off)
         curly_sentence = self.sample_data.hand_off_sentence.replace("'", "’")
         assert plan["type"] == "regex"
+        assert plan["toolCalls"] == [{"name": "endCall"}]
         assert re.fullmatch(plan["content"], self.sample_data.hand_off_sentence)
         assert re.fullmatch(plan["content"], f"Sorry. {curly_sentence}")
 
@@ -27,11 +28,13 @@ class JudgePlanFactoryTest:
     def test_expects_the_end_call_tool(self) -> None:
         plan = self.make_factory().make(EvaluationTurn(role="assistant", check="endsCall"), self.sample_data.make_settings().hand_off)
         assert plan["toolCalls"] == [{"name": "endCall"}]
+        assert plan["content"] == ".+"
 
     def test_asks_the_judge_about_the_expectation(self) -> None:
         turn = EvaluationTurn(role="assistant", check="answers", expectation="It explains the status.")
         plan = self.make_factory().make(turn, self.sample_data.make_settings().hand_off)
         judge_instructions = plan["model"]["messages"][0]["content"]
         assert plan["model"]["model"] == "gpt-4.1"
+        assert plan["model"]["maxTokens"] >= 50
         assert "- It explains the status." in judge_instructions
         assert "{{messages[-1]}}" in judge_instructions
