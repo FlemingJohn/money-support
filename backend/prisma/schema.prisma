@@ -43,6 +43,7 @@ enum ReviewReason {
   handOff
   guardrail
   lowConfidence
+  possibleMistake
 }
 
 enum ReviewVerdict {
