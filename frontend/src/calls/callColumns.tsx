@@ -9,7 +9,7 @@ import type { ListTableFeatures } from "@/types/ListTableFeatures";
 
 const columnHelper = createColumnHelper<ListTableFeatures, Call>();
 
-export const recentCallColumns = columnHelper.columns([
+export const callColumns = columnHelper.columns([
   columnHelper.display({
     id: "time",
     size: 84,
