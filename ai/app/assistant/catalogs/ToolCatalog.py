@@ -9,7 +9,7 @@ class ToolCatalog:
         return tools
 
     def make_end_call_tool(self) -> dict:
-        return {"type": "endCall"}
+        return {"type": "endCall", "messages": [{"type": "request-start", "content": "Thanks for calling Wise. Goodbye."}]}
 
     def make_transfer_tool(self, hand_off: HandOffSettings) -> dict:
         return {
