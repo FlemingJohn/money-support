@@ -104,6 +104,11 @@ money-support/
 │       ├── app/          routes
 │       ├── components/   shared components, one per file
 │       ├── overview/     overview page parts
+│       ├── calls/        calls list and call detail
+│       ├── review/       review queue and call backs
+│       ├── faqs/         FAQ list and editor
+│       ├── settings/     settings tabs
+│       ├── test-call/    browser test call with live transcript
 │       ├── hooks/        one hook per file
 │       ├── types/        one type per file
 │       ├── navigation/   sidebar items
@@ -201,7 +206,7 @@ The backend connects through the transaction pooler and verifies Supabase's cert
 |---|---|
 | backend | `DATABASE_URL`, `DATABASE_CA_CERTIFICATE`, `VAPI_WEBHOOK_SECRET`, `VAPI_API_KEY`, `SERVICE_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`, `AI_SERVICE_URL`, `FRONTEND_ORIGIN` |
 | ai | `SERVICE_SECRET`, `BACKEND_URL`, `VAPI_API_KEY`, `VAPI_WEBHOOK_URL`, `VAPI_WEBHOOK_SECRET` |
-| frontend | `BACKEND_URL`, used by the `/api` rewrite |
+| frontend | `BACKEND_URL` for the `/api` rewrite, `VAPI_PUBLIC_KEY` and `VAPI_ASSISTANT_ID` for the Test call page |
 
 **Retention.** Supabase Cron calls the backend's retention endpoint every hour. [backend/README.md](backend/README.md#retention-on-supabase) has the setup.
 
@@ -223,7 +228,7 @@ Run on 4 November 2026 against the live assistant.
 |---|---|
 | Dashboard shell: sidebar with collapse, header, theme | Done |
 | Overview page | Done, with live data from the backend |
-| Calls, call detail, review queue, FAQs, test call, settings | Next |
+| Calls, call detail, review queue, FAQs, test call, settings | Done, with live data from the backend |
 | backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
 | ai/ | Done: prompt and assistant sync, redaction, Vapi Evals and Simulations |
 | Deployment | Done: Vercel and Supabase, deploys from `main` |
@@ -235,7 +240,7 @@ Run on 4 November 2026 against the live assistant.
 | No login yet | The dashboard and its API are open to anyone with the URL. The webhook, internal and retention routes are protected by secrets. |
 | Team hours are fixed | In transfer mode with weekday hours, the agent transfers Monday to Friday, 9am to 5pm UK time. |
 | Call backs use the simulator | Real call backs need the Twilio variables. |
-| No phone number attached | Calls are made from the Vapi dashboard or the web until a Vapi number is assigned. |
+| No phone number attached | Calls are made from the dashboard's Test call page until a Vapi number is assigned. |
 
 ## License
 
