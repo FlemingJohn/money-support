@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { SidebarLink } from "@/components/SidebarLink";
+import { SidebarNavigationLink } from "@/components/SidebarNavigationLink";
 import { useOpenReviewCount } from "@/hooks/useOpenReviewCount";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import { LogoMark } from "@/icons/LogoMark";
@@ -25,12 +25,12 @@ export function AppSidebar() {
 
       <nav aria-label="Main" className="flex flex-col gap-1">
         {mainNavigationItems.map((item) => (
-          <SidebarLink key={item.href} item={item.href === "/review" ? { ...item, badgeCount: openReviewCount } : item} isCollapsed={isCollapsed} />
+          <SidebarNavigationLink key={item.href} item={item.href === "/review" ? { ...item, badgeCount: openReviewCount } : item} isCollapsed={isCollapsed} />
         ))}
       </nav>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-line-soft pt-4">
-        <SidebarLink item={settingsNavigationItem} isCollapsed={isCollapsed} />
+        <SidebarNavigationLink item={settingsNavigationItem} isCollapsed={isCollapsed} />
         <button
           type="button"
           onClick={toggleCollapsed}
