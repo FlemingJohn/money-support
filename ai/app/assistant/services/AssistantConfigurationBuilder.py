@@ -1,6 +1,5 @@
 from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
-from app.assistant.factories.AnalysisPlanFactory import AnalysisPlanFactory
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
 from app.assistant.models.AssistantDraft import AssistantDraft
 from app.configuration.AppConfiguration import AppConfiguration
@@ -13,13 +12,11 @@ class AssistantConfigurationBuilder:
         tool_catalog: ToolCatalog,
         hook_catalog: HookCatalog,
         compliance_plan_factory: CompliancePlanFactory,
-        analysis_plan_factory: AnalysisPlanFactory,
     ) -> None:
         self.configuration = configuration
         self.tool_catalog = tool_catalog
         self.hook_catalog = hook_catalog
         self.compliance_plan_factory = compliance_plan_factory
-        self.analysis_plan_factory = analysis_plan_factory
 
     def build(self, draft: AssistantDraft) -> dict:
         agent = draft.settings.agent
@@ -33,8 +30,8 @@ class AssistantConfigurationBuilder:
             "maxDurationSeconds": agent.longest_call_minutes * 60,
             "endCallPhrases": self.make_end_call_phrases(draft),
             "hooks": self.hook_catalog.make_hooks(agent),
-            "compliancePlan": self.compliance_plan_factory.make(draft.settings.privacy),
-            "analysisPlan": self.analysis_plan_factory.make(draft.faqs),
+            "compliancePlan": self.compliance_plan_factory.make(),
+            "analysisPlan": {"summaryPlan": {"enabled": False}, "structuredDataPlan": {"enabled": False}},
             "artifactPlan": {"recordingEnabled": False},
             "metadata": {"service": self.configuration.assistant_tag, "promptHash": draft.prompt_hash},
             **self.make_server(),
