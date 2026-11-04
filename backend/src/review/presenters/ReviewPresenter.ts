@@ -28,6 +28,7 @@ export class ReviewPresenter {
       verdictReason: review.verdictReason,
       expectedBehaviour: review.expectedBehaviour,
       resolvedAt: review.resolvedAt?.toISOString() ?? null,
+      handOffEmailedAt: review.handOffEmailedAt?.toISOString() ?? null,
     };
   }
 }
