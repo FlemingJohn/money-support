@@ -12,4 +12,5 @@ export interface Review {
   verdictReason: VerdictReason | null;
   expectedBehaviour: string | null;
   resolvedAt: string | null;
+  handOffEmailedAt: string | null;
 }
