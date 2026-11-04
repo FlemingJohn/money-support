@@ -1,1 +1,1 @@
-export type ReviewReason = "handOff" | "guardrail" | "lowConfidence";
+export type ReviewReason = "handOff" | "guardrail" | "lowConfidence" | "possibleMistake";
