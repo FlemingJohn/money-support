@@ -12,7 +12,7 @@ import { PrismaService } from "../../prisma/services/PrismaService";
 import { ReviewRepository } from "../../review/repositories/ReviewRepository";
 import { FieldLocator } from "./FieldLocator";
 import type { FinishedCallRecording } from "../types/FinishedCallRecording";
-import type { RedactedReport } from "../types/RedactedReport";
+import type { CallAnalysis } from "../types/CallAnalysis";
 
 @Injectable()
 export class FinishedCallWriter {
@@ -28,13 +28,13 @@ export class FinishedCallWriter {
   ) {}
 
   async write(recording: FinishedCallRecording): Promise<void> {
-    const { completion, redactedReport, reviewReason } = recording;
+    const { completion, analysis, reviewReason } = recording;
     await this.prismaService.$transaction(async (transaction) => {
       await this.callRepository.completeCall(transaction, completion);
-      const messages = await this.callMessageRepository.replaceForCall(transaction, completion.callId, redactedReport.lines);
-      const fields = this.fieldLocator.locate(redactedReport.fields, messages);
+      const messages = await this.callMessageRepository.replaceForCall(transaction, completion.callId, analysis.lines);
+      const fields = this.fieldLocator.locate(analysis.fields, messages);
       await this.extractedFieldRepository.replaceForCall(transaction, completion.callId, fields);
-      await this.guardrailEventRepository.replaceRemovedDataEvents(transaction, completion.callId, this.removedDataEvents(redactedReport));
+      await this.guardrailEventRepository.replaceRemovedDataEvents(transaction, completion.callId, this.removedDataEvents(analysis));
       await this.openReview(transaction, completion.callId, reviewReason);
       await this.activityLog.record(this.completionActivity(recording), transaction);
     });
@@ -45,15 +45,15 @@ export class FinishedCallWriter {
     await this.reviewRepository.openReview(transaction, callId, reviewReason);
   }
 
-  private removedDataEvents(redactedReport: RedactedReport): GuardrailEventInput[] {
-    return redactedReport.lines.flatMap((line) =>
+  private removedDataEvents(analysis: CallAnalysis): GuardrailEventInput[] {
+    return analysis.lines.flatMap((line) =>
       line.removedEntityTypes.map((entityType) => ({ kind: GuardrailKind.personalDataRemoved, entityType })),
     );
   }
 
   private completionActivity(recording: FinishedCallRecording): ActivityEventInput {
     return {
-      action: recording.report.isHandedOff ? ActivityAction.callHandedOff : ActivityAction.callCompleted,
+      action: recording.analysis.isHandedOff ? ActivityAction.callHandedOff : ActivityAction.callCompleted,
       itemType: ActivityItemType.call,
       itemId: recording.completion.callId,
     };
