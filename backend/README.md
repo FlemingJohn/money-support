@@ -10,7 +10,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 
 | Abstract class | Used when configured | Used otherwise |
 |---|---|---|
-| `RedactionClient` | `AiRedactionClient` (ai/ with Presidio, falls back to patterns if ai/ fails) | `PatternRedactionClient` |
+| `CallAnalysisClient` | `AiCallAnalysisClient` (ai/ analysis graph; saves lines as waiting if ai/ fails) | `PendingCallAnalysisClient` |
 | `AssistantSyncClient` | `AiAssistantSyncClient` | `SkippedAssistantSyncClient` |
 | `OutboundCallClient` | `TwilioBridgeClient` | `SimulatedBridgeClient` |
 | `VapiEventHandler` | `StatusUpdateHandler`, `EndOfCallReportHandler`, chosen by event type | |
@@ -41,16 +41,17 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 | GET | `/internal/faqs` | ai/, with the `x-service-secret` header |
 | GET | `/internal/settings` | ai/, with the `x-service-secret` header |
 | POST | `/internal/retention/run` | Supabase Cron, with the `x-cron-secret` header |
+| POST | `/masking/line` | Test call page, limited to 60 lines a minute per address |
 
 ## What happens when a call ends
 
 1. `VapiSecretGuard` checks the secret and the Zod DTO checks the payload.
 2. `VapiReportReader` turns the payload into a `FinishedCallReport`.
-3. `ReportRedactor` removes personal data from the transcript, summary, topic and field values.
-4. `ReviewTriage` decides whether a person needs to look at it: hand-off, removed data or a field under 75% confidence.
+3. `ReportAnalyser` sends the transcript, the privacy toggles and the FAQs to ai/ `/analysis`, which returns masked lines, summary, topic, matched FAQ and fields. If ai/ is down, every line is saved as "[waiting for privacy check]" and Vapi's copy is kept.
+4. `ReviewTriage` decides whether a person needs to look at it: hand-off, removed or unchecked data, a field under 75% confidence, or a possible mistake suggested by ai/.
 5. `CallCompletionBuilder` masks the caller's number, and encrypts it only when a review needs a call back.
 6. `FinishedCallWriter` saves the call, messages, fields, guardrail events, review and activity in one transaction.
-7. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on.
+7. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on and the analysis is complete.
 
 ## Structure
 
@@ -62,13 +63,14 @@ src/
 ├── configuration/   environment schema and typed AppConfiguration
 ├── prisma/          PrismaService and the transaction type
 ├── common/          guards, SecretMatcher, EncryptionService, Clock
-├── vapi/            webhook, report reading, redaction, recording
+├── vapi/            webhook, report reading, call analysis, recording
 ├── calls/           calls, messages, extracted fields, number protection
 ├── review/          review queue, triage, verdicts, unmasked reports
 ├── callbacks/       call backs through Twilio or the simulator
 ├── faqs/            FAQ editing and the internal list for ai/
 ├── assistant/       agent sync with ai/ and prompt versions
-├── guardrails/      redaction clients and guardrail events
+├── guardrails/      guardrail events and the kinds of data to mask
+├── masking/         live masking of test call lines
 ├── overview/        statistics for the overview page
 ├── settings/        settings sections with defaults
 ├── activity/        activity log
