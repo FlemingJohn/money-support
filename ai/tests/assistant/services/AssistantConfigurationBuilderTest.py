@@ -1,6 +1,10 @@
 from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
+from app.assistant.factories.NoisePlanFactory import NoisePlanFactory
+from app.assistant.factories.SpeakingPlanFactory import SpeakingPlanFactory
+from app.assistant.factories.TranscriberFactory import TranscriberFactory
+from app.assistant.factories.VoiceFactory import VoiceFactory
 from app.assistant.models.AssistantDraft import AssistantDraft
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
 from tests.support.SampleData import SampleData
@@ -16,6 +20,10 @@ class AssistantConfigurationBuilderTest:
             ToolCatalog(),
             HookCatalog(),
             CompliancePlanFactory(),
+            VoiceFactory(),
+            TranscriberFactory(),
+            SpeakingPlanFactory(),
+            NoisePlanFactory(),
         )
         draft = AssistantDraft(
             faqs=self.sample_data.make_faqs(),
@@ -29,7 +37,7 @@ class AssistantConfigurationBuilderTest:
         assistant = self.build()
         assert assistant["endCallPhrases"] == [self.sample_data.hand_off_sentence]
         assert [tool["type"] for tool in assistant["model"]["tools"]] == ["endCall"]
-        assert assistant["model"]["tools"][0]["messages"][0]["content"] == "Thanks for calling Wise. Goodbye."
+        assert assistant["model"]["tools"][0]["messages"][0]["content"] == "Thanks for calling Wise. Take care."
 
     def test_adds_the_transfer_tool_when_transferring(self) -> None:
         assistant = self.build("transfer")
@@ -52,3 +60,19 @@ class AssistantConfigurationBuilderTest:
         assistant = self.build()
         assert assistant["analysisPlan"] == {"summaryPlan": {"enabled": False}, "structuredDataPlan": {"enabled": False}}
         assert assistant["compliancePlan"]["securityFilterPlan"]["filters"] == [{"type": "prompt-injection"}]
+
+    def test_speaks_slower_and_listens_for_wise_terms(self) -> None:
+        assistant = self.build()
+        assert assistant["voice"] == {"provider": "vapi", "voiceId": "Elliot", "speed": 0.9}
+        assert "bank account" in assistant["transcriber"]["keyterm"]
+
+    def test_waits_for_the_caller_and_ignores_short_noises(self) -> None:
+        assistant = self.build()
+        assert assistant["startSpeakingPlan"]["smartEndpointingPlan"] == {"provider": "livekit"}
+        assert assistant["stopSpeakingPlan"]["numWords"] == 2
+        assert "hang on" in assistant["stopSpeakingPlan"]["interruptionPhrases"]
+
+    def test_removes_background_noise(self) -> None:
+        assistant = self.build()
+        assert assistant["backgroundSound"] == "off"
+        assert assistant["backgroundSpeechDenoisingPlan"] == {"smartDenoisingPlan": {"enabled": True}}
