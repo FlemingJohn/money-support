@@ -58,7 +58,7 @@ class AssistantConfigurationBuilder:
             "server": {
                 "url": self.configuration.vapi_webhook_url,
                 "headers": {"x-vapi-secret": self.configuration.vapi_webhook_secret},
-                "timeoutSeconds": 20,
+                "timeoutSeconds": 60,
             },
             "serverMessages": ["status-update", "end-of-call-report"],
         }
