@@ -31,6 +31,9 @@ class PersonalDataRedactorTest:
             ("the sort code is 12-34-56", "the sort code is [sort code removed]"),
             ("Hi, I am Priya, card ending soon", "Hi, I am [name removed], card ending soon"),
             ("I'm Tom and my transfer is late", "I'm [name removed] and my transfer is late"),
+            ("my card number, 3 4 5 0", "my card number, [card number removed]"),
+            ("the card ends in 7781", "the card ends in [card number removed]"),
+            ("my account is 4471 2", "my account is [bank account number removed]"),
         ],
     )
     def test_removes_personal_data(self, redactor: PersonalDataRedactor, text: str, redacted_text: str) -> None:
@@ -48,6 +51,8 @@ class PersonalDataRedactorTest:
             "My transfer number is 123456789",
             "Why does it say my transfer's complete?",
             "I am worried, this is Wise right?",
+            "I paid by card, 500 pounds on Monday",
+            "I paid by card, 5000 pounds on Monday",
         ],
     )
     def test_keeps_details_that_are_not_personal(self, redactor: PersonalDataRedactor, text: str) -> None:
