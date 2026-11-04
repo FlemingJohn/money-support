@@ -1,4 +1,4 @@
 export interface LineMaskingResult {
-  status: "checking" | "checked" | "failed";
+  status: "partial" | "checked" | "failed";
   redactedText: string;
 }
