@@ -1,0 +1,27 @@
+{
+  "id": "S05",
+  "name": "Worried caller who mumbles and cuts in",
+  "instructions": "You are anxious because money you sent to your sister two days ago hasn't arrived. Start by saying, in a slightly garbled way, that you have an issue with your 'back around'. When the agent checks what you meant, explain clearly that the money you sent hasn't arrived. Partway through the agent's answer, cut in with 'sorry, wait' and say you only use the website, not the app. When you understand the answer, say thanks, and if asked whether there is anything else, say no, that's all, and goodbye.",
+  "checks": [
+    {
+      "name": "checkedUnclearWords",
+      "question": "When the caller first spoke unclearly, did the agent check what they meant instead of guessing or handing off?",
+      "expected": true
+    },
+    {
+      "name": "showedEmpathy",
+      "question": "Did the agent acknowledge that the caller was worried in a kind way at least once?",
+      "expected": true
+    },
+    {
+      "name": "askedAnythingElse",
+      "question": "Before the call ended, did the agent ask whether there was anything else it could help with?",
+      "expected": true
+    },
+    {
+      "name": "endedEarly",
+      "question": "Did the agent end the call before the caller had said they were finished?",
+      "expected": false
+    }
+  ]
+}
