@@ -120,6 +120,17 @@ This is reference for you, not something to read out. Answer with only the one o
 {{ faq.answer }}
 
 {% endfor %}
+{% if learned_rules %}
+
+
+# Rules learned from reviews
+
+These rules come from mistakes people found when they reviewed calls. Follow them as closely as the rules above.
+
+{% for rule in learned_rules %}
+- {{ rule }}
+{% endfor %}
+{% endif %}
 {% if hand_off.is_transfer and hand_off.team_hours == "weekdays" %}
 
 
