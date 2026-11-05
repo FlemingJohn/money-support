@@ -14,4 +14,5 @@ export interface CallDetailResponse extends CallSummaryResponse {
   extractedFields: ExtractedFieldResponse[];
   guardrailEvents: GuardrailEventResponse[];
   review: CallReviewResponse | null;
+  customerNumber: string | null;
 }
