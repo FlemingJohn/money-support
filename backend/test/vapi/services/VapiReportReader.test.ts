@@ -1,11 +1,31 @@
 import type { Clock } from "../../../src/common/services/Clock";
 import { CallChannel, Speaker } from "../../../src/generated/prisma/client";
 import { VapiCallMissingException } from "../../../src/vapi/exceptions/VapiCallMissingException";
+import { HandOffToolReader } from "../../../src/vapi/services/HandOffToolReader";
 import { VapiReportReader } from "../../../src/vapi/services/VapiReportReader";
 
 describe("VapiReportReader", () => {
   const fixedNow = new Date("2026-11-03T10:00:00Z");
-  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock);
+  const vapiReportReader = new VapiReportReader({ now: () => fixedNow } as Clock, new HandOffToolReader());
+
+  it("reads the hand-off reason when the agent used the hand-off tool", () => {
+    const report = vapiReportReader.read({
+      type: "end-of-call-report",
+      call: { id: "call-2", type: "webCall" },
+      artifact: {
+        messages: [
+          { role: "user", message: "Can I speak to someone?", secondsFromStart: 2 },
+          { role: "tool_calls", toolCalls: [{ id: "tool-1", function: { name: "handOffToHuman", arguments: '{"reason":"askedForPerson","callerNeed":"wants a person"}' } }] },
+        ],
+      },
+    });
+    expect(report.handOffReason).toBe("askedForPerson");
+  });
+
+  it("has no hand-off reason when the tool was not used", () => {
+    const report = vapiReportReader.read({ type: "end-of-call-report", call: { id: "call-3", type: "webCall" }, artifact: { messages: [] } });
+    expect(report.handOffReason).toBeNull();
+  });
 
   it("reads the transcript and call details of a finished web call", () => {
     const report = vapiReportReader.read({
