@@ -6,11 +6,11 @@ import { ReviewStatusButtons } from "@/review/ReviewStatusButtons";
 import { VerdictForm } from "@/review/VerdictForm";
 import type { ReviewActionsCardProps } from "@/types/ReviewActionsCardProps";
 
-export function ReviewActionsCard({ review, callbacks }: ReviewActionsCardProps) {
+export function ReviewActionsCard({ review, callbacks, agentReplies }: ReviewActionsCardProps) {
   return (
     <SectionCard title="Review" icon={ClipboardCheck}>
       <div className="flex flex-col gap-4 p-5">
-        <VerdictForm key={`${review.verdict}-${review.verdictReason}`} review={review} />
+        <VerdictForm key={`${review.verdict}-${review.verdictReason}-${review.verdictMessageId}`} review={review} agentReplies={agentReplies} />
         <CallbackHistory callbacks={callbacks} />
         <ReviewNoteForm key={review.note} review={review} />
         <ReviewStatusButtons review={review} />
