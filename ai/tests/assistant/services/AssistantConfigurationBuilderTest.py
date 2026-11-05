@@ -73,6 +73,9 @@ class AssistantConfigurationBuilderTest:
         assert assistant["stopSpeakingPlan"]["numWords"] == 2
         assert "hang on" in assistant["stopSpeakingPlan"]["interruptionPhrases"]
 
+    def test_shares_the_prompt_cache_between_calls_with_the_same_prompt(self) -> None:
+        assert self.build()["model"]["promptCacheKey"] == "money-support-hash"
+
     def test_removes_background_noise(self) -> None:
         assistant = self.build()
         assert assistant["backgroundSound"] == "off"
