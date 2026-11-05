@@ -33,6 +33,8 @@ class JudgePlanFactory:
         }
 
     def make_hand_off_plan(self, hand_off: HandOffSettings) -> dict:
+        if not hand_off.is_transfer and self.configuration.has_hand_off_tool:
+            return {"type": "regex", "content": self.any_content, "toolCalls": [{"name": "handOffToHuman"}]}
         sentence_plan = {"type": "regex", "content": self.make_sentence_pattern(hand_off.hand_off_sentence)}
         if not hand_off.is_transfer:
             return sentence_plan
