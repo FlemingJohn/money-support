@@ -3,31 +3,43 @@ import { CallTable } from "@/calls/CallTable";
 import { CardLink } from "@/components/CardLink";
 import { ChartLegendItem } from "@/components/ChartLegendItem";
 import { SectionCard } from "@/components/SectionCard";
+import { TabLinkBar } from "@/components/TabLinkBar";
 import { getOverview } from "@/lib/getOverview";
 import { getQuality } from "@/lib/getQuality";
 import { AgentQualityCard } from "@/overview/AgentQualityCard";
-import { CallsPerHourChart } from "@/overview/CallsPerHourChart";
+import { CallVolumeChart } from "@/overview/CallVolumeChart";
 import { HandOffReasonList } from "@/overview/HandOffReasonList";
 import { makeOutcomeShares } from "@/overview/makeOutcomeShares";
+import { makeOverviewPeriodLinks } from "@/overview/makeOverviewPeriodLinks";
 import { makeOverviewStats } from "@/overview/makeOverviewStats";
 import { NeedsReviewList } from "@/overview/NeedsReviewList";
 import { OutcomeDonutChart } from "@/overview/OutcomeDonutChart";
 import { OutcomeLegend } from "@/overview/OutcomeLegend";
 import { OverviewStats } from "@/overview/OverviewStats";
+import { overviewPeriodWordings } from "@/overview/overviewPeriodWordings";
+import { readOverviewPeriod } from "@/overview/readOverviewPeriod";
 import { toCallRow } from "@/calls/toCallRow";
 import { toReviewPreview } from "@/overview/toReviewPreview";
+import type { SearchParamsProps } from "@/types/SearchParamsProps";
 
-export async function OverviewContent() {
-  const [overview, quality] = await Promise.all([getOverview(), getQuality()]);
-  const outcomeShares = makeOutcomeShares(overview.today);
+export async function OverviewContent({ searchParams }: SearchParamsProps) {
+  const period = readOverviewPeriod(await searchParams);
+  const wording = overviewPeriodWordings[period];
+  const [overview, quality] = await Promise.all([getOverview(period), getQuality()]);
+  const outcomeShares = makeOutcomeShares(overview.current);
 
   return (
     <>
-      <OverviewStats stats={makeOverviewStats(overview.today, overview.yesterday)} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <TabLinkBar label="Overview period" links={makeOverviewPeriodLinks(period)} />
+        <p className="text-sm text-ink-muted">Days counted in UK time</p>
+      </div>
+
+      <OverviewStats stats={makeOverviewStats(overview.current, overview.previous, wording)} />
 
       <div className="flex flex-wrap items-stretch gap-4">
         <SectionCard
-          title="Calls per hour"
+          title={wording.chartTitle}
           icon={BarChart3}
           className="flex-[2_1_560px]"
           action={
@@ -38,7 +50,7 @@ export async function OverviewContent() {
           }
         >
           <div className="flex flex-1 items-center p-5">
-            <CallsPerHourChart counts={overview.callsPerHour} />
+            <CallVolumeChart counts={overview.callVolume} label={wording.chartTitle} emptyMessage={wording.noCalls} />
           </div>
         </SectionCard>
 
@@ -48,7 +60,7 @@ export async function OverviewContent() {
               <OutcomeDonutChart shares={outcomeShares} />
               <OutcomeLegend shares={outcomeShares} />
             </div>
-            <HandOffReasonList reasons={overview.handOffReasons} />
+            <HandOffReasonList reasons={overview.handOffReasons} emptyMessage={wording.noHandOffs} />
           </div>
         </SectionCard>
       </div>
