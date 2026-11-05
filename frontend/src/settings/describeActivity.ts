@@ -18,6 +18,14 @@ const descriptions: Record<string, string> = {
   settingsUpdated: "Settings changed",
   handOffEmailSent: "Hand-off emailed to the team",
   handOffEmailFailed: "Hand-off email failed",
+  callReanalysed: "Call re-analysed after a report",
+  maskingMissRecorded: "Masking miss recorded",
+  reviewTestCreated: "Test created from a review",
+  reviewTestsRun: "Agent tests run",
+  suggestionCreated: "Improvement suggested",
+  suggestionApproved: "Improvement approved",
+  suggestionRejected: "Improvement rejected",
+  promptRuleToggled: "Learned rule switched",
 };
 
 export function describeActivity(action: string): string {
