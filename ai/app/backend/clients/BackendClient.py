@@ -6,10 +6,15 @@ from pydantic import TypeAdapter, ValidationError
 from app.backend.exceptions.BackendRequestError import BackendRequestError
 from app.backend.models.AssistantSettings import AssistantSettings
 from app.backend.models.Faq import Faq
+from app.evaluation.models.EvaluationCase import EvaluationCase
+from app.improvement.models.FeedbackItem import FeedbackItem
 
 
 class BackendClient:
     faq_list = TypeAdapter(list[Faq])
+    case_list = TypeAdapter(list[EvaluationCase])
+    rule_list = TypeAdapter(list[str])
+    feedback_list = TypeAdapter(list[FeedbackItem])
 
     def __init__(self, http_client: httpx.AsyncClient) -> None:
         self.http_client = http_client
@@ -21,6 +26,18 @@ class BackendClient:
     async def get_assistant_settings(self) -> AssistantSettings:
         body = await self.get("/internal/settings")
         return self.parse(lambda: AssistantSettings.model_validate(body))
+
+    async def get_learned_rules(self) -> list[str]:
+        body = await self.get("/internal/prompt-rules")
+        return self.parse(lambda: self.rule_list.validate_python(body))
+
+    async def get_feedback(self) -> list[FeedbackItem]:
+        body = await self.get("/internal/feedback")
+        return self.parse(lambda: self.feedback_list.validate_python(body))
+
+    async def get_review_tests(self) -> list[EvaluationCase]:
+        body = await self.get("/internal/review-tests")
+        return self.parse(lambda: self.case_list.validate_python(body))
 
     async def ring_team(self, call_id: str, reason: str, caller_need: str) -> bool:
         body = await self.post("/internal/hand-offs/ring", {"callId": call_id, "reason": reason, "callerNeed": caller_need})
