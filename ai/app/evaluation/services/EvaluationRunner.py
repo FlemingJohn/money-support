@@ -10,6 +10,7 @@ from app.evaluation.clients.VapiEvaluationClient import VapiEvaluationClient
 from app.evaluation.factories.MockConversationFactory import MockConversationFactory
 from app.evaluation.models.EvaluationCase import EvaluationCase
 from app.evaluation.models.EvaluationCaseResult import EvaluationCaseResult
+from app.evaluation.models.EvaluationProgress import EvaluationProgress
 from app.evaluation.models.EvaluationReport import EvaluationReport
 from app.evaluation.services.EvaluationCaseLoader import EvaluationCaseLoader
 
@@ -32,11 +33,13 @@ class EvaluationRunner:
         self.run_poller = run_poller
         self.run_limit = asyncio.Semaphore(run_poller.configuration.max_concurrent_runs)
 
-    async def run(self, target: dict | None = None) -> EvaluationReport:
+    async def run(self, target: dict | None = None, progress: EvaluationProgress | None = None) -> EvaluationReport:
         target = target or {"type": "assistant", "assistantId": await self.assistant_client.get_assistant_id()}
         settings = await self.backend_client.get_assistant_settings()
         cases = self.case_loader.load_cases() + await self.load_review_cases()
-        results = await asyncio.gather(*[self.run_case(case, target, settings.hand_off) for case in cases])
+        if progress:
+            await progress.on_start(len(cases))
+        results = await asyncio.gather(*[self.run_reported_case(case, target, settings.hand_off, progress) for case in cases])
         return EvaluationReport.from_results(list(results))
 
     async def load_review_cases(self) -> list[EvaluationCase]:
@@ -44,6 +47,12 @@ class EvaluationRunner:
             return await self.backend_client.get_review_tests()
         except BackendRequestError:
             return []
+
+    async def run_reported_case(self, case: EvaluationCase, target: dict, hand_off: HandOffSettings, progress: EvaluationProgress | None) -> EvaluationCaseResult:
+        result = await self.run_case(case, target, hand_off)
+        if progress:
+            await progress.on_result(result)
+        return result
 
     async def run_case(self, case: EvaluationCase, target: dict, hand_off: HandOffSettings) -> EvaluationCaseResult:
         async with self.run_limit:
