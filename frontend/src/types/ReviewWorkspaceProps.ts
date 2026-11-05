@@ -6,4 +6,5 @@ export interface ReviewWorkspaceProps {
   detail: ReviewDetail;
   callbacks: Callback[];
   phone: PhoneSettings;
+  nextReviewPath: string | null;
 }
