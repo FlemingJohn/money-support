@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { type Call, type CallChannel, CallStatus, type Prisma, ReviewStatus } from "../../generated/prisma/client";
 import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction";
+import type { CallAnalysisUpdate } from "../types/CallAnalysisUpdate";
 import { PrismaService } from "../../prisma/services/PrismaService";
 import type { CallCompletion } from "../types/CallCompletion";
 import { callDetailInclude } from "../queries/callDetailInclude";
@@ -27,6 +28,10 @@ export class CallRepository {
       create: { id: callId, ...values, status: CallStatus.ended },
       update: { ...values, status: CallStatus.ended },
     });
+  }
+
+  async updateAnalysis(transaction: DatabaseTransaction, callId: string, analysis: CallAnalysisUpdate): Promise<void> {
+    await transaction.call.update({ where: { id: callId }, data: analysis });
   }
 
   findById(callId: string): Promise<Call | null> {
