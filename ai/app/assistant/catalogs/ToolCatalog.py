@@ -1,17 +1,23 @@
+from app.assistant.factories.HandOffToolFactory import HandOffToolFactory
 from app.backend.models.HandOffSettings import HandOffSettings
 from app.common.services.TemplateRenderer import TemplateRenderer
+from app.configuration.AppConfiguration import AppConfiguration
 
 
 class ToolCatalog:
     missed_transfer_message = "Sorry, nobody from the team could take your call just now. We've let them know, and they'll call you back on this number."
 
-    def __init__(self, template_renderer: TemplateRenderer) -> None:
+    def __init__(self, template_renderer: TemplateRenderer, configuration: AppConfiguration, hand_off_tool_factory: HandOffToolFactory) -> None:
         self.template_renderer = template_renderer
+        self.configuration = configuration
+        self.hand_off_tool_factory = hand_off_tool_factory
 
     def make_tools(self, hand_off: HandOffSettings) -> list[dict]:
         tools = [self.make_end_call_tool()]
         if hand_off.is_transfer:
             tools.append(self.make_transfer_tool(hand_off))
+        elif self.configuration.has_hand_off_tool:
+            tools.append(self.hand_off_tool_factory.make(hand_off))
         return tools
 
     def make_end_call_tool(self) -> dict:
