@@ -50,6 +50,12 @@ from app.handoff.services.HandOffToolService import HandOffToolService
 from app.handoff.services.ReasonNode import ReasonNode
 from app.handoff.services.RingTeamNode import RingTeamNode
 from app.health.routes.HealthRouter import HealthRouter
+from app.improvement.routes.ImprovementRouter import ImprovementRouter
+from app.improvement.services.FeedbackNode import FeedbackNode
+from app.improvement.services.ImprovementGraph import ImprovementGraph
+from app.improvement.services.ImprovementService import ImprovementService
+from app.improvement.services.ProposeRuleNode import ProposeRuleNode
+from app.improvement.services.TestRuleNode import TestRuleNode
 from app.simulation.clients.VapiSimulationClient import VapiSimulationClient
 from app.simulation.factories.SimulationEntryFactory import SimulationEntryFactory
 from app.simulation.routes.SimulationRouter import SimulationRouter
@@ -97,14 +103,28 @@ class ServiceContainer:
             self.make_evaluation_router(),
             self.make_simulation_router(),
             self.make_hand_off_tool_router(),
+            self.make_improvement_router(),
         ]
+
+    def make_improvement_router(self) -> APIRouter:
+        configuration_builder = self.make_configuration_builder()
+        sync_service = self.make_sync_service(configuration_builder)
+        graph = ImprovementGraph(
+            FeedbackNode(self.backend_client),
+            ProposeRuleNode(self.structured_model, self.template_renderer),
+            TestRuleNode(self.make_evaluation_runner(), sync_service, configuration_builder),
+        )
+        return ImprovementRouter(ImprovementService(graph), self.service_secret_guard).make()
 
     def make_hand_off_tool_router(self) -> APIRouter:
         graph = HandOffGraph(ReasonNode(HandOffReasonCatalog()), RingTeamNode(self.backend_client))
         return HandOffToolRouter(HandOffToolService(graph), VapiSecretGuard(self.configuration)).make()
 
     def make_assistant_router(self) -> APIRouter:
-        configuration_builder = AssistantConfigurationBuilder(
+        return AssistantRouter(self.make_sync_service(self.make_configuration_builder()), self.service_secret_guard).make()
+
+    def make_configuration_builder(self) -> AssistantConfigurationBuilder:
+        return AssistantConfigurationBuilder(
             self.configuration,
             ToolCatalog(self.template_renderer, self.configuration, HandOffToolFactory(self.configuration, HandOffReasonCatalog())),
             HookCatalog(),
@@ -114,13 +134,9 @@ class ServiceContainer:
             SpeakingPlanFactory(),
             NoisePlanFactory(),
         )
-        sync_service = AssistantSyncService(
-            self.backend_client,
-            PromptBuilder(self.template_renderer, self.configuration),
-            configuration_builder,
-            self.assistant_client,
-        )
-        return AssistantRouter(sync_service, self.service_secret_guard).make()
+
+    def make_sync_service(self, configuration_builder: AssistantConfigurationBuilder) -> AssistantSyncService:
+        return AssistantSyncService(self.backend_client, PromptBuilder(self.template_renderer, self.configuration), configuration_builder, self.assistant_client)
 
     def make_analysis_router(self) -> APIRouter:
         line_masker = LineMasker(self.structured_model, self.template_renderer, PieceMasker(MaskKindCatalog(), OwnNumberMatcher()), MaskKindCatalog())
@@ -136,7 +152,10 @@ class ServiceContainer:
         return AnalysisRouter(call_analysis_service, line_masker, self.service_secret_guard).make()
 
     def make_evaluation_router(self) -> APIRouter:
-        runner = EvaluationRunner(
+        return EvaluationRouter(self.make_evaluation_runner(), self.service_secret_guard).make()
+
+    def make_evaluation_runner(self) -> EvaluationRunner:
+        return EvaluationRunner(
             EvaluationCaseLoader(self.configuration.evaluation_cases_folder),
             MockConversationFactory(JudgePlanFactory(self.configuration, self.template_renderer)),
             VapiEvaluationClient(self.vapi_client),
@@ -144,7 +163,6 @@ class ServiceContainer:
             self.backend_client,
             RunPoller(self.configuration),
         )
-        return EvaluationRouter(runner, self.service_secret_guard).make()
 
     def make_simulation_router(self) -> APIRouter:
         runner = SimulationRunner(
