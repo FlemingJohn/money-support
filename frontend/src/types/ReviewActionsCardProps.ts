@@ -6,4 +6,5 @@ export interface ReviewActionsCardProps {
   review: Review;
   callbacks: Callback[];
   agentReplies: CallMessage[];
+  nextReviewPath: string | null;
 }
