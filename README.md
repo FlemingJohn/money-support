@@ -39,13 +39,15 @@ Anything else is handed to a person. The agent calls the `handOffToHuman` tool w
 **One call**
 
 1. The caller rings the Twilio number, or starts a test call in the browser.
-2. Vapi hears, thinks and speaks. It answers from the six FAQs, or says the hand-off sentence and hangs up.
-3. When the call ends, Vapi sends the end-of-call report to the backend.
-4. The backend asks ai to analyse the call.
-5. ai masks each line and writes the summary, topic and fields on Azure OpenAI.
-6. The backend saves the masked call and opens a review if a person is needed.
-7. After a hand-off, a missed transfer or an out-of-hours call, the team's phone rings and the backend emails the team through Gmail. A hand-off through the tool rings the team during the call, not after it.
-8. The team opens the call on the Review page and calls the customer back.
+2. Vapi hears, thinks and speaks, and answers from the six FAQs.
+3. If the caller needs a person, Vapi calls the `handOffToHuman` tool on ai, with the reason.
+4. ai's LangGraph hand-off graph turns the reason into plain words and asks the backend to ring the team.
+5. Twilio rings the support team's phone while the call is still going. Vapi tells the caller "I've passed this to our support team, and someone will be in touch with you shortly." and hangs up.
+6. When the call ends, Vapi sends the end-of-call report to the backend.
+7. The backend asks ai to analyse the call. ai masks each line and writes the summary, topic and fields on Azure OpenAI.
+8. The backend saves the masked call and opens a review.
+9. The backend emails the team, including why the caller needed a person.
+10. The team opens the call on the Review page and calls the customer back.
 
 **An admin change**
 
@@ -69,10 +71,14 @@ sequenceDiagram
     participant Azure as Azure OpenAI
     participant DB as Supabase
     participant Mail as Gmail
+    actor Team as Support team
     Caller->>Vapi: Calls the Twilio number or starts a web call
     Vapi->>Caller: Greets, listens, answers from the six FAQs
     alt Out of scope, or asks for a person
-        Vapi->>Caller: Says the hand-off sentence, then hangs up or transfers
+        Vapi->>AI: handOffToHuman tool with the reason
+        AI->>Backend: ring the team
+        Backend->>Team: Twilio rings the team phone with the reason
+        Vapi->>Caller: "I've passed this to our support team…" and hangs up
     else Done
         Caller->>Vapi: "No, that's all, bye"
         Vapi->>Caller: "Thanks for calling Wise. Take care." and hangs up
@@ -82,8 +88,8 @@ sequenceDiagram
     AI->>Azure: mask each line, then summary, topic and fields in parallel, then checks
     AI-->>Backend: masked lines, summary, topic, matched FAQ, fields, suggested review
     Backend->>DB: save call, masked lines, fields, review, activity
-    opt Handed off, missed transfer or out of hours
-        Backend->>Mail: one email to the team, masked details only
+    opt Handed off
+        Backend->>Mail: one email to the team, with the reason and masked details only
     end
     Backend->>Vapi: delete Vapi's own copy when that privacy setting is on
 ```
