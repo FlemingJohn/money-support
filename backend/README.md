@@ -49,7 +49,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 2. `VapiReportReader` turns the payload into a `FinishedCallReport`.
 3. `ReportAnalyser` sends the transcript, the privacy toggles and the FAQs to ai/ `/analysis`, which returns masked lines, summary, topic, matched FAQ and fields. If ai/ is down, every line is saved as "[waiting for privacy check]" and Vapi's copy is kept.
 4. `ReviewTriage` decides whether a person needs to look at it: hand-off, removed or unchecked data, a field under 75% confidence, or a possible mistake suggested by ai/.
-5. `CallCompletionBuilder` masks the caller's number, and encrypts it only when a review needs a call back.
+5. `CallCompletionBuilder` masks the caller's number for display, and keeps the full number for call backs when that privacy setting is on. The caller's number is also sent to ai, so it stays in the transcript while any other phone number is masked.
 6. `FinishedCallWriter` saves the call, messages, fields, guardrail events, review and activity in one transaction.
 7. `HandOffEmailService` emails the team when the call was handed off, a transfer was not answered, the caller hung up during a transfer, or the caller rang out of hours. It sends once per call, using only masked details, and never stops the call being saved if Gmail fails.
 8. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on and the analysis is complete.
@@ -142,7 +142,6 @@ Fill in `.env`:
 | `DATABASE_CA_CERTIFICATE` | Text of `certs/supabase-ca.crt`, so the connection to Supabase is verified. Leave empty for a local database. |
 | `DIRECT_URL` | Supabase pooler in session mode (port 5432) with `?sslmode=verify-full&sslrootcert=certs/supabase-ca.crt`, used for migrations |
 | `VAPI_WEBHOOK_SECRET`, `SERVICE_SECRET`, `CRON_SECRET` | Long random strings |
-| `ENCRYPTION_KEY` | 32 random bytes in base64: `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
 | `AI_SERVICE_URL` | Leave empty until ai/ runs |
 | `TWILIO_*` | Leave empty to use the call back simulator |
 
