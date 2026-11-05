@@ -1,4 +1,5 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
+import { OverviewQueryDto } from "../dto/OverviewQueryDto";
 import type { OverviewResponse } from "../responses/OverviewResponse";
 import type { QualityResponse } from "../responses/QualityResponse";
 import { OverviewService } from "../services/OverviewService";
@@ -8,8 +9,8 @@ export class OverviewController {
   constructor(private readonly overviewService: OverviewService) {}
 
   @Get()
-  getOverview(): Promise<OverviewResponse> {
-    return this.overviewService.getOverview();
+  getOverview(@Query() query: OverviewQueryDto): Promise<OverviewResponse> {
+    return this.overviewService.getOverview(query.period);
   }
 
   @Get("quality")
