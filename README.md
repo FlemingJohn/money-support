@@ -34,37 +34,7 @@ Anything else gets the hand-off sentence, *"Please contact the Wise support team
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    caller(["Caller"])
-    twilio["Twilio number"]
-    browser["Test call page"]
-    subgraph vapi["Vapi"]
-        stt["Deepgram nova-3"] --> llm["gpt-4o + system prompt"] --> tts["Vapi voice"]
-    end
-    subgraph ours["Our services on Vercel"]
-        backend["backend/ NestJS"]
-        ai["ai/ FastAPI + LangGraph"]
-        frontend["frontend/ Next.js"]
-    end
-    azure[("Azure OpenAI gpt-4o")]
-    db[("Supabase Postgres")]
-    gmail["Gmail SMTP"]
-    team(["Support team"])
-
-    caller -- "1 phone call" --> twilio --> vapi
-    caller -.->|"1 web call"| browser -.-> vapi
-    vapi -- "2 answers or hands off" --> caller
-    vapi -- "3 end-of-call report" --> backend
-    backend -- "4 analyse the call" --> ai
-    ai -- "5 mask, summarise, classify" --> azure
-    backend -- "6 save masked call and review" --> db
-    backend -- "7 hand-off email" --> gmail --> team
-    team -- "8 review and call back" --> frontend --> backend
-    frontend -- "A edit FAQs or settings" --> backend
-    backend -- "B sync the agent" --> ai
-    ai -- "C update the assistant" --> vapi
-```
+![Money Support Agent architecture: caller, Twilio, Vapi, backend, ai, Azure OpenAI, Supabase, Gmail and the dashboard, with numbered steps](docs/architecture.svg)
 
 ### A call, step by step
 
