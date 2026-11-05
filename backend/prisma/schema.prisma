@@ -94,6 +94,14 @@ enum ActivityAction {
   settingsUpdated
   handOffEmailSent
   handOffEmailFailed
+  callReanalysed
+  maskingMissRecorded
+  reviewTestCreated
+  reviewTestsRun
+  suggestionCreated
+  suggestionApproved
+  suggestionRejected
+  promptRuleToggled
 }
 
 enum ActivityItemType {
@@ -103,6 +111,28 @@ enum ActivityItemType {
   faq
   agent
   settings
+  reviewTest
+  suggestion
+  promptRule
+}
+
+enum ReviewTestCheck {
+  answers
+  handsOff
+}
+
+enum ReviewTestResult {
+  notRun
+  passed
+  failed
+}
+
+enum PromptSuggestionStatus {
+  testing
+  pending
+  approved
+  rejected
+  discarded
 }
 
 model Faq {
@@ -121,38 +151,40 @@ model Faq {
 }
 
 model PromptVersion {
-  id          String   @id @default(uuid()) @db.Uuid
-  contentHash String   @unique @map("content_hash")
+  id          String       @id @default(uuid()) @db.Uuid
+  contentHash String       @unique @map("content_hash")
   content     String
-  isCurrent   Boolean  @default(false) @map("is_current")
-  createdAt   DateTime @default(now()) @map("created_at")
+  isCurrent   Boolean      @default(false) @map("is_current")
+  createdAt   DateTime     @default(now()) @map("created_at")
   calls       Call[]
+  addedRules  PromptRule[]
 
   @@map("prompt_versions")
 }
 
 model Call {
-  id                      String           @id
-  channel                 CallChannel
-  status                  CallStatus       @default(inProgress)
-  startedAt               DateTime?        @map("started_at")
-  endedAt                 DateTime?        @map("ended_at")
-  endedReason             String?          @map("ended_reason")
-  summary                 String?
-  topic                   String?
-  outcome                 CallOutcome?
-  maskedCustomerNumber    String?          @map("masked_customer_number")
-  customerNumber          String?          @map("customer_number")
-  matchedFaqId            String?          @map("matched_faq_id") @db.Uuid
-  promptVersionId         String?          @map("prompt_version_id") @db.Uuid
-  createdAt               DateTime         @default(now()) @map("created_at")
-  updatedAt               DateTime         @updatedAt @map("updated_at")
-  matchedFaq              Faq?             @relation(fields: [matchedFaqId], references: [id], onDelete: SetNull)
-  promptVersion           PromptVersion?   @relation(fields: [promptVersionId], references: [id], onDelete: SetNull)
-  messages                CallMessage[]
-  extractedFields         ExtractedField[]
-  guardrailEvents         GuardrailEvent[]
-  review                  Review?
+  id                   String           @id
+  channel              CallChannel
+  status               CallStatus       @default(inProgress)
+  startedAt            DateTime?        @map("started_at")
+  endedAt              DateTime?        @map("ended_at")
+  endedReason          String?          @map("ended_reason")
+  summary              String?
+  topic                String?
+  outcome              CallOutcome?
+  maskedCustomerNumber String?          @map("masked_customer_number")
+  customerNumber       String?          @map("customer_number")
+  matchedFaqId         String?          @map("matched_faq_id") @db.Uuid
+  promptVersionId      String?          @map("prompt_version_id") @db.Uuid
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @updatedAt @map("updated_at")
+  matchedFaq           Faq?             @relation(fields: [matchedFaqId], references: [id], onDelete: SetNull)
+  promptVersion        PromptVersion?   @relation(fields: [promptVersionId], references: [id], onDelete: SetNull)
+  messages             CallMessage[]
+  extractedFields      ExtractedField[]
+  guardrailEvents      GuardrailEvent[]
+  review               Review?
+  maskingMisses        MaskingMiss[]
 
   @@index([endedAt])
   @@map("calls")
@@ -167,6 +199,8 @@ model CallMessage {
   secondsFromStart Float            @map("seconds_from_start")
   call             Call             @relation(fields: [callId], references: [id], onDelete: Cascade)
   extractedFields  ExtractedField[]
+  maskingMisses    MaskingMiss[]
+  wrongVerdicts    Review[]         @relation("VerdictMessage")
 
   @@unique([callId, position])
   @@map("call_messages")
@@ -202,19 +236,23 @@ model GuardrailEvent {
 }
 
 model Review {
-  callId            String         @id @map("call_id")
-  status            ReviewStatus   @default(open)
+  callId            String                   @id @map("call_id")
+  status            ReviewStatus             @default(open)
   reason            ReviewReason
-  note              String         @default("")
+  note              String                   @default("")
   verdict           ReviewVerdict?
-  verdictReason     VerdictReason? @map("verdict_reason")
-  expectedBehaviour String?        @map("expected_behaviour")
-  resolvedAt        DateTime?      @map("resolved_at")
-  handOffEmailedAt  DateTime?      @map("hand_off_emailed_at")
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @updatedAt @map("updated_at")
-  call              Call           @relation(fields: [callId], references: [id], onDelete: Cascade)
+  verdictReason     VerdictReason?           @map("verdict_reason")
+  expectedBehaviour String?                  @map("expected_behaviour")
+  resolvedAt        DateTime?                @map("resolved_at")
+  handOffEmailedAt  DateTime?                @map("hand_off_emailed_at")
+  verdictMessageId  String?                  @map("verdict_message_id") @db.Uuid
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @updatedAt @map("updated_at")
+  call              Call                     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  verdictMessage    CallMessage?             @relation("VerdictMessage", fields: [verdictMessageId], references: [id], onDelete: SetNull)
   callbacks         Callback[]
+  reviewTest        ReviewTest?
+  suggestionLinks   PromptSuggestionReview[]
 
   @@index([status])
   @@map("reviews")
@@ -252,4 +290,74 @@ model ActivityEvent {
 
   @@index([createdAt])
   @@map("activity_events")
+}
+
+model MaskingMiss {
+  id            String       @id @default(uuid()) @db.Uuid
+  callId        String?      @map("call_id")
+  messageId     String?      @map("message_id") @db.Uuid
+  kind          String
+  maskedPattern String       @map("masked_pattern")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  call          Call?        @relation(fields: [callId], references: [id], onDelete: SetNull)
+  message       CallMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@map("masking_misses")
+}
+
+model ReviewTest {
+  id            String           @id @default(uuid()) @db.Uuid
+  number        Int              @unique @default(autoincrement())
+  reviewCallId  String?          @unique @map("review_call_id")
+  callerLine    String           @map("caller_line")
+  check         ReviewTestCheck
+  expectation   String           @default("")
+  verdictReason VerdictReason    @map("verdict_reason")
+  isEnabled     Boolean          @default(true) @map("is_enabled")
+  lastResult    ReviewTestResult @default(notRun) @map("last_result")
+  lastRunAt     DateTime?        @map("last_run_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  review        Review?          @relation(fields: [reviewCallId], references: [callId], onDelete: SetNull)
+
+  @@map("review_tests")
+}
+
+model PromptSuggestion {
+  id           String                   @id @default(uuid()) @db.Uuid
+  ruleText     String                   @default("") @map("rule_text")
+  explanation  String                   @default("")
+  status       PromptSuggestionStatus   @default(testing)
+  passedBefore Int?                     @map("passed_before")
+  passedAfter  Int?                     @map("passed_after")
+  totalTests   Int?                     @map("total_tests")
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  decidedAt    DateTime?                @map("decided_at")
+  reviews      PromptSuggestionReview[]
+  rule         PromptRule?
+
+  @@index([createdAt])
+  @@map("prompt_suggestions")
+}
+
+model PromptSuggestionReview {
+  suggestionId String           @map("suggestion_id") @db.Uuid
+  reviewCallId String           @map("review_call_id")
+  suggestion   PromptSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  review       Review           @relation(fields: [reviewCallId], references: [callId], onDelete: Cascade)
+
+  @@id([suggestionId, reviewCallId])
+  @@map("prompt_suggestion_reviews")
+}
+
+model PromptRule {
+  id               String            @id @default(uuid()) @db.Uuid
+  ruleText         String            @map("rule_text")
+  isEnabled        Boolean           @default(true) @map("is_enabled")
+  suggestionId     String?           @unique @map("suggestion_id") @db.Uuid
+  addedInVersionId String?           @map("added_in_version_id") @db.Uuid
+  createdAt        DateTime          @default(now()) @map("created_at")
+  suggestion       PromptSuggestion? @relation(fields: [suggestionId], references: [id], onDelete: SetNull)
+  addedInVersion   PromptVersion?    @relation(fields: [addedInVersionId], references: [id], onDelete: SetNull)
+
+  @@map("prompt_rules")
 }
