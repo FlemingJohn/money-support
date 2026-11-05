@@ -33,7 +33,7 @@ Everything except `/health` needs the `x-service-secret` header, with the same v
    - a Vapi voice at 0.9 speed from `VoiceFactory`, and Deepgram nova-3 with Wise key terms such as "bank account" and "IBAN" from `TranscriberFactory`
    - turn-taking from `SpeakingPlanFactory`: LiveKit smart endpointing so the agent waits for the caller to finish, and two words or a phrase such as "hang on" to interrupt it, while "okay" or "mm-hmm" never do
    - background sound off and Krisp denoising from `NoisePlanFactory`
-   - the hand-off sentence as an end-call phrase, so in end-call mode the call ends as soon as the agent says it, without a tool
+   - in end-call mode, the `handOffToHuman` tool from `HandOffToolFactory` when `AI_PUBLIC_URL` is set: Vapi sends the tool call to `/tools/hand-off`, the `HandOffGraph` (describe_reason, then ring_team) asks the backend to ring the team phone, then Vapi speaks the hand-off sentence and ends the call. Without `AI_PUBLIC_URL`, the hand-off sentence is an end-call phrase instead.
    - silence and unclear-speech hooks from `HookCatalog`
    - the prompt-injection filter from `CompliancePlanFactory`
    - Vapi's own summary and structured data turned off, because ai/ analyses the call instead
