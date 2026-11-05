@@ -1,4 +1,4 @@
-import { BookOpen, Flag, LayoutGrid, Mic, Phone } from "lucide-react";
+import { BookOpen, Flag, LayoutGrid, Mic, Phone, Sparkles } from "lucide-react";
 import type { NavigationItem } from "@/types/NavigationItem";
 
 export const mainNavigationItems: NavigationItem[] = [
@@ -7,4 +7,5 @@ export const mainNavigationItems: NavigationItem[] = [
   { label: "Review queue", href: "/review", icon: Flag },
   { label: "FAQs", href: "/faqs", icon: BookOpen },
   { label: "Test call", href: "/test-call", icon: Mic },
+  { label: "Agent quality", href: "/agent-quality", icon: Sparkles },
 ];
