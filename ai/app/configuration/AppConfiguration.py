@@ -12,6 +12,7 @@ class AppConfiguration(BaseSettings):
     vapi_base_url: str = "https://api.vapi.ai"
     vapi_webhook_url: str = ""
     vapi_webhook_secret: str = ""
+    ai_public_url: str = ""
     assistant_tag: str = "money-support"
     assistant_model: str = "gpt-4o"
     judge_model: str = "gpt-4.1"
@@ -38,3 +39,7 @@ class AppConfiguration(BaseSettings):
     @property
     def has_webhook(self) -> bool:
         return len(self.vapi_webhook_url) > 0
+
+    @property
+    def has_hand_off_tool(self) -> bool:
+        return len(self.ai_public_url) > 0 and len(self.vapi_webhook_secret) > 0
