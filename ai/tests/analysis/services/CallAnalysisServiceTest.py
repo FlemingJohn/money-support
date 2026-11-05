@@ -70,3 +70,10 @@ class CallAnalysisServiceTest:
         response, _ = self.analyse(ScriptedAnswers().all(), self.make_request("assistant-said-end-call-phrase"))
         assert response.is_handed_off
         assert response.suggested_review.reason == "handOff"
+
+    def test_keeps_the_saved_lines_when_reanalysing_without_masking(self) -> None:
+        request = self.make_request().model_copy(update={"mask_lines": False})
+        response, model = self.analyse(ScriptedAnswers().all(), request)
+        assert [line.redacted_text for line in response.lines] == [line.text for line in request.lines]
+        assert all(output_type is not MaskingOutput for output_type, _ in model.questions)
+        assert response.summary
