@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Speaker } from "../../generated/prisma/client";
 import { handOffEmailWordings } from "../catalogs/handOffEmailWordings";
+import { handOffReasonLabels } from "../catalogs/handOffReasonLabels";
 import type { HandOffEmail } from "../types/HandOffEmail";
 import type { HandOffEmailInput } from "../types/HandOffEmailInput";
 import type { HandOffEmailWording } from "../types/HandOffEmailWording";
@@ -28,7 +29,9 @@ export class HandOffEmailBuilder {
   }
 
   private makeDetails(input: HandOffEmailInput): [string, string][] {
+    const reasonRow: [string, string][] = input.handOffReason ? [["Why", handOffReasonLabels[input.handOffReason] ?? input.handOffReason]] : [];
     return [
+      ...reasonRow,
       ["When", `${this.ukTime.format(input.startedAt ?? input.endedAt)} UK time, ${this.getDurationSeconds(input)} seconds`],
       ["Caller", input.maskedCustomerNumber ?? "Not known"],
       ["Topic", input.topic ?? "Not known"],
