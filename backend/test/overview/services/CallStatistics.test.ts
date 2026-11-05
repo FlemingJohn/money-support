@@ -17,7 +17,7 @@ describe("CallStatistics", () => {
       topic,
       outcome,
       maskedCustomerNumber: null,
-      encryptedCustomerNumber: null,
+      customerNumber: null,
       matchedFaqId: null,
       promptVersionId: null,
       createdAt: endedAt,
