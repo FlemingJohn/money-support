@@ -2,9 +2,19 @@ import { verdictReasonLabels } from "@/lib/verdictReasonLabels";
 import type { VerdictReason } from "@/types/VerdictReason";
 import type { WrongVerdictDetailsProps } from "@/types/WrongVerdictDetailsProps";
 
-export function WrongVerdictDetails({ verdictReason, expectedBehaviour, isSaving, onReasonChange, onExpectedBehaviourChange, onSave }: WrongVerdictDetailsProps) {
+export function WrongVerdictDetails({ verdictReason, agentReplies, verdictMessageId, expectedBehaviour, isSaving, onReasonChange, onReplyChange, onExpectedBehaviourChange, onSave }: WrongVerdictDetailsProps) {
   return (
     <div className="flex flex-col gap-3 rounded-card border border-line-soft bg-surface p-3">
+      <label className="flex flex-col gap-1.5 text-sm font-semibold">
+        Which reply was wrong?
+        <select value={verdictMessageId} onChange={(event) => onReplyChange(event.target.value)} className="min-h-11 rounded-control border border-line bg-paper px-3 font-normal">
+          {agentReplies.map((reply) => (
+            <option key={reply.id} value={reply.id}>
+              {reply.text.length > 80 ? `${reply.text.slice(0, 80)}…` : reply.text}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="flex flex-col gap-1.5 text-sm font-semibold">
         What went wrong?
         <select
