@@ -1,13 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { type Call, CallOutcome } from "../../generated/prisma/client";
 import type { CallTotals } from "../responses/CallTotals";
+import type { CallVolumeCount } from "../responses/CallVolumeCount";
 import type { HandOffReasonCount } from "../responses/HandOffReasonCount";
-import type { HourlyCount } from "../responses/HourlyCount";
+import { UkTime } from "./UkTime";
 
 @Injectable()
 export class CallStatistics {
   private readonly reasonLimit = 4;
   private readonly otherReasonLabel = "Other";
+
+  constructor(private readonly ukTime: UkTime) {}
 
   totals(calls: Call[]): CallTotals {
     const durations = calls.map((call) => this.durationSeconds(call)).filter((duration) => duration !== null);
@@ -19,12 +22,20 @@ export class CallStatistics {
     };
   }
 
-  countByHour(calls: Call[]): HourlyCount[] {
-    const hours = calls.map((call) => call.endedAt?.getHours()).filter((hour) => hour !== undefined);
+  countByHour(calls: Call[]): CallVolumeCount[] {
+    const hours = calls.flatMap((call) => (call.endedAt ? [this.ukTime.getHour(call.endedAt)] : []));
     if (hours.length === 0) return [];
     const firstHour = Math.min(...hours);
     const lastHour = Math.max(...hours);
     return Array.from({ length: lastHour - firstHour + 1 }, (_, offset) => this.countHour(calls, firstHour + offset));
+  }
+
+  countByDay(calls: Call[], dayStarts: Date[]): CallVolumeCount[] {
+    return dayStarts.map((dayStart) => {
+      const dayKey = this.ukTime.getDayKey(dayStart);
+      const callsOnDay = calls.filter((call) => call.endedAt && this.ukTime.getDayKey(call.endedAt) === dayKey);
+      return this.makeCount(this.ukTime.getDayLabel(dayStart), callsOnDay);
+    });
   }
 
   countHandOffReasons(calls: Call[]): HandOffReasonCount[] {
@@ -43,12 +54,16 @@ export class CallStatistics {
     return [...counts.entries()].map(([label, count]) => ({ label, count })).sort((first, second) => second.count - first.count);
   }
 
-  private countHour(calls: Call[], hour: number): HourlyCount {
-    const callsInHour = calls.filter((call) => call.endedAt?.getHours() === hour);
+  private countHour(calls: Call[], hour: number): CallVolumeCount {
+    const callsInHour = calls.filter((call) => call.endedAt && this.ukTime.getHour(call.endedAt) === hour);
+    return this.makeCount(String(hour).padStart(2, "0"), callsInHour);
+  }
+
+  private makeCount(label: string, calls: Call[]): CallVolumeCount {
     return {
-      hour: String(hour).padStart(2, "0"),
-      resolved: this.countOutcome(callsInHour, CallOutcome.resolved),
-      handedOff: this.countOutcome(callsInHour, CallOutcome.handedOff),
+      label,
+      resolved: this.countOutcome(calls, CallOutcome.resolved),
+      handedOff: this.countOutcome(calls, CallOutcome.handedOff),
     };
   }
 
