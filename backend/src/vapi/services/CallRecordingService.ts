@@ -39,7 +39,7 @@ export class CallRecordingService {
     const report = this.vapiReportReader.read(message);
     const analysis = await this.reportAnalyser.analyse(report);
     const reviewReason = this.reviewTriage.decideReason(this.triageFacts(analysis));
-    const completion = await this.callCompletionBuilder.build(report, analysis, reviewReason !== null);
+    const completion = await this.callCompletionBuilder.build(report, analysis);
     const recording = { report, analysis, reviewReason, completion };
     await this.finishedCallWriter.write(recording);
     await this.handOffEmailService.sendIfHandedOff(recording);
