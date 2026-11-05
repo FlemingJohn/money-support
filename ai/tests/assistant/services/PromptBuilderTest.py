@@ -6,8 +6,9 @@ from tests.support.SampleData import SampleData
 class PromptBuilderTest:
     sample_data = SampleData()
 
-    def make_builder(self) -> PromptBuilder:
-        return PromptBuilder(TemplateRenderer(self.sample_data.make_configuration().prompts_folder))
+    def make_builder(self, **configuration_overrides: object) -> PromptBuilder:
+        configuration = self.sample_data.make_configuration(**configuration_overrides)
+        return PromptBuilder(TemplateRenderer(configuration.prompts_folder), configuration)
 
     def test_lists_the_faqs_in_number_order(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings())
@@ -39,3 +40,9 @@ class PromptBuilderTest:
     def test_fills_in_the_assistant_name(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings())
         assert prompt.startswith("# Role\n\nYou are Money Support Agent,")
+
+    def test_hands_off_with_the_tool_when_the_ai_service_can_take_tool_calls(self) -> None:
+        builder = self.make_builder(ai_public_url="https://ai.example.org", vapi_webhook_secret="hook-secret")
+        prompt = builder.build(self.sample_data.make_faqs(), self.sample_data.make_settings())
+        assert "use the handOffToHuman tool straight away" in prompt
+        assert "The call ends by itself as soon as you say it" not in prompt
