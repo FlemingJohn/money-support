@@ -1,11 +1,16 @@
 import type { HandOffEmailWording } from "../types/HandOffEmailWording";
 import type { HandOffOutcome } from "../types/HandOffOutcome";
 
-export const handOffEmailWordings: Record<Exclude<HandOffOutcome, "transferAnswered">, HandOffEmailWording> = {
+export const handOffEmailWordings: Record<HandOffOutcome, HandOffEmailWording> = {
   handedOff: {
     subjectStart: "Follow up a handed-off call",
     explanation: "The agent couldn't help with this call and told the caller to contact the support team.",
     callToAction: "Open it in Review to see what they needed and call them back if you can.",
+  },
+  transferAnswered: {
+    subjectStart: "Transferred to you",
+    explanation: "The agent transferred this caller to {transferNumber}, briefed the person who answered, and connected them.",
+    callToAction: "Open it in Review to add a note and mark it done once the caller is helped.",
   },
   transferNotAnswered: {
     subjectStart: "⚠ Missed transfer, please call back",
