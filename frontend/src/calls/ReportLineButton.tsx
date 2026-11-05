@@ -1,40 +1,54 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Check, TriangleAlert } from "lucide-react";
+import { ReportLineForm } from "@/calls/ReportLineForm";
 import { sendToBackend } from "@/lib/sendToBackend";
 import type { ReportLineButtonProps } from "@/types/ReportLineButtonProps";
 import type { ReportState } from "@/types/ReportState";
+import type { UnmaskedReportResult } from "@/types/UnmaskedReportResult";
+
+const doneMessages: Partial<Record<ReportState, string>> = {
+  masked: "Masked, and the summary and fields were checked again",
+  hidden: "Nothing specific found, so the line is hidden",
+};
 
 export function ReportLineButton({ callId, messageId }: ReportLineButtonProps) {
-  const [reportState, setReportState] = useState<ReportState>("idle");
+  const router = useRouter();
+  const [reportState, setReportState] = useState<ReportState>("closed");
 
-  async function report() {
+  async function report(selectedText: string, kind: string) {
     setReportState("sending");
     try {
-      await sendToBackend("POST", `/calls/${encodeURIComponent(callId)}/unmasked-reports`, { messageId });
-      setReportState("sent");
+      const body = selectedText ? { messageId, selectedText, kind } : { messageId };
+      const result = await sendToBackend<UnmaskedReportResult>("POST", `/calls/${encodeURIComponent(callId)}/unmasked-reports`, body);
+      setReportState(result.outcome);
+      router.refresh();
     } catch {
       setReportState("failed");
     }
   }
 
-  if (reportState === "sent") {
+  const doneMessage = doneMessages[reportState];
+  if (doneMessage) {
     return (
       <span role="status" className="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-success-ink">
         <Check size={14} strokeWidth={2.2} aria-hidden="true" />
-        Reported
+        {doneMessage}
       </span>
     );
+  }
+  if (reportState === "open" || reportState === "sending") {
+    return <ReportLineForm isSending={reportState === "sending"} onReport={report} onCancel={() => setReportState("closed")} />;
   }
 
   return (
     <button
       type="button"
-      onClick={report}
-      disabled={reportState === "sending"}
+      onClick={() => setReportState("open")}
       title="Report personal data in this line"
-      className="inline-flex min-h-11 items-center gap-1.5 rounded-control px-2 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink disabled:opacity-50"
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-control px-2 text-xs font-semibold text-ink-muted hover:bg-surface hover:text-ink"
     >
       <TriangleAlert size={14} strokeWidth={2} aria-hidden="true" />
       {reportState === "failed" ? "Try again" : "Report personal data"}
