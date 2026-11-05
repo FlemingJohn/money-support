@@ -21,6 +21,10 @@ export class CallMessageRepository {
     });
   }
 
+  findForCall(callId: string): Promise<CallMessage[]> {
+    return this.prismaService.callMessage.findMany({ where: { callId }, orderBy: { position: "asc" } });
+  }
+
   findById(messageId: string): Promise<CallMessage | null> {
     return this.prismaService.callMessage.findUnique({ where: { id: messageId } });
   }
