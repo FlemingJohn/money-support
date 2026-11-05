@@ -6,3 +6,4 @@ from app.analysis.models.CallLine import CallLine
 class LineTask(TypedDict):
     line: CallLine
     mask_kinds: list[str]
+    caller_number: str
