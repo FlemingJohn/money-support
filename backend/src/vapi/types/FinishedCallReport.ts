@@ -9,4 +9,5 @@ export interface FinishedCallReport {
   endedAt: Date;
   endedReason: string | null;
   lines: TranscriptLine[];
+  handOffReason: string | null;
 }
