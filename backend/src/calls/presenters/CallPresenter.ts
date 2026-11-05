@@ -41,6 +41,7 @@ export class CallPresenter {
         createdAt: event.createdAt.toISOString(),
       })),
       review: call.review ? { status: call.review.status, reason: call.review.reason } : null,
+      customerNumber: call.customerNumber,
     };
   }
 
