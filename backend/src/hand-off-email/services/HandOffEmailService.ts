@@ -33,7 +33,6 @@ export class HandOffEmailService {
     const handOff = await this.settingsService.getHandOff();
     if (!handOff.emailTeam || !handOff.teamEmail) return;
     const outcome = this.handOffOutcomeResolver.resolve(recording.report.endedReason, handOff, recording.report.endedAt);
-    if (outcome === "transferAnswered") return;
     const callId = recording.report.callId;
     if (!(await this.reviewRepository.claimHandOffEmail(callId, this.clock.now()))) return;
     await this.sendClaimedEmail(recording, handOff, outcome);
