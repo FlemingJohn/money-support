@@ -37,3 +37,10 @@ class JudgePlanFactoryTest:
         assert plan["model"]["maxTokens"] >= 50
         assert "- It explains the status." in judge_instructions
         assert "{{messages[-1]}}" in judge_instructions
+
+    def test_expects_the_hand_off_tool_when_the_ai_service_takes_tool_calls(self) -> None:
+        configuration = self.sample_data.make_configuration(ai_public_url="https://ai.example.org", vapi_webhook_secret="hook-secret")
+        factory = JudgePlanFactory(configuration, TemplateRenderer(configuration.prompts_folder))
+        plan = factory.make(EvaluationTurn(role="assistant", check="handsOff"), self.sample_data.make_settings().hand_off)
+        assert plan["type"] == "ai"
+        assert "handOffToHuman" in plan["model"]["messages"][0]["content"]
