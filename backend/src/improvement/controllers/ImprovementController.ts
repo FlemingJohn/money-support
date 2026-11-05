@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Res } from "@nestjs/common";
+import type { Response } from "express";
 import { PromptRuleUpdateDto } from "../dto/PromptRuleUpdateDto";
 import type { PromptRuleListResponse } from "../responses/PromptRuleListResponse";
 import type { PromptRuleResponse } from "../responses/PromptRuleResponse";
@@ -24,6 +25,11 @@ export class ImprovementController {
   @Post("suggestions")
   suggest(): Promise<PromptSuggestionResponse> {
     return this.suggestionService.suggest();
+  }
+
+  @Post("suggestions/stream")
+  suggestStreaming(@Res() response: Response): Promise<void> {
+    return this.suggestionService.streamSuggest(response);
   }
 
   @Post("suggestions/:id/approve")
