@@ -22,6 +22,19 @@ class BackendClient:
         body = await self.get("/internal/settings")
         return self.parse(lambda: AssistantSettings.model_validate(body))
 
+    async def ring_team(self, call_id: str, reason: str, caller_need: str) -> bool:
+        body = await self.post("/internal/hand-offs/ring", {"callId": call_id, "reason": reason, "callerNeed": caller_need})
+        return isinstance(body, dict) and body.get("isRung") is True
+
+    async def post(self, path: str, payload: dict) -> object:
+        try:
+            response = await self.http_client.post(path, json=payload)
+        except httpx.HTTPError as error:
+            raise BackendRequestError(f"The backend could not be reached: {error}") from error
+        if response.is_error:
+            raise BackendRequestError(f"The backend answered {response.status_code} for {path}")
+        return response.json()
+
     async def get(self, path: str) -> object:
         try:
             response = await self.http_client.get(path)
