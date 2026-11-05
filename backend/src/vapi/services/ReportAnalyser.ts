@@ -15,7 +15,7 @@ export class ReportAnalyser {
     private readonly maskedEntityTypeResolver: MaskedEntityTypeResolver,
   ) {}
 
-  async analyse(report: FinishedCallReport): Promise<CallAnalysis> {
+  async analyse(report: FinishedCallReport, maskLines = true): Promise<CallAnalysis> {
     const [privacy, handOff, faqs] = await Promise.all([this.settingsService.getPrivacy(), this.settingsService.getHandOff(), this.faqRepository.findActive()]);
     const analysis = await this.callAnalysisClient.analyse({
       callId: report.callId,
@@ -25,6 +25,7 @@ export class ReportAnalyser {
       faqs: faqs.map((faq) => ({ number: faq.sortOrder, question: faq.question })),
       handOffSentence: handOff.handOffSentence,
       callerNumber: report.customerNumber ?? "",
+      maskLines,
     });
     return { ...analysis, isHandedOff: analysis.isHandedOff || report.handOffReason !== null };
   }
