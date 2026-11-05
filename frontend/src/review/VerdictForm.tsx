@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import Link from "next/link";
+import { FlaskConical, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useBackendChange } from "@/hooks/useBackendChange";
 import { WrongVerdictDetails } from "@/review/WrongVerdictDetails";
-import type { ReviewFormProps } from "@/types/ReviewFormProps";
+import type { VerdictFormProps } from "@/types/VerdictFormProps";
 import type { VerdictReason } from "@/types/VerdictReason";
 
-export function VerdictForm({ review }: ReviewFormProps) {
+export function VerdictForm({ review, agentReplies }: VerdictFormProps) {
   const { savingState, errorMessage, send } = useBackendChange();
   const [isWrongOpen, setIsWrongOpen] = useState(review.verdict === "wrong");
   const [verdictReason, setVerdictReason] = useState<VerdictReason>(review.verdictReason ?? "shouldHaveAnswered");
   const [expectedBehaviour, setExpectedBehaviour] = useState(review.expectedBehaviour ?? "");
+  const [verdictMessageId, setVerdictMessageId] = useState(review.verdictMessageId ?? agentReplies.at(-1)?.id ?? "");
   const verdictPath = `/reviews/${encodeURIComponent(review.callId)}/verdict`;
   const isCorrect = review.verdict === "correct" && !isWrongOpen;
   const isWrong = review.verdict === "wrong" || isWrongOpen;
@@ -22,7 +24,7 @@ export function VerdictForm({ review }: ReviewFormProps) {
   }
 
   function saveWrong() {
-    send("PUT", verdictPath, { verdict: "wrong", verdictReason, expectedBehaviour: expectedBehaviour.trim() || undefined });
+    send("PUT", verdictPath, { verdict: "wrong", verdictReason, expectedBehaviour: expectedBehaviour.trim() || undefined, verdictMessageId: verdictMessageId || undefined });
   }
 
   return (
@@ -45,12 +47,21 @@ export function VerdictForm({ review }: ReviewFormProps) {
       {isWrongOpen && (
         <WrongVerdictDetails
           verdictReason={verdictReason}
+          agentReplies={agentReplies}
+          verdictMessageId={verdictMessageId}
+          onReplyChange={setVerdictMessageId}
           expectedBehaviour={expectedBehaviour}
           isSaving={savingState === "saving"}
           onReasonChange={setVerdictReason}
           onExpectedBehaviourChange={setExpectedBehaviour}
           onSave={saveWrong}
         />
+      )}
+      {review.reviewTestNumber !== null && (
+        <Link href="/agent-quality?tab=tests" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-success-ink hover:underline">
+          <FlaskConical size={16} strokeWidth={2} aria-hidden="true" />
+          This mistake is now test R{String(review.reviewTestNumber).padStart(2, "0")}, run before every agent change
+        </Link>
       )}
       {errorMessage && <p role="alert" className="text-sm text-handoff-ink">{errorMessage}</p>}
     </div>
