@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { FlaskConical, ThumbsDown, ThumbsUp } from "lucide-react";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { useBackendChange } from "@/hooks/useBackendChange";
+import { VerdictSummary } from "@/review/VerdictSummary";
 import { WrongVerdictDetails } from "@/review/WrongVerdictDetails";
 import type { VerdictFormProps } from "@/types/VerdictFormProps";
 import type { VerdictReason } from "@/types/VerdictReason";
 
-export function VerdictForm({ review, agentReplies }: VerdictFormProps) {
+export function VerdictForm({ review, agentReplies, nextReviewPath }: VerdictFormProps) {
   const { savingState, errorMessage, send } = useBackendChange();
+  const [isEditing, setIsEditing] = useState(review.verdict === null);
   const [isWrongOpen, setIsWrongOpen] = useState(review.verdict === "wrong");
   const [verdictReason, setVerdictReason] = useState<VerdictReason>(review.verdictReason ?? "shouldHaveAnswered");
   const [expectedBehaviour, setExpectedBehaviour] = useState(review.expectedBehaviour ?? "");
@@ -26,6 +27,8 @@ export function VerdictForm({ review, agentReplies }: VerdictFormProps) {
   function saveWrong() {
     send("PUT", verdictPath, { verdict: "wrong", verdictReason, expectedBehaviour: expectedBehaviour.trim() || undefined, verdictMessageId: verdictMessageId || undefined });
   }
+
+  if (!isEditing) return <VerdictSummary review={review} nextReviewPath={nextReviewPath} onChange={() => setIsEditing(true)} />;
 
   return (
     <div className="flex flex-col gap-3">
@@ -56,12 +59,6 @@ export function VerdictForm({ review, agentReplies }: VerdictFormProps) {
           onExpectedBehaviourChange={setExpectedBehaviour}
           onSave={saveWrong}
         />
-      )}
-      {review.reviewTestNumber !== null && (
-        <Link href="/agent-quality?tab=tests" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-success-ink hover:underline">
-          <FlaskConical size={16} strokeWidth={2} aria-hidden="true" />
-          This mistake is now test R{String(review.reviewTestNumber).padStart(2, "0")}, run before every agent change
-        </Link>
       )}
       {errorMessage && <p role="alert" className="text-sm text-handoff-ink">{errorMessage}</p>}
     </div>
