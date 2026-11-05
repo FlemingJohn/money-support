@@ -4,6 +4,7 @@ import type { DatabaseTransaction } from "../../prisma/types/DatabaseTransaction
 import { PrismaService } from "../../prisma/services/PrismaService";
 import type { ReviewCounts } from "../types/ReviewCounts";
 import { reviewListInclude } from "../queries/reviewListInclude";
+import type { JudgedReview } from "../types/JudgedReview";
 import type { ReviewWithCall } from "../types/ReviewWithCall";
 
 @Injectable()
@@ -28,6 +29,13 @@ export class ReviewRepository {
       include: reviewListInclude,
       orderBy: { createdAt: "desc" },
       take: limit,
+    });
+  }
+
+  findJudgedSince(since: Date): Promise<JudgedReview[]> {
+    return this.prismaService.review.findMany({
+      where: { verdict: { not: null }, updatedAt: { gte: since } },
+      include: { call: { include: { promptVersion: true } } },
     });
   }
 
