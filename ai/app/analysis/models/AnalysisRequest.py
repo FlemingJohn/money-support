@@ -14,3 +14,4 @@ class AnalysisRequest(CamelModel):
     faqs: list[FaqSummary] = Field(default_factory=list)
     hand_off_sentence: str = ""
     caller_number: str = ""
+    mask_lines: bool = True
