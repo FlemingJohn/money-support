@@ -24,6 +24,7 @@ export class ReportAnalyser {
       maskKinds: this.maskedEntityTypeResolver.resolve(privacy),
       faqs: faqs.map((faq) => ({ number: faq.sortOrder, question: faq.question })),
       handOffSentence: handOff.handOffSentence,
+      callerNumber: report.customerNumber ?? "",
     });
   }
 }
