@@ -8,6 +8,7 @@ from app.evaluation.models.EvaluationTurn import EvaluationTurn
 
 class JudgePlanFactory:
     any_content = ".*"
+    hand_off_tool_expectation = "It hands the caller to a person by calling the handOffToHuman tool, and does not try to answer the question itself."
 
     def __init__(self, configuration: AppConfiguration, template_renderer: TemplateRenderer) -> None:
         self.configuration = configuration
@@ -34,7 +35,7 @@ class JudgePlanFactory:
 
     def make_hand_off_plan(self, hand_off: HandOffSettings) -> dict:
         if not hand_off.is_transfer and self.configuration.has_hand_off_tool:
-            return {"type": "regex", "content": self.any_content, "toolCalls": [{"name": "handOffToHuman"}]}
+            return self.make_answer_plan(self.hand_off_tool_expectation)
         sentence_plan = {"type": "regex", "content": self.make_sentence_pattern(hand_off.hand_off_sentence)}
         if not hand_off.is_transfer:
             return sentence_plan
