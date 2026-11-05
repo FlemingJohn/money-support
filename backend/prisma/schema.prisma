@@ -361,3 +361,16 @@ model PromptRule {
 
   @@map("prompt_rules")
 }
+
+model TestRun {
+  id          String   @id @default(uuid()) @db.Uuid
+  startedAt   DateTime @map("started_at")
+  finishedAt  DateTime @map("finished_at")
+  passedCount Int      @map("passed_count")
+  totalCount  Int      @map("total_count")
+  results     Json
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([finishedAt])
+  @@map("test_runs")
+}
