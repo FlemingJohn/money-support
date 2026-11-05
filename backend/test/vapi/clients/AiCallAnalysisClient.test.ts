@@ -16,6 +16,7 @@ describe("AiCallAnalysisClient", () => {
     endedReason: "assistant-ended-call",
     maskKinds: ["name"],
     faqs: [{ number: 2, question: "When will my money arrive?" }],
+    callerNumber: "+447700900123",
     handOffSentence: "I'm transferring you.",
   };
 
