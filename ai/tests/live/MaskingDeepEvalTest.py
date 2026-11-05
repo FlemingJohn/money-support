@@ -23,6 +23,6 @@ class MaskingDeepEvalTest:
 
     @pytest.mark.parametrize("case", cases, ids=[case["text"][:40] for case in cases])
     def test_masks_personal_data_in_one_line(self, case: dict) -> None:
-        result = asyncio.run(self.line_masker.mask(case["text"], ["name", "card number", "bank account number", "email address", "phone number", "address"]))
+        result = asyncio.run(self.line_masker.mask(case["text"], ["name", "card number", "bank account number", "email address", "phone number", "address"], case.get("callerNumber", "")))
         test_case = LLMTestCase(input=case["text"], actual_output=result.redacted_text, metadata={"hide": case["hide"], "keep": case["keep"]})
         assert_test(test_case, [MaskingMetric()], run_async=False)
