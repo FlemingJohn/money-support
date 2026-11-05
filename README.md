@@ -61,7 +61,7 @@ Anything else is handed to a person. The agent calls the `handOffToHuman` tool w
 
 - **R** A reviewer reports personal data in a line. ai checks the line again and masks only the leaked words, then the call's summary and fields are re-analysed. The rest of the transcript stays as it was.
 - **T** A reviewer marks a reply wrong. The caller's line before it becomes a test, run with the 25 built-in tests before every agent change.
-- **S** On the Agent quality page, "Suggest an improvement" runs the improvement graph: it reads the failing tests from reviews, writes one rule on Azure OpenAI, and tests it on a temporary copy of the agent.
+- **S** On the Agent quality page, "Suggest an improvement" runs the improvement graph: it reads the failing tests from reviews, writes one rule on Azure OpenAI, and tests it on a temporary copy of the agent. Each step streams to the page as it happens, using LangGraph stream events, and test runs stream their progress the same way.
 - **P** A person approves the rule. It is added to the end of the agent's prompt, the agent is updated, and a new prompt version is saved. The Overview shows whether the new version makes fewer mistakes.
 
 **The live transcript**
