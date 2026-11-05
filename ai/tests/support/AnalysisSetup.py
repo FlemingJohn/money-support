@@ -7,6 +7,7 @@ from app.analysis.services.FieldsNode import FieldsNode
 from app.analysis.services.HandOffDetector import HandOffDetector
 from app.analysis.services.LineMasker import LineMasker
 from app.analysis.services.LineMaskingNode import LineMaskingNode
+from app.analysis.services.OwnNumberMatcher import OwnNumberMatcher
 from app.analysis.services.PieceMasker import PieceMasker
 from app.analysis.services.ReviewSuggester import ReviewSuggester
 from app.analysis.services.SummaryNode import SummaryNode
@@ -22,7 +23,7 @@ class AnalysisSetup:
         self.model = model
 
     def make_line_masker(self) -> LineMasker:
-        return LineMasker(self.model, self.template_renderer, PieceMasker(MaskKindCatalog()), MaskKindCatalog())
+        return LineMasker(self.model, self.template_renderer, PieceMasker(MaskKindCatalog(), OwnNumberMatcher()), MaskKindCatalog())
 
     def make_service(self) -> CallAnalysisService:
         formatter = TranscriptFormatter()
