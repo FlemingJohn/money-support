@@ -3,7 +3,7 @@ import { ActivityLog } from "../../activity/services/ActivityLog";
 import { CallQueryService } from "../../calls/services/CallQueryService";
 import { ExtractedFieldRepository } from "../../calls/repositories/ExtractedFieldRepository";
 import { Clock } from "../../common/services/Clock";
-import { ActivityAction, ActivityItemType, type Review, ReviewStatus } from "../../generated/prisma/client";
+import { ActivityAction, ActivityItemType, type Review, ReviewStatus, ReviewVerdict } from "../../generated/prisma/client";
 import type { ReviewDetailResponse } from "../responses/ReviewDetailResponse";
 import type { ReviewListResponse } from "../responses/ReviewListResponse";
 import { ReviewNotFoundException } from "../exceptions/ReviewNotFoundException";
@@ -12,6 +12,7 @@ import { ReviewRepository } from "../repositories/ReviewRepository";
 import type { ReviewResponse } from "../responses/ReviewResponse";
 import type { ReviewUpdateDto } from "../dto/ReviewUpdateDto";
 import type { ReviewVerdictDto } from "../dto/ReviewVerdictDto";
+import { ReviewTestWriter } from "../../review-tests/services/ReviewTestWriter";
 
 @Injectable()
 export class ReviewService {
@@ -22,6 +23,7 @@ export class ReviewService {
     private readonly extractedFieldRepository: ExtractedFieldRepository,
     private readonly activityLog: ActivityLog,
     private readonly clock: Clock,
+    private readonly reviewTestWriter: ReviewTestWriter,
   ) {}
 
   async list(status: ReviewStatus): Promise<ReviewListResponse> {
@@ -31,7 +33,8 @@ export class ReviewService {
 
   async getDetail(callId: string): Promise<ReviewDetailResponse> {
     const review = await this.requireReview(callId);
-    return { review: this.reviewPresenter.toResponse(review), call: await this.callQueryService.getDetail(callId) };
+    const [call, reviewTestNumber] = await Promise.all([this.callQueryService.getDetail(callId), this.reviewTestWriter.findNumber(callId)]);
+    return { review: this.reviewPresenter.toResponse(review, reviewTestNumber), call };
   }
 
   async update(callId: string, changes: ReviewUpdateDto): Promise<ReviewResponse> {
@@ -51,9 +54,22 @@ export class ReviewService {
       verdict: verdict.verdict,
       verdictReason: verdict.verdictReason ?? null,
       expectedBehaviour: verdict.expectedBehaviour ?? null,
+      verdictMessage: verdict.verdictMessageId ? { connect: { id: verdict.verdictMessageId } } : { disconnect: true },
     });
     await this.recordActivity(ActivityAction.reviewVerdictSaved, callId);
-    return this.reviewPresenter.toResponse(review);
+    return this.reviewPresenter.toResponse(review, await this.saveReviewTest(callId, verdict));
+  }
+
+  private async saveReviewTest(callId: string, verdict: ReviewVerdictDto): Promise<number | null> {
+    if (verdict.verdict === ReviewVerdict.correct || !verdict.verdictReason) {
+      await this.reviewTestWriter.removeForCorrectVerdict(callId);
+      return null;
+    }
+    return this.reviewTestWriter.saveForWrongVerdict(callId, {
+      verdictReason: verdict.verdictReason,
+      expectedBehaviour: verdict.expectedBehaviour ?? null,
+      verdictMessageId: verdict.verdictMessageId ?? null,
+    });
   }
 
   async confirmFields(callId: string): Promise<ReviewDetailResponse> {
