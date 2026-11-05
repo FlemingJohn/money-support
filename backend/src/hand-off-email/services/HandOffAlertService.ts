@@ -13,6 +13,7 @@ import type { HandOffEmailInput } from "../types/HandOffEmailInput";
 import type { HandOffOutcome } from "../types/HandOffOutcome";
 import { HandOffEmailBuilder } from "./HandOffEmailBuilder";
 import { HandOffOutcomeResolver } from "./HandOffOutcomeResolver";
+import { TeamAlertSpeechBuilder } from "./TeamAlertSpeechBuilder";
 
 @Injectable()
 export class HandOffAlertService {
@@ -28,6 +29,7 @@ export class HandOffAlertService {
     private readonly handOffEmailBuilder: HandOffEmailBuilder,
     private readonly handOffMailer: HandOffMailer,
     private readonly teamPhoneRinger: TeamPhoneRinger,
+    private readonly teamAlertSpeechBuilder: TeamAlertSpeechBuilder,
   ) {}
 
   async alertTeamIfHandedOff(recording: FinishedCallRecording): Promise<void> {
@@ -38,13 +40,14 @@ export class HandOffAlertService {
     if (!canEmail && !canRing) return;
     if (!(await this.reviewRepository.claimHandOffEmail(recording.report.callId, this.clock.now()))) return;
     const outcome = this.handOffOutcomeResolver.resolve(recording.report.endedReason, handOff, recording.report.endedAt);
-    if (canRing && outcome !== "transferAnswered") await this.ringTeam(recording.report.callId, phone.mobilePhone);
+    const wasRungDuringCall = recording.report.handOffReason !== null;
+    if (canRing && outcome !== "transferAnswered" && !wasRungDuringCall) await this.ringTeam(recording.report.callId, phone.mobilePhone);
     if (canEmail) await this.sendEmail(recording, handOff, outcome);
   }
 
   private async ringTeam(callId: string, teamPhone: string): Promise<void> {
     try {
-      await this.teamPhoneRinger.ring(teamPhone);
+      await this.teamPhoneRinger.ring(teamPhone, this.teamAlertSpeechBuilder.makeAfterCall());
       this.logger.log(`Rang the team phone for call ${callId}`);
     } catch (error) {
       this.logger.error(`Ringing the team phone for call ${callId} failed: ${this.describe(error)}`);
@@ -76,6 +79,7 @@ export class HandOffAlertService {
       summary: analysis.summary,
       lines: analysis.lines,
       transferNumber: handOff.transferNumber,
+      handOffReason: report.handOffReason,
       callUrl: `${this.appConfiguration.frontendOrigin}/review?call=${report.callId}`,
     };
   }
