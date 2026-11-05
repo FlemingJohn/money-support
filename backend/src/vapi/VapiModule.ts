@@ -50,5 +50,6 @@ import { VapiWebhookService } from "./services/VapiWebhookService";
           : new PendingCallAnalysisClient(pendingAnalysisBuilder),
     },
   ],
+  exports: [FieldLocator, ReportAnalyser],
 })
 export class VapiModule {}
