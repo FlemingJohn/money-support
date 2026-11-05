@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ActivityLog } from "../../activity/services/ActivityLog";
 import { CallRepository } from "../../calls/repositories/CallRepository";
-import { CustomerNumberProtector } from "../../calls/services/CustomerNumberProtector";
 import { Clock } from "../../common/services/Clock";
 import { ActivityAction, ActivityItemType, type Callback, CallbackStatus, type Prisma, ReviewStatus } from "../../generated/prisma/client";
 import { ReviewNotFoundException } from "../../review/exceptions/ReviewNotFoundException";
@@ -25,7 +24,6 @@ export class CallbackService {
     private readonly outboundCallClient: OutboundCallClient,
     private readonly reviewRepository: ReviewRepository,
     private readonly callRepository: CallRepository,
-    private readonly customerNumberProtector: CustomerNumberProtector,
     private readonly settingsService: SettingsService,
     private readonly activityLog: ActivityLog,
     private readonly clock: Clock,
@@ -71,8 +69,8 @@ export class CallbackService {
 
   private async readCustomerNumber(callId: string): Promise<string> {
     const call = await this.callRepository.findById(callId);
-    if (!call?.encryptedCustomerNumber) throw new CallbackUnavailableException("This call has no stored number to call back");
-    return this.customerNumberProtector.reveal(call.encryptedCustomerNumber);
+    if (!call?.customerNumber) throw new CallbackUnavailableException("This call has no stored number to call back");
+    return call.customerNumber;
   }
 
   private async ensureNoActiveCallback(callId: string): Promise<void> {
