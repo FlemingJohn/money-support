@@ -1,54 +1,546 @@
 [
-  {"group": "name", "text": "Hi, my sister Ananya has not got it", "hide": ["Ananya"], "keep": ["sister"]},
-  {"group": "name", "text": "Can you tell Rahul the money is coming", "hide": ["Rahul"], "keep": ["money"]},
-  {"group": "name", "text": "yeah its john speaking", "hide": ["john"], "keep": ["speaking"]},
-  {"group": "name", "text": "I sent it to mohammed in Dubai", "hide": ["mohammed"], "keep": ["Dubai"]},
-  {"group": "name", "text": "Hi Kumar here, transfer to Priya Shah", "hide": ["Kumar", "Priya Shah"], "keep": ["transfer"]},
-  {"group": "name", "text": "The recipient is Li Wei", "hide": ["Li Wei"], "keep": ["recipient"]},
-  {"group": "name", "text": "Send it to Sarah please", "hide": ["Sarah"], "keep": ["please"]},
-  {"group": "name", "text": "I am calling about Nirmala my mother", "hide": ["Nirmala"], "keep": ["mother"]},
-  {"group": "name", "text": "This is Oluwaseun Adeyemi calling", "hide": ["Oluwaseun Adeyemi"], "keep": ["calling"]},
-  {"group": "name", "text": "my name's Siobhan O'Connor", "hide": ["Siobhan O'Connor"], "keep": ["name"]},
-  {"group": "name", "text": "it went to my landlord, Mr Fernandes", "hide": ["Fernandes"], "keep": ["landlord"]},
-  {"group": "name", "text": "the account holder is chen jie", "hide": ["chen jie"], "keep": ["holder"]},
-  {"group": "card", "text": "Yes. My card number, 3 4 5 0", "hide": ["3 4 5 0"], "keep": ["card"]},
-  {"group": "card", "text": "the card ending in 7781 was charged", "hide": ["7781"], "keep": ["charged"]},
-  {"group": "card", "text": "the last four of my card are 9 9 1 2", "hide": ["9 9 1 2"], "keep": ["last four"]},
-  {"group": "card", "text": "my card is 4111 1111 1111 1111", "hide": ["4111 1111 1111 1111"], "keep": ["card"]},
-  {"group": "card", "text": "it's 4111-1111-1111-1111 on the card", "hide": ["4111-1111-1111-1111"], "keep": ["card"]},
-  {"group": "card", "text": "card number five two three one", "hide": ["five two three one"], "keep": ["card"]},
-  {"group": "card", "text": "expiry 08 27 and the cvv is 123", "hide": ["08 27", "123"], "keep": ["expiry"]},
-  {"group": "card", "text": "my debit card 5555 4444 3333 1111", "hide": ["5555 4444 3333 1111"], "keep": ["debit"]},
-  {"group": "account", "text": "my account number is 12345678", "hide": ["12345678"], "keep": ["account"]},
-  {"group": "account", "text": "the account ends 4471", "hide": ["4471"], "keep": ["ends"]},
-  {"group": "account", "text": "My IBAN is GB29 NWBK 6016 1331 9268 19", "hide": ["GB29 NWBK 6016 1331 9268 19"], "keep": ["IBAN"]},
-  {"group": "account", "text": "sort code 12-34-56 and account 31926819", "hide": ["12-34-56", "31926819"], "keep": ["sort code"]},
-  {"group": "account", "text": "my account is four four seven one two", "hide": ["four four seven one two"], "keep": ["account"]},
-  {"group": "account", "text": "the routing number is 021000021", "hide": ["021000021"], "keep": ["routing"]},
-  {"group": "contact", "text": "email me at priya@example.com", "hide": ["priya@example.com"], "keep": ["email"]},
-  {"group": "contact", "text": "it's priya dot shah at gmail dot com", "hide": ["priya dot shah at gmail dot com"], "keep": ["it's"]},
-  {"group": "contact", "text": "call me on +44 7700 900123", "hide": ["+44 7700 900123"], "keep": ["call"]},
-  {"group": "contact", "text": "my number is 07700 900123", "hide": ["07700 900123"], "keep": ["number"]},
-  {"group": "contact", "text": "my number is nine eight four five zero one two three four five", "hide": ["nine eight four five zero one two three four five"], "keep": ["number"]},
-  {"group": "contact", "text": "I live at 22 Baker Street, London NW1 6XE", "hide": ["22 Baker Street", "NW1 6XE"], "keep": ["live"]},
-  {"group": "keep", "text": "I sent 500 pounds to Germany on Monday", "hide": [], "keep": ["500 pounds", "Germany", "Monday"]},
-  {"group": "keep", "text": "I paid by card, 5000 pounds", "hide": [], "keep": ["5000 pounds", "card"]},
-  {"group": "keep", "text": "My transfer number is 123456789", "hide": [], "keep": ["123456789"]},
-  {"group": "keep", "text": "the bank wants the UTR, it's 4521 8890", "hide": [], "keep": ["4521 8890"]},
-  {"group": "keep", "text": "it said due today at 3 pm", "hide": [], "keep": ["3 pm", "due today"]},
-  {"group": "keep", "text": "Why does it say my transfer's complete?", "hide": [], "keep": ["transfer's complete"]},
-  {"group": "keep", "text": "Email me the receipt please", "hide": [], "keep": ["Email me the receipt"]},
-  {"group": "keep", "text": "I am worried, this is Wise right?", "hide": [], "keep": ["Wise"]},
-  {"group": "keep", "text": "It was 1,200 euros on 3 November", "hide": [], "keep": ["1,200 euros", "3 November"]},
-  {"group": "keep", "text": "I've been waiting 2 working days", "hide": [], "keep": ["2 working days"]},
-  {"group": "keep", "text": "the fee was 4.50", "hide": [], "keep": ["4.50"]},
-  {"group": "keep", "text": "my transfer to India for 75000 rupees", "hide": [], "keep": ["India", "75000 rupees"]},
-  {"group": "keep", "text": "Wise asked me for a proof of payment", "hide": [], "keep": ["proof of payment"]},
-  {"group": "keep", "text": "Transfer says complete but nothing arrived", "hide": [], "keep": ["Transfer says complete"]},
-  {"group": "keep", "text": "Thanks, bye!", "hide": [], "keep": ["Thanks, bye!"]},
-  {"group": "keep", "text": "I used my card to pay for the transfer", "hide": [], "keep": ["card to pay"]},
-  {"group": "keep", "text": "can you check my account please", "hide": [], "keep": ["check my account"]},
-  {"group": "keep", "text": "the estimate said 2 to 4 working days", "hide": [], "keep": ["2 to 4 working days"]},
-  {"group": "keep", "text": "Hello, is this the Wise helpline?", "hide": [], "keep": ["Hello", "Wise helpline"]},
-  {"group": "keep", "text": "It's been three days since Friday", "hide": [], "keep": ["three days", "Friday"]}
+  {
+    "group": "name",
+    "text": "Hi, my sister Ananya has not got it",
+    "hide": [
+      "Ananya"
+    ],
+    "keep": [
+      "sister"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "Can you tell Rahul the money is coming",
+    "hide": [
+      "Rahul"
+    ],
+    "keep": [
+      "money"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "yeah its john speaking",
+    "hide": [
+      "john"
+    ],
+    "keep": [
+      "speaking"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "I sent it to mohammed in Dubai",
+    "hide": [
+      "mohammed"
+    ],
+    "keep": [
+      "Dubai"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "Hi Kumar here, transfer to Priya Shah",
+    "hide": [
+      "Kumar",
+      "Priya Shah"
+    ],
+    "keep": [
+      "transfer"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "The recipient is Li Wei",
+    "hide": [
+      "Li Wei"
+    ],
+    "keep": [
+      "recipient"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "Send it to Sarah please",
+    "hide": [
+      "Sarah"
+    ],
+    "keep": [
+      "please"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "I am calling about Nirmala my mother",
+    "hide": [
+      "Nirmala"
+    ],
+    "keep": [
+      "mother"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "This is Oluwaseun Adeyemi calling",
+    "hide": [
+      "Oluwaseun Adeyemi"
+    ],
+    "keep": [
+      "calling"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "my name's Siobhan O'Connor",
+    "hide": [
+      "Siobhan O'Connor"
+    ],
+    "keep": [
+      "name"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "it went to my landlord, Mr Fernandes",
+    "hide": [
+      "Fernandes"
+    ],
+    "keep": [
+      "landlord"
+    ]
+  },
+  {
+    "group": "name",
+    "text": "the account holder is chen jie",
+    "hide": [
+      "chen jie"
+    ],
+    "keep": [
+      "holder"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "Yes. My card number, 3 4 5 0",
+    "hide": [
+      "3 4 5 0"
+    ],
+    "keep": [
+      "card"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "the card ending in 7781 was charged",
+    "hide": [
+      "7781"
+    ],
+    "keep": [
+      "charged"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "the last four of my card are 9 9 1 2",
+    "hide": [
+      "9 9 1 2"
+    ],
+    "keep": [
+      "last four"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "my card is 4111 1111 1111 1111",
+    "hide": [
+      "4111 1111 1111 1111"
+    ],
+    "keep": [
+      "card"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "it's 4111-1111-1111-1111 on the card",
+    "hide": [
+      "4111-1111-1111-1111"
+    ],
+    "keep": [
+      "card"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "card number five two three one",
+    "hide": [
+      "five two three one"
+    ],
+    "keep": [
+      "card"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "expiry 08 27 and the cvv is 123",
+    "hide": [
+      "08 27",
+      "123"
+    ],
+    "keep": [
+      "expiry"
+    ]
+  },
+  {
+    "group": "card",
+    "text": "my debit card 5555 4444 3333 1111",
+    "hide": [
+      "5555 4444 3333 1111"
+    ],
+    "keep": [
+      "debit"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "my account number is 12345678",
+    "hide": [
+      "12345678"
+    ],
+    "keep": [
+      "account"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "the account ends 4471",
+    "hide": [
+      "4471"
+    ],
+    "keep": [
+      "ends"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "My IBAN is GB29 NWBK 6016 1331 9268 19",
+    "hide": [
+      "GB29 NWBK 6016 1331 9268 19"
+    ],
+    "keep": [
+      "IBAN"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "sort code 12-34-56 and account 31926819",
+    "hide": [
+      "12-34-56",
+      "31926819"
+    ],
+    "keep": [
+      "sort code"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "my account is four four seven one two",
+    "hide": [
+      "four four seven one two"
+    ],
+    "keep": [
+      "account"
+    ]
+  },
+  {
+    "group": "account",
+    "text": "the routing number is 021000021",
+    "hide": [
+      "021000021"
+    ],
+    "keep": [
+      "routing"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "email me at priya@example.com",
+    "hide": [
+      "priya@example.com"
+    ],
+    "keep": [
+      "email"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "it's priya dot shah at gmail dot com",
+    "hide": [
+      "priya dot shah at gmail dot com"
+    ],
+    "keep": [
+      "it's"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "call me on +44 7700 900123",
+    "hide": [
+      "+44 7700 900123"
+    ],
+    "keep": [
+      "call"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "my number is 07700 900123",
+    "hide": [
+      "07700 900123"
+    ],
+    "keep": [
+      "number"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "my number is nine eight four five zero one two three four five",
+    "hide": [
+      "nine eight four five zero one two three four five"
+    ],
+    "keep": [
+      "number"
+    ]
+  },
+  {
+    "group": "contact",
+    "text": "I live at 22 Baker Street, London NW1 6XE",
+    "hide": [
+      "22 Baker Street",
+      "NW1 6XE"
+    ],
+    "keep": [
+      "live"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "I sent 500 pounds to Germany on Monday",
+    "hide": [],
+    "keep": [
+      "500 pounds",
+      "Germany",
+      "Monday"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "I paid by card, 5000 pounds",
+    "hide": [],
+    "keep": [
+      "5000 pounds",
+      "card"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "My transfer number is 123456789",
+    "hide": [],
+    "keep": [
+      "123456789"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "the bank wants the UTR, it's 4521 8890",
+    "hide": [],
+    "keep": [
+      "4521 8890"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "it said due today at 3 pm",
+    "hide": [],
+    "keep": [
+      "3 pm",
+      "due today"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Why does it say my transfer's complete?",
+    "hide": [],
+    "keep": [
+      "transfer's complete"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Email me the receipt please",
+    "hide": [],
+    "keep": [
+      "Email me the receipt"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "I am worried, this is Wise right?",
+    "hide": [],
+    "keep": [
+      "Wise"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "It was 1,200 euros on 3 November",
+    "hide": [],
+    "keep": [
+      "1,200 euros",
+      "3 November"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "I've been waiting 2 working days",
+    "hide": [],
+    "keep": [
+      "2 working days"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "the fee was 4.50",
+    "hide": [],
+    "keep": [
+      "4.50"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "my transfer to India for 75000 rupees",
+    "hide": [],
+    "keep": [
+      "India",
+      "75000 rupees"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Wise asked me for a proof of payment",
+    "hide": [],
+    "keep": [
+      "proof of payment"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Transfer says complete but nothing arrived",
+    "hide": [],
+    "keep": [
+      "Transfer says complete"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Thanks, bye!",
+    "hide": [],
+    "keep": [
+      "Thanks, bye!"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "I used my card to pay for the transfer",
+    "hide": [],
+    "keep": [
+      "card to pay"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "can you check my account please",
+    "hide": [],
+    "keep": [
+      "check my account"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "the estimate said 2 to 4 working days",
+    "hide": [],
+    "keep": [
+      "2 to 4 working days"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "Hello, is this the Wise helpline?",
+    "hide": [],
+    "keep": [
+      "Hello",
+      "Wise helpline"
+    ]
+  },
+  {
+    "group": "keep",
+    "text": "It's been three days since Friday",
+    "hide": [],
+    "keep": [
+      "three days",
+      "Friday"
+    ]
+  },
+  {
+    "group": "own phone",
+    "text": "You can call me back on 98765 41363",
+    "callerNumber": "+919876541363",
+    "hide": [],
+    "keep": [
+      "98765 41363",
+      "call me back"
+    ]
+  },
+  {
+    "group": "own phone",
+    "text": "My number ends in 1363 if the team needs it",
+    "callerNumber": "+919876541363",
+    "hide": [],
+    "keep": [
+      "1363"
+    ]
+  },
+  {
+    "group": "other phone",
+    "text": "Please ring my wife on 91234 56789 instead",
+    "callerNumber": "+919876541363",
+    "hide": [
+      "91234 56789"
+    ],
+    "keep": [
+      "wife"
+    ]
+  },
+  {
+    "group": "other phone",
+    "text": "My number is 98765 41363 and my brother's is 99887 76655",
+    "callerNumber": "+919876541363",
+    "hide": [
+      "99887 76655"
+    ],
+    "keep": [
+      "98765 41363",
+      "brother"
+    ]
+  },
+  {
+    "group": "web call phone",
+    "text": "You can call me back on 98765 41363",
+    "hide": [
+      "98765 41363"
+    ],
+    "keep": [
+      "call me back"
+    ]
+  }
 ]
