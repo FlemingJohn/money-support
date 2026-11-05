@@ -1,8 +1,12 @@
 from app.backend.models.HandOffSettings import HandOffSettings
+from app.common.services.TemplateRenderer import TemplateRenderer
 
 
 class ToolCatalog:
     missed_transfer_message = "Sorry, nobody from the team could take your call just now. We've let them know, and they'll call you back on this number."
+
+    def __init__(self, template_renderer: TemplateRenderer) -> None:
+        self.template_renderer = template_renderer
 
     def make_tools(self, hand_off: HandOffSettings) -> list[dict]:
         tools = [self.make_end_call_tool()]
@@ -33,6 +37,7 @@ class ToolCatalog:
                     "type": "number",
                     "number": hand_off.transfer_number,
                     "description": "The Wise support team",
+                    "message": "",
                     "transferPlan": self.make_transfer_plan(),
                 }
             ],
@@ -41,5 +46,14 @@ class ToolCatalog:
     def make_transfer_plan(self) -> dict:
         return {
             "mode": "warm-transfer-experimental",
+            "summaryPlan": self.make_briefing_plan(),
             "fallbackPlan": {"message": self.missed_transfer_message, "endCallEnabled": True},
+        }
+
+    def make_briefing_plan(self) -> dict:
+        return {
+            "messages": [
+                {"role": "system", "content": self.template_renderer.render("assistant/TransferBriefing.md")},
+                {"role": "user", "content": "Here is the transcript:\n\n{{transcript}}"},
+            ]
         }
