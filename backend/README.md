@@ -51,7 +51,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 4. `ReviewTriage` decides whether a person needs to look at it: hand-off, removed or unchecked data, a field under 75% confidence, or a possible mistake suggested by ai/.
 5. `CallCompletionBuilder` masks the caller's number for display, and keeps the full number for call backs when that privacy setting is on. The caller's number is also sent to ai, so it stays in the transcript while any other phone number is masked.
 6. `FinishedCallWriter` saves the call, messages, fields, guardrail events, review and activity in one transaction.
-7. `HandOffEmailService` emails the team when the call was handed off, a transfer was not answered, the caller hung up during a transfer, or the caller rang out of hours. It sends once per call, using only masked details, and never stops the call being saved if Gmail fails.
+7. `HandOffAlertService` rings the team phone in Settings → Phone, then emails the team, when the call was handed off, a transfer was not answered, the caller hung up during a transfer, or the caller rang out of hours. It sends once per call, using only masked details, and never stops the call being saved if Gmail fails.
 8. `VapiCallArchive` deletes Vapi's own copy when that privacy setting is on and the analysis is complete.
 
 ## Hand-off emails
