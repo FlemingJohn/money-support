@@ -17,6 +17,7 @@ describe("AiCallAnalysisClient", () => {
     maskKinds: ["name"],
     faqs: [{ number: 2, question: "When will my money arrive?" }],
     callerNumber: "+447700900123",
+    maskLines: true,
     handOffSentence: "I'm transferring you.",
   };
 
