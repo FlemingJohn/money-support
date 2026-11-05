@@ -13,6 +13,9 @@ class ImprovementGraph:
     async def run(self) -> ImprovementState:
         return await self.compiled.ainvoke({})
 
+    def stream(self):
+        return self.compiled.astream({}, stream_mode=["custom", "values"])
+
     def build(self, feedback_node: FeedbackNode, propose_rule_node: ProposeRuleNode, test_rule_node: TestRuleNode):
         graph = StateGraph(ImprovementState)
         graph.add_node("collect_feedback", feedback_node)
