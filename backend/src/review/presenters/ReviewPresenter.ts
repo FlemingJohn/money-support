@@ -18,7 +18,7 @@ export class ReviewPresenter {
     };
   }
 
-  toResponse(review: Review): ReviewResponse {
+  toResponse(review: Review, reviewTestNumber: number | null = null): ReviewResponse {
     return {
       callId: review.callId,
       status: review.status,
@@ -29,6 +29,8 @@ export class ReviewPresenter {
       expectedBehaviour: review.expectedBehaviour,
       resolvedAt: review.resolvedAt?.toISOString() ?? null,
       handOffEmailedAt: review.handOffEmailedAt?.toISOString() ?? null,
+      reviewTestNumber,
+      verdictMessageId: review.verdictMessageId,
     };
   }
 }
