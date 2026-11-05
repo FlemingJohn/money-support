@@ -4,6 +4,8 @@ import { CardLink } from "@/components/CardLink";
 import { ChartLegendItem } from "@/components/ChartLegendItem";
 import { SectionCard } from "@/components/SectionCard";
 import { getOverview } from "@/lib/getOverview";
+import { getQuality } from "@/lib/getQuality";
+import { AgentQualityCard } from "@/overview/AgentQualityCard";
 import { CallsPerHourChart } from "@/overview/CallsPerHourChart";
 import { HandOffReasonList } from "@/overview/HandOffReasonList";
 import { makeOutcomeShares } from "@/overview/makeOutcomeShares";
@@ -16,7 +18,7 @@ import { toCallRow } from "@/calls/toCallRow";
 import { toReviewPreview } from "@/overview/toReviewPreview";
 
 export async function OverviewContent() {
-  const overview = await getOverview();
+  const [overview, quality] = await Promise.all([getOverview(), getQuality()]);
   const outcomeShares = makeOutcomeShares(overview.today);
 
   return (
@@ -60,6 +62,8 @@ export async function OverviewContent() {
           <NeedsReviewList reviews={overview.needsReview.map(toReviewPreview)} />
         </SectionCard>
       </div>
+
+      <AgentQualityCard quality={quality} />
     </>
   );
 }
