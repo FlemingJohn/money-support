@@ -4,6 +4,7 @@ import { CallChannel, Speaker } from "../../generated/prisma/client";
 import type { TranscriptLine } from "../../guardrails/types/TranscriptLine";
 import type { FinishedCallReport } from "../types/FinishedCallReport";
 import { VapiCallMissingException } from "../exceptions/VapiCallMissingException";
+import { HandOffToolReader } from "./HandOffToolReader";
 import type { VapiMessage } from "../types/VapiMessage";
 import type { VapiTranscriptEntry } from "../types/VapiTranscriptEntry";
 
@@ -11,7 +12,10 @@ import type { VapiTranscriptEntry } from "../types/VapiTranscriptEntry";
 export class VapiReportReader {
   private readonly speakersByRole: Record<string, Speaker> = { user: Speaker.caller, bot: Speaker.agent, assistant: Speaker.agent };
 
-  constructor(private readonly clock: Clock) {}
+  constructor(
+    private readonly clock: Clock,
+    private readonly handOffToolReader: HandOffToolReader,
+  ) {}
 
   read(message: VapiMessage): FinishedCallReport {
     return {
@@ -22,6 +26,7 @@ export class VapiReportReader {
       endedAt: this.readDate(message.endedAt) ?? this.clock.now(),
       endedReason: message.endedReason ?? null,
       lines: this.readLines(message),
+      handOffReason: this.handOffToolReader.readReason(message),
     };
   }
 
