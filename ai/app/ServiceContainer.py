@@ -12,6 +12,7 @@ from app.analysis.services.FieldsNode import FieldsNode
 from app.analysis.services.HandOffDetector import HandOffDetector
 from app.analysis.services.LineMasker import LineMasker
 from app.analysis.services.LineMaskingNode import LineMaskingNode
+from app.analysis.services.OwnNumberMatcher import OwnNumberMatcher
 from app.analysis.services.PieceMasker import PieceMasker
 from app.analysis.services.ReviewSuggester import ReviewSuggester
 from app.analysis.services.SummaryNode import SummaryNode
@@ -109,7 +110,7 @@ class ServiceContainer:
         return AssistantRouter(sync_service, self.service_secret_guard).make()
 
     def make_analysis_router(self) -> APIRouter:
-        line_masker = LineMasker(self.structured_model, self.template_renderer, PieceMasker(MaskKindCatalog()), MaskKindCatalog())
+        line_masker = LineMasker(self.structured_model, self.template_renderer, PieceMasker(MaskKindCatalog(), OwnNumberMatcher()), MaskKindCatalog())
         transcript_formatter = TranscriptFormatter()
         graph = CallAnalysisGraph(
             LineMaskingNode(line_masker),
