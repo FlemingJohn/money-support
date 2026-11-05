@@ -25,4 +25,4 @@ class AnalysisRouter:
         return await self.call_analysis_service.analyse(request)
 
     async def mask_line(self, request: LineMaskingRequest) -> LineMaskingResponse:
-        return await self.line_masker.mask(request.text, request.mask_kinds)
+        return await self.line_masker.mask(request.text, request.mask_kinds, "", request.is_reported)
