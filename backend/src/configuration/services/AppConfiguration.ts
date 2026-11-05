@@ -42,10 +42,6 @@ export class AppConfiguration {
     return this.configService.get("AI_SERVICE_URL", { infer: true });
   }
 
-  get encryptionKey(): string {
-    return this.configService.get("ENCRYPTION_KEY", { infer: true });
-  }
-
   get twilioAccountSid(): string {
     return this.configService.get("TWILIO_ACCOUNT_SID", { infer: true });
   }
