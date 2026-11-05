@@ -5,10 +5,11 @@ import { CallStatistics } from "./services/CallStatistics";
 import { DayRange } from "./services/DayRange";
 import { OverviewController } from "./controllers/OverviewController";
 import { OverviewService } from "./services/OverviewService";
+import { QualityStatistics } from "./services/QualityStatistics";
 
 @Module({
   imports: [CallsModule, ReviewModule],
   controllers: [OverviewController],
-  providers: [CallStatistics, DayRange, OverviewService],
+  providers: [CallStatistics, DayRange, OverviewService, QualityStatistics],
 })
 export class OverviewModule {}
