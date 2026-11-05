@@ -20,8 +20,8 @@
   </defs>
 
   <rect width="1280" height="860" fill="#f7f7f5"/>
-  <text x="40" y="46" font-size="26" font-weight="700" fill="#17140c">Money Support Agent: how a call flows</text>
-  <text x="40" y="72" font-size="14" fill="#5f594b">Numbers follow one call. The orange path is the hand-off during the call. Letters follow an admin change. L is the live transcript.</text>
+  <text x="40" y="40" font-size="26" font-weight="700" fill="#17140c">Money Support Agent: how a call flows</text>
+  <text x="40" y="64" font-size="14" fill="#5f594b">Numbers follow one call. The orange path is the hand-off during the call. Letters follow an admin change. L is the live transcript.</text>
 
   <g id="caller">
     <circle cx="84" cy="208" r="18" fill="#f1ede2" stroke="#17140c" stroke-width="2.5"/>
@@ -100,9 +100,9 @@
   </g>
 
   <g id="azure">
-    <path d="M1060 222 a22 22 0 0 1 8 -42 a30 30 0 0 1 56 -6 a22 22 0 0 1 28 22 a18 18 0 0 1 -4 26 z" fill="#ffffff" stroke="#17140c" stroke-width="2" filter="url(#shadow)"/>
-    <text x="1108" y="204" font-size="13" font-weight="700" fill="#17140c" text-anchor="middle">Azure OpenAI</text>
-    <text x="1108" y="242" font-size="11" fill="#5f594b" text-anchor="middle">gpt-4o · masks · summarises</text>
+    <path d="M1050 224 C1028 224 1028 190 1054 188 C1058 162 1094 156 1108 176 C1124 158 1160 168 1156 192 C1180 194 1180 224 1156 224 Z" fill="#ffffff" stroke="#17140c" stroke-width="2" filter="url(#shadow)"/>
+    <text x="1104" y="208" font-size="13" font-weight="700" fill="#17140c" text-anchor="middle">Azure OpenAI</text>
+    <text x="1104" y="244" font-size="11" fill="#5f594b" text-anchor="middle">gpt-4o · masks · summarises</text>
   </g>
 
   <g id="backend" filter="url(#shadow)">
@@ -195,7 +195,7 @@
 
   <g fill="none" stroke-width="2">
     <line x1="116" y1="186" x2="156" y2="186" stroke="#17140c" marker-end="url(#arrow)"/>
-    <path d="M100 280 C120 290 136 290 156 284" stroke="#a39c8a" stroke-dasharray="6 5" marker-end="url(#arrowMuted)"/>
+    <path d="M122 258 C136 266 142 274 156 276" stroke="#a39c8a" stroke-dasharray="6 5" marker-end="url(#arrowMuted)"/>
     <line x1="310" y1="186" x2="346" y2="186" stroke="#17140c" marker-end="url(#arrow)"/>
     <line x1="310" y1="270" x2="346" y2="270" stroke="#a39c8a" stroke-dasharray="6 5" marker-end="url(#arrowMuted)"/>
     <path d="M350 392 C250 420 120 390 92 308" stroke="#17140c" marker-end="url(#arrow)"/>
@@ -204,29 +204,29 @@
     <path d="M786 428 L786 462 Q786 468 780 468 L200 468 Q194 468 194 474 L194 574" stroke="#8a4300" stroke-width="2.5" marker-end="url(#arrowHandOff)"/>
     <line x1="686" y1="360" x2="766" y2="360" stroke="#17140c" marker-end="url(#arrow)"/>
     <line x1="920" y1="300" x2="920" y2="252" stroke="#17140c" marker-end="url(#arrow)"/>
-    <line x1="976" y1="182" x2="1056" y2="192" stroke="#17140c" marker-end="url(#arrow)"/>
+    <line x1="976" y1="186" x2="1028" y2="200" stroke="#17140c" marker-end="url(#arrow)"/>
     <line x1="976" y1="364" x2="1060" y2="350" stroke="#17140c" marker-end="url(#arrow)"/>
     <path d="M812 428 L812 480 Q812 486 806 486 L446 486 Q440 486 440 492 L440 654 Q440 660 434 660 L424 660" stroke="#17140c" marker-end="url(#arrow)"/>
     <line x1="250" y1="690" x2="148" y2="650" stroke="#17140c" marker-end="url(#arrow)"/>
-    <path d="M110 700 C110 820 520 830 580 702" stroke="#17140c" marker-end="url(#arrow)"/>
+    <path d="M110 700 C110 790 540 800 580 702" stroke="#17140c" marker-end="url(#arrow)"/>
     <line x1="860" y1="560" x2="900" y2="432" stroke="#17140c" marker-end="url(#arrow)"/>
-    <path d="M790 112 C780 86 640 86 620 108" stroke="#e3a600" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+    <path d="M790 112 C782 98 640 98 622 110" stroke="#e3a600" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
     <path d="M1000 500 C985 470 980 440 978 418" stroke="#1f7a4d" stroke-dasharray="6 5" marker-end="url(#arrowLive)"/>
   </g>
 
   <g font-size="11" fill="#5f594b">
     <text x="140" y="430" fill="#17140c">answers, or hands off and hangs up</text>
     <text x="726" y="166" text-anchor="middle" fill="#8a4300">hand-off tool</text>
-    <text x="838" y="282" fill="#8a4300">ring</text>
+    <text x="844" y="282" fill="#8a4300">ring</text>
     <text x="470" y="460" fill="#8a4300">Twilio rings the team phone now</text>
     <text x="726" y="352" text-anchor="middle">report</text>
     <text x="960" y="292">analyse · sync</text>
-    <text x="1012" y="176">mask</text>
+    <text x="988" y="180">mask</text>
     <text x="1000" y="346">save</text>
     <text x="424" y="590" text-anchor="end">emails the team</text>
-    <text x="300" y="790">opens Review, calls the customer back</text>
-    <text x="874" y="470">edits</text>
-    <text x="706" y="84" fill="#8a4300">updates the assistant</text>
+    <text x="300" y="806">opens Review, calls the customer back</text>
+    <text x="902" y="504">edits</text>
+    <text x="712" y="90" fill="#8a4300">updates the assistant</text>
     <text x="1004" y="458" fill="#1b5e3b">live lines</text>
     <text x="170" y="642">inbox</text>
   </g>
@@ -241,10 +241,10 @@
     <circle cx="896" cy="276" r="12" fill="#ffd23f" stroke="#17140c" stroke-width="2"/><text x="896" y="280">7</text>
     <circle cx="1030" cy="370" r="12" fill="#ffd23f" stroke="#17140c" stroke-width="2"/><text x="1030" y="374">8</text>
     <circle cx="440" cy="560" r="12" fill="#ffd23f" stroke="#17140c" stroke-width="2"/><text x="440" y="564">9</text>
-    <circle cx="276" cy="786" r="12" fill="#ffd23f" stroke="#17140c" stroke-width="2"/><text x="276" y="790">10</text>
+    <circle cx="276" cy="774" r="12" fill="#ffd23f" stroke="#17140c" stroke-width="2"/><text x="276" y="778">10</text>
     <circle cx="884" cy="500" r="12" fill="#ffffff" stroke="#17140c" stroke-width="2"/><text x="884" y="504">A</text>
     <circle cx="944" cy="276" r="12" fill="#ffffff" stroke="#17140c" stroke-width="2"/><text x="944" y="280">B</text>
-    <circle cx="690" cy="92" r="12" fill="#ffffff" stroke="#e3a600" stroke-width="2"/><text x="690" y="96">C</text>
+    <circle cx="692" cy="100" r="11" fill="#ffffff" stroke="#e3a600" stroke-width="2"/><text x="692" y="104">C</text>
     <circle cx="990" cy="474" r="12" fill="#e6f2ec" stroke="#1f7a4d" stroke-width="2"/><text x="990" y="478" fill="#1b5e3b">L</text>
   </g>
 </svg>
