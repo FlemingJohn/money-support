@@ -29,6 +29,7 @@ Everything except `/health` needs the `x-service-secret` header, with the same v
 2. `PromptBuilder` fills `prompts/assistant/SystemPrompt.md` with them, and the prompt is hashed.
 3. `AssistantConfigurationBuilder` builds the assistant:
    - gpt-4o at temperature 0 with the prompt and the tools from `ToolCatalog`: `endCall` for goodbyes, `transferCall` in transfer mode
+   - a `promptCacheKey` per prompt version, so every call reuses OpenAI's cached prompt; the live UK time sits at the end of the prompt so it never breaks the cached part
    - a Vapi voice at 0.9 speed from `VoiceFactory`, and Deepgram nova-3 with Wise key terms such as "bank account" and "IBAN" from `TranscriberFactory`
    - turn-taking from `SpeakingPlanFactory`: LiveKit smart endpointing so the agent waits for the caller to finish, and two words or a phrase such as "hang on" to interrupt it, while "okay" or "mm-hmm" never do
    - background sound off and Krisp denoising from `NoisePlanFactory`
