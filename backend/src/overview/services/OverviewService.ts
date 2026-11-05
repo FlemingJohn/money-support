@@ -7,11 +7,15 @@ import { ReviewRepository } from "../../review/repositories/ReviewRepository";
 import { CallStatistics } from "./CallStatistics";
 import { DayRange } from "./DayRange";
 import type { OverviewResponse } from "../responses/OverviewResponse";
+import type { QualityResponse } from "../responses/QualityResponse";
+import { Clock } from "../../common/services/Clock";
+import { QualityStatistics } from "./QualityStatistics";
 
 @Injectable()
 export class OverviewService {
   private readonly recentCallLimit = 5;
   private readonly needsReviewLimit = 3;
+  private readonly qualityWindowDays = 7;
 
   constructor(
     private readonly callRepository: CallRepository,
@@ -20,7 +24,14 @@ export class OverviewService {
     private readonly reviewPresenter: ReviewPresenter,
     private readonly callStatistics: CallStatistics,
     private readonly dayRange: DayRange,
+    private readonly qualityStatistics: QualityStatistics,
+    private readonly clock: Clock,
   ) {}
+
+  async getQuality(): Promise<QualityResponse> {
+    const since = new Date(this.clock.now().getTime() - this.qualityWindowDays * 24 * 60 * 60 * 1000);
+    return this.qualityStatistics.summarise(await this.reviewRepository.findJudgedSince(since));
+  }
 
   async getOverview(): Promise<OverviewResponse> {
     const today = this.dayRange.today();
