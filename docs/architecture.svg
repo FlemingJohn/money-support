@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 860" width="1280" height="860" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1040" width="1280" height="1040" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title description">
   <title id="title">Money Support Agent architecture</title>
-  <desc id="description">A caller rings the Twilio number or uses the test call page. Vapi hears, thinks and speaks. When the caller needs a person, Vapi calls the hand-off tool on ai, whose LangGraph graph asks the backend to ring the support team through Twilio during the call. Vapi then tells the caller and hangs up. After the call the backend has ai analyse it on Azure OpenAI, saves the masked call in Supabase and emails the team. The team reviews the call and calls back from the dashboard. Admin edits sync the agent through ai to Vapi. On the test call, caller words are masked live by ai.</desc>
+  <desc id="description">A caller rings the Twilio number or uses the test call page. Vapi hears, thinks and speaks. When the caller needs a person, Vapi calls the hand-off tool on ai, whose LangGraph graph asks the backend to ring the support team through Twilio during the call. Vapi then tells the caller and hangs up. After the call the backend has ai analyse it on Azure OpenAI, saves the masked call in Supabase and emails the team. The team reviews the call and calls back from the dashboard. Admin edits sync the agent through ai to Vapi. On the test call, caller words are masked live by ai. Below, the agent learns from reviews: reported lines are masked again, wrong replies become tests, and an improvement graph suggests a rule that a person approves.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 Z" fill="#17140c"/>
@@ -19,7 +19,7 @@
     </filter>
   </defs>
 
-  <rect width="1280" height="860" fill="#f7f7f5"/>
+  <rect width="1280" height="1040" fill="#f7f7f5"/>
   <text x="40" y="40" font-size="26" font-weight="700" fill="#17140c">Money Support Agent: how a call flows</text>
   <text x="40" y="64" font-size="14" fill="#5f594b">Numbers follow one call. The orange path is the hand-off during the call. Letters follow an admin change. L is the live transcript.</text>
 
@@ -246,5 +246,58 @@
     <circle cx="944" cy="276" r="12" fill="#ffffff" stroke="#17140c" stroke-width="2"/><text x="944" y="280">B</text>
     <circle cx="692" cy="100" r="11" fill="#ffffff" stroke="#e3a600" stroke-width="2"/><text x="692" y="104">C</text>
     <circle cx="990" cy="474" r="12" fill="#e6f2ec" stroke="#1f7a4d" stroke-width="2"/><text x="990" y="478" fill="#1b5e3b">L</text>
+  </g>
+  <g id="learning">
+    <line x1="40" y1="836" x2="1240" y2="836" stroke="#e8e4d8" stroke-width="2"/>
+    <text x="40" y="866" font-size="18" font-weight="700" fill="#17140c">Learning from reviews</text>
+    <text x="250" y="866" font-size="12" fill="#5f594b">reviewers' feedback makes the agent better, always with a person in control</text>
+
+    <g filter="url(#shadow)">
+      <rect x="40" y="884" width="262" height="120" rx="12" fill="#ffffff" stroke="#e8e4d8"/>
+      <path d="M70 902 L86 930 H54 Z" fill="#fdebd3" stroke="#8a4300" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="70" y1="911" x2="70" y2="920" stroke="#8a4300" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="70" cy="925" r="1.6" fill="#8a4300"/>
+      <text x="98" y="912" font-size="14" font-weight="700" fill="#17140c">R · Report data</text>
+      <text x="98" y="930" font-size="11" fill="#5f594b">masking missed a detail</text>
+      <text x="58" y="958" font-size="11" fill="#17140c">ai re-checks the line and masks</text>
+      <text x="58" y="974" font-size="11" fill="#17140c">only the leak, then re-analyses</text>
+      <text x="58" y="990" font-size="11" fill="#17140c">the summary and fields</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="338" y="884" width="262" height="120" rx="12" fill="#ffffff" stroke="#e8e4d8"/>
+      <circle cx="368" cy="916" r="14" fill="#fdebd3" stroke="#8a4300" stroke-width="2"/>
+      <path d="M362 910 L374 922 M374 910 L362 922" stroke="#8a4300" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="394" y="912" font-size="14" font-weight="700" fill="#17140c">T · Wrong reply</text>
+      <text x="394" y="930" font-size="11" fill="#5f594b">a reviewer marks it wrong</text>
+      <text x="356" y="958" font-size="11" fill="#17140c">the caller's line becomes test</text>
+      <text x="356" y="974" font-size="11" fill="#17140c">R01, run with the 25 built-in</text>
+      <text x="356" y="990" font-size="11" fill="#17140c">tests before every change</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="636" y="884" width="262" height="120" rx="12" fill="#fff8db" stroke="#e3a600" stroke-width="2"/>
+      <path d="M666 900 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 z" fill="#ffd23f" stroke="#17140c" stroke-width="1.5" stroke-linejoin="round"/>
+      <text x="692" y="912" font-size="14" font-weight="700" fill="#17140c">S · Suggest a rule</text>
+      <text x="692" y="930" font-size="11" fill="#5f594b">LangGraph improvement graph</text>
+      <text x="654" y="958" font-size="11" fill="#17140c">Azure writes one rule from the</text>
+      <text x="654" y="974" font-size="11" fill="#17140c">failing tests, tested on a copy</text>
+      <text x="654" y="990" font-size="11" fill="#17140c">of the agent: 25 → 28 passed</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="934" y="884" width="306" height="120" rx="12" fill="#ffffff" stroke="#e8e4d8"/>
+      <circle cx="964" cy="916" r="14" fill="#e6f2ec" stroke="#1f7a4d" stroke-width="2"/>
+      <path d="M957 916 L962 921 L971 911" fill="none" stroke="#1f7a4d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="990" y="912" font-size="14" font-weight="700" fill="#17140c">P · A person approves</text>
+      <text x="990" y="930" font-size="11" fill="#5f594b">nothing goes live without it</text>
+      <text x="952" y="958" font-size="11" fill="#17140c">the rule is added to the end of the</text>
+      <text x="952" y="974" font-size="11" fill="#17140c">prompt, the agent updates (like C)</text>
+      <text x="952" y="990" font-size="11" fill="#17140c">and Overview compares versions</text>
+    </g>
+
+    <line x1="319" y1="892" x2="319" y2="996" stroke="#e8e4d8" stroke-width="2" stroke-dasharray="5 5"/>
+    <line x1="602" y1="944" x2="632" y2="944" stroke="#17140c" stroke-width="2" marker-end="url(#arrow)"/>
+    <line x1="900" y1="944" x2="930" y2="944" stroke="#17140c" stroke-width="2" marker-end="url(#arrow)"/>
   </g>
 </svg>
