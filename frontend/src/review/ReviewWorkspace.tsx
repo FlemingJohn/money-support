@@ -10,7 +10,7 @@ import { ReviewActionsCard } from "@/review/ReviewActionsCard";
 import { ReviewHeader } from "@/review/ReviewHeader";
 import type { ReviewWorkspaceProps } from "@/types/ReviewWorkspaceProps";
 
-export function ReviewWorkspace({ detail, callbacks, phone }: ReviewWorkspaceProps) {
+export function ReviewWorkspace({ detail, callbacks, phone, nextReviewPath }: ReviewWorkspaceProps) {
   const { review, call } = detail;
   const removedTypes = [...new Set(call.guardrailEvents.filter((event) => event.kind === "personalDataRemoved").map((event) => event.entityType))];
   const isEveryFieldConfirmed = call.extractedFields.every((field) => field.isConfirmed);
@@ -39,7 +39,7 @@ export function ReviewWorkspace({ detail, callbacks, phone }: ReviewWorkspacePro
         </SectionCard>
       </div>
 
-      <ReviewActionsCard review={review} callbacks={callbacks} agentReplies={call.messages.filter((message) => message.speaker === "agent")} />
+      <ReviewActionsCard review={review} callbacks={callbacks} agentReplies={call.messages.filter((message) => message.speaker === "agent")} nextReviewPath={nextReviewPath} />
     </div>
   );
 }
