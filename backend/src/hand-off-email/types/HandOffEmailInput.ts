@@ -12,5 +12,6 @@ export interface HandOffEmailInput {
   summary: string | null;
   lines: RedactedLine[];
   transferNumber: string;
+  handOffReason: string | null;
   callUrl: string;
 }
