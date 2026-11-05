@@ -46,3 +46,12 @@ class PromptBuilderTest:
         prompt = builder.build(self.sample_data.make_faqs(), self.sample_data.make_settings())
         assert "use the handOffToHuman tool straight away" in prompt
         assert "The call ends by itself as soon as you say it" not in prompt
+
+    def test_adds_learned_rules_at_the_end_so_the_start_stays_cached(self) -> None:
+        prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings(), ["Fees are never in scope."])
+        assert prompt.index("# Rules learned from reviews") > prompt.index("# Knowledge")
+        assert "- Fees are never in scope." in prompt
+
+    def test_leaves_out_the_learned_rules_section_when_there_are_none(self) -> None:
+        assert "# Rules learned from reviews" not in self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings())
+
