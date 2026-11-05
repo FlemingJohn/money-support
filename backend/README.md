@@ -62,7 +62,7 @@ NestJS API that owns the database. It receives Vapi call events, stores redacted
 | Transfer not answered | `call.forwarding.no-answer`, `call.forwarding.operator-busy`, `call.in-progress.error-transfer-failed` | ⚠ Missed transfer, please call back |
 | Caller left during transfer | `customer-ended-call-during-transfer` | ⚠ Caller hung up during transfer, please call back |
 | Out of hours | transfer mode, weekday hours, outside Mon–Fri 9am–5pm UK | Out-of-hours caller, follow up next working day |
-| Transfer answered | `assistant-forwarded-call` | no email |
+| Transfer answered | `assistant-forwarded-call` | Transferred to you |
 
 Emails go through Gmail SMTP with an app password (`MAIL_USER`, `MAIL_APP_PASSWORD`) to the address in Settings → Hand-off. `reviews.hand_off_emailed_at` is claimed in one update before sending, so a repeated report never sends twice; a failed send clears it and logs `handOffEmailFailed`.
 
