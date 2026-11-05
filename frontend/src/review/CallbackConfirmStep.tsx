@@ -13,7 +13,7 @@ export function CallbackConfirmStep({ callerLabel, phone, errorMessage, onStart,
   return (
     <>
       <p className="text-sm leading-relaxed">
-        We ring your phone first, then connect you to the caller <strong className="font-mono">{callerLabel}</strong>. Their full number stays hidden.
+        We ring your phone first, then connect you to the caller on <strong className="font-mono">{callerLabel}</strong>.
       </p>
       {phoneChoices.length === 0 ? (
         <p className="rounded-control bg-handoff-wash px-3 py-2 text-sm text-handoff-ink">Add your desk or mobile number in Settings → Phone first.</p>
