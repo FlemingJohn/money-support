@@ -1,75 +1,76 @@
 import { ArrowLeftRight, CircleCheck, Clock, Phone } from "lucide-react";
 import { formatDuration } from "@/lib/formatDuration";
 import type { CallTotals } from "@/types/CallTotals";
+import type { OverviewPeriodWording } from "@/types/OverviewPeriodWording";
 import type { Stat } from "@/types/Stat";
 
-export function makeOverviewStats(today: CallTotals, yesterday: CallTotals): Stat[] {
+export function makeOverviewStats(current: CallTotals, previous: CallTotals, wording: OverviewPeriodWording): Stat[] {
   return [
-    makeCallCountStat(today, yesterday),
-    makeResolvedStat(today),
-    makeHandedOffStat(today, yesterday),
-    makeAverageLengthStat(today, yesterday),
+    makeCallCountStat(current, previous, wording),
+    makeResolvedStat(current),
+    makeHandedOffStat(current, previous, wording),
+    makeAverageLengthStat(current, previous, wording),
   ];
 }
 
-function makeCallCountStat(today: CallTotals, yesterday: CallTotals): Stat {
-  const difference = today.callCount - yesterday.callCount;
+function makeCallCountStat(current: CallTotals, previous: CallTotals, wording: OverviewPeriodWording): Stat {
+  const difference = current.callCount - previous.callCount;
   return {
-    label: "Calls today",
-    value: String(today.callCount),
+    label: wording.callCountLabel,
+    value: String(current.callCount),
     icon: Phone,
-    detail: describeCountChange(difference, "call"),
+    detail: describeCountChange(difference, "call", wording.comparison),
     tone: "neutral",
     trend: difference >= 0 ? "up" : "down",
   };
 }
 
-function makeResolvedStat(today: CallTotals): Stat {
-  const share = today.callCount === 0 ? 0 : Math.round((today.resolvedCount / today.callCount) * 100);
+function makeResolvedStat(current: CallTotals): Stat {
+  const share = current.callCount === 0 ? 0 : Math.round((current.resolvedCount / current.callCount) * 100);
   return {
     label: "Resolved by agent",
     value: `${share}%`,
     icon: CircleCheck,
-    detail: `${today.resolvedCount} of ${today.callCount} calls`,
+    detail: `${current.resolvedCount} of ${current.callCount} calls`,
     tone: "neutral",
     progress: share,
   };
 }
 
-function makeHandedOffStat(today: CallTotals, yesterday: CallTotals): Stat {
-  const difference = today.handedOffCount - yesterday.handedOffCount;
+function makeHandedOffStat(current: CallTotals, previous: CallTotals, wording: OverviewPeriodWording): Stat {
+  const difference = current.handedOffCount - previous.handedOffCount;
   return {
     label: "Handed to a person",
-    value: String(today.handedOffCount),
+    value: String(current.handedOffCount),
     icon: ArrowLeftRight,
-    detail: describeCountChange(difference, "hand-off"),
+    detail: describeCountChange(difference, "hand-off", wording.comparison),
     tone: difference <= 0 ? "good" : "neutral",
     trend: difference >= 0 ? "up" : "down",
   };
 }
 
-function makeAverageLengthStat(today: CallTotals, yesterday: CallTotals): Stat {
+function makeAverageLengthStat(current: CallTotals, previous: CallTotals, wording: OverviewPeriodWording): Stat {
   return {
     label: "Average call length",
-    value: formatDuration(today.averageDurationSeconds),
+    value: formatDuration(current.averageDurationSeconds),
     icon: Clock,
-    detail: describeLengthChange(today.averageDurationSeconds, yesterday.averageDurationSeconds),
+    detail: describeLengthChange(current.averageDurationSeconds, previous.averageDurationSeconds, wording.comparison),
     tone: "neutral",
-    trend: (today.averageDurationSeconds ?? 0) >= (yesterday.averageDurationSeconds ?? 0) ? "up" : "down",
+    trend: (current.averageDurationSeconds ?? 0) >= (previous.averageDurationSeconds ?? 0) ? "up" : "down",
     isMonospace: true,
   };
 }
 
-function describeCountChange(difference: number, noun: string): string {
-  if (difference === 0) return "Same as yesterday";
+function describeCountChange(difference: number, noun: string, comparison: string): string {
+  if (difference === 0) return `Same as ${comparison}`;
   const amount = Math.abs(difference);
   const plural = amount === 1 ? noun : `${noun}s`;
-  return `${amount} ${plural} ${difference > 0 ? "more" : "fewer"} than yesterday`;
+  return `${amount} ${plural} ${difference > 0 ? "more" : "fewer"} than ${comparison}`;
 }
 
-function describeLengthChange(todaySeconds: number | null, yesterdaySeconds: number | null): string {
-  if (todaySeconds === null || yesterdaySeconds === null) return "No calls to compare";
-  const difference = Math.round(todaySeconds - yesterdaySeconds);
-  if (difference === 0) return "Same as yesterday";
-  return `${Math.abs(difference)} s ${difference > 0 ? "longer" : "shorter"} than yesterday`;
+function describeLengthChange(currentSeconds: number | null, previousSeconds: number | null, comparison: string): string {
+  if (currentSeconds === null || previousSeconds === null) return "No calls to compare";
+  const difference = Math.round(currentSeconds - previousSeconds);
+  if (difference === 0) return `Same as ${comparison}`;
+  return `${Math.abs(difference)} s ${difference > 0 ? "longer" : "shorter"} than ${comparison}`;
 }
