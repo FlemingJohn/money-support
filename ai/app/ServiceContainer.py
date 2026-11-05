@@ -35,6 +35,7 @@ from app.backend.clients.BackendClient import BackendClient
 from app.common.guards.ServiceSecretGuard import ServiceSecretGuard
 from app.common.guards.VapiSecretGuard import VapiSecretGuard
 from app.common.services.RunPoller import RunPoller
+from app.common.services.ServerSentEvents import ServerSentEvents
 from app.common.services.TemplateRenderer import TemplateRenderer
 from app.configuration.AppConfiguration import AppConfiguration
 from app.evaluation.clients.VapiEvaluationClient import VapiEvaluationClient
@@ -43,6 +44,7 @@ from app.evaluation.factories.MockConversationFactory import MockConversationFac
 from app.evaluation.routes.EvaluationRouter import EvaluationRouter
 from app.evaluation.services.EvaluationCaseLoader import EvaluationCaseLoader
 from app.evaluation.services.EvaluationRunner import EvaluationRunner
+from app.evaluation.services.EvaluationStreamService import EvaluationStreamService
 from app.handoff.catalogs.HandOffReasonCatalog import HandOffReasonCatalog
 from app.handoff.routes.HandOffToolRouter import HandOffToolRouter
 from app.handoff.services.HandOffGraph import HandOffGraph
@@ -114,7 +116,7 @@ class ServiceContainer:
             ProposeRuleNode(self.structured_model, self.template_renderer),
             TestRuleNode(self.make_evaluation_runner(), sync_service, configuration_builder),
         )
-        return ImprovementRouter(ImprovementService(graph), self.service_secret_guard).make()
+        return ImprovementRouter(ImprovementService(graph, ServerSentEvents()), self.service_secret_guard).make()
 
     def make_hand_off_tool_router(self) -> APIRouter:
         graph = HandOffGraph(ReasonNode(HandOffReasonCatalog()), RingTeamNode(self.backend_client))
@@ -152,7 +154,8 @@ class ServiceContainer:
         return AnalysisRouter(call_analysis_service, line_masker, self.service_secret_guard).make()
 
     def make_evaluation_router(self) -> APIRouter:
-        return EvaluationRouter(self.make_evaluation_runner(), self.service_secret_guard).make()
+        runner = self.make_evaluation_runner()
+        return EvaluationRouter(runner, EvaluationStreamService(runner, ServerSentEvents()), self.service_secret_guard).make()
 
     def make_evaluation_runner(self) -> EvaluationRunner:
         return EvaluationRunner(
