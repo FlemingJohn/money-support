@@ -11,6 +11,7 @@ import { CallCompletionBuilder } from "./services/CallCompletionBuilder";
 import { CallRecordingService } from "./services/CallRecordingService";
 import { EndOfCallReportHandler } from "./handlers/EndOfCallReportHandler";
 import { FieldLocator } from "./services/FieldLocator";
+import { HandOffToolReader } from "./services/HandOffToolReader";
 import { FinishedCallWriter } from "./services/FinishedCallWriter";
 import { AiCallAnalysisClient } from "./clients/AiCallAnalysisClient";
 import { CallAnalysisClient } from "./clients/CallAnalysisClient";
@@ -33,6 +34,7 @@ import { VapiWebhookService } from "./services/VapiWebhookService";
     EndOfCallReportHandler,
     FieldLocator,
     FinishedCallWriter,
+    HandOffToolReader,
     PendingAnalysisBuilder,
     ReportAnalyser,
     StatusUpdateHandler,
