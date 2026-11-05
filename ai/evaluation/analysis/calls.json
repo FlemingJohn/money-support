@@ -156,5 +156,50 @@
       "fieldValues": [],
       "reviewReason": "possibleMistake"
     }
+  },
+  {
+    "id": "A05",
+    "name": "Caller gives their own number and someone else's",
+    "endedReason": "assistant-ended-call",
+    "callerNumber": "+919876541363",
+    "lines": [
+      [
+        "agent",
+        "Hi, thanks for calling. How can I help?"
+      ],
+      [
+        "caller",
+        "When will my money arrive? You can call me back on 98765 41363."
+      ],
+      [
+        "agent",
+        "You can see the estimated arrival time under Home in your Wise account. Does that help?"
+      ],
+      [
+        "caller",
+        "Yes. If I'm busy, ring my wife on 91234 56789."
+      ],
+      [
+        "agent",
+        "I don't need anyone's number. Is there anything else I can help with?"
+      ],
+      [
+        "caller",
+        "No, that's all, bye."
+      ]
+    ],
+    "expected": {
+      "matchedFaqNumber": 2,
+      "isHandedOff": false,
+      "hidden": [
+        "91234 56789"
+      ],
+      "kept": [
+        "98765 41363",
+        "wife"
+      ],
+      "fieldValues": [],
+      "reviewReason": "guardrail"
+    }
   }
 ]
