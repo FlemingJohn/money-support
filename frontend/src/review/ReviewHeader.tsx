@@ -23,7 +23,7 @@ export function ReviewHeader({ detail, phone }: ReviewHeaderProps) {
             <Clock size={14} strokeWidth={1.9} aria-hidden="true" />
             {formatClockTime(call.startedAt)} · {formatDuration(call.durationSeconds)}
           </span>
-          <CallerLabel call={toCallRow(call)} />
+          {call.customerNumber ? <span className="font-mono font-semibold text-ink">{call.customerNumber}</span> : <CallerLabel call={toCallRow(call)} />}
           {review.handOffEmailedAt && (
             <span className="inline-flex items-center gap-1.5">
               <Mail size={14} strokeWidth={1.9} aria-hidden="true" />
@@ -33,7 +33,7 @@ export function ReviewHeader({ detail, phone }: ReviewHeaderProps) {
         </div>
       </div>
       {isPhoneCall ? (
-        <CallbackButton callId={call.id} callerLabel={call.callerLabel} phone={phone} />
+        <CallbackButton callId={call.id} callerLabel={call.customerNumber ?? call.callerLabel} phone={phone} />
       ) : (
         <span className="text-[13px] text-ink-muted">Web call · no number to call back</span>
       )}
