@@ -10,7 +10,7 @@ export interface CallCompletion {
   topic: string | null;
   outcome: CallOutcome;
   maskedCustomerNumber: string | null;
-  encryptedCustomerNumber: string | null;
+  customerNumber: string | null;
   matchedFaqId: string | null;
   promptVersionId: string | null;
 }
