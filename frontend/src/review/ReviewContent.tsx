@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { getSettings } from "@/lib/getSettings";
 import { getCallbacks } from "@/review/getCallbacks";
 import { getReviewDetail } from "@/review/getReviewDetail";
+import { findNextReviewPath } from "@/review/findNextReviewPath";
 import { getReviewList } from "@/review/getReviewList";
 import { readReviewSelection } from "@/review/readReviewSelection";
 import { ReviewQueueList } from "@/review/ReviewQueueList";
@@ -26,7 +27,7 @@ export async function ReviewContent({ searchParams }: SearchParamsProps) {
       </section>
 
       {detail && settings ? (
-        <ReviewWorkspace detail={detail} callbacks={callbacks} phone={settings.phone} />
+        <ReviewWorkspace detail={detail} callbacks={callbacks} phone={settings.phone} nextReviewPath={findNextReviewPath(reviewList, selection, selectedCallId)} />
       ) : (
         <section className="flex min-w-0 flex-[2_1_560px] flex-col items-center gap-3 rounded-card border border-line bg-paper p-10 text-center">
           <Flag size={24} strokeWidth={1.75} aria-hidden="true" className="text-ink-muted" />
