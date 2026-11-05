@@ -48,9 +48,9 @@ describe("HandOffEmailService", () => {
     expect(mailer.send).not.toHaveBeenCalled();
   });
 
-  it("does not email an answered transfer", async () => {
+  it("emails a record of an answered transfer", async () => {
     await service.sendIfHandedOff(makeRecording(true, "assistant-forwarded-call"));
-    expect(mailer.send).not.toHaveBeenCalled();
+    expect(mailer.send.mock.calls[0][0].subject).toMatch(/^Transferred to you: /);
   });
 
   it("does not email again when the same report arrives twice", async () => {
