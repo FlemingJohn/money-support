@@ -99,6 +99,22 @@ class ApplicationFactoryTest:
         assert report["failedCount"] == 0
         assert vapi.get_sent_bodies("POST", "/eval/run")[0]["target"] == {"type": "assistant", "assistantId": "assistant-1"}
 
+    def test_evaluations_also_run_the_tests_from_reviews(self, analyzer: ScriptedStructuredModel) -> None:
+        vapi = FakeHttpServer(
+            {
+                ("GET", "/assistant"): [our_assistant],
+                ("POST", "/eval/run"): {"evalRunId": "run-1"},
+                ("GET", "/eval/run/run-1"): {"id": "run-1", "status": "ended", "endedReason": "mockConversation.done", "results": [{"status": "pass"}]},
+            }
+        )
+        backend = self.make_backend()
+        backend.responses[("GET", "/internal/review-tests")] = [
+            {"id": "R01", "name": "From a review: fees", "turns": [{"role": "user", "content": "What are your fees to India?"}, {"role": "assistant", "check": "handsOff"}]}
+        ]
+        report = self.make_client(analyzer, backend, vapi).post("/evaluations/run", headers=secret_header).json()
+        assert report["passedCount"] == 26
+        assert any(result["caseId"] == "R01" for result in report["results"])
+
     def test_simulations_start_one_run_with_every_scenario(self, analyzer: ScriptedStructuredModel) -> None:
         vapi = FakeHttpServer(
             {
