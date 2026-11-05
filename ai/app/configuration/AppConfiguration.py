@@ -22,6 +22,7 @@ class AppConfiguration(BaseSettings):
     azure_openai_api_version: str = "2025-01-01-preview"
     run_timeout_seconds: float = 240
     poll_interval_seconds: float = 3
+    max_concurrent_runs: int = 10
     project_folder: Path = Path(__file__).resolve().parents[2]
 
     @property
