@@ -9,4 +9,5 @@ export interface CallAnalysisInput {
   faqs: FaqQuestion[];
   handOffSentence: string;
   callerNumber: string;
+  maskLines: boolean;
 }
