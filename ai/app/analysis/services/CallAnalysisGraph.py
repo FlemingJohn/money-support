@@ -36,7 +36,7 @@ class CallAnalysisGraph:
         request = state["request"]
         if not request.lines:
             return "join_lines"
-        return [Send("mask_line", {"line": line, "mask_kinds": request.mask_kinds}) for line in request.lines]
+        return [Send("mask_line", {"line": line, "mask_kinds": request.mask_kinds, "caller_number": request.caller_number}) for line in request.lines]
 
     def join_lines(self, state: CallAnalysisState) -> dict:
         return {}
