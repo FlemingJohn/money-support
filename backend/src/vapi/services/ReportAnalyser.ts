@@ -17,7 +17,7 @@ export class ReportAnalyser {
 
   async analyse(report: FinishedCallReport): Promise<CallAnalysis> {
     const [privacy, handOff, faqs] = await Promise.all([this.settingsService.getPrivacy(), this.settingsService.getHandOff(), this.faqRepository.findActive()]);
-    return this.callAnalysisClient.analyse({
+    const analysis = await this.callAnalysisClient.analyse({
       callId: report.callId,
       lines: report.lines,
       endedReason: report.endedReason,
@@ -26,5 +26,6 @@ export class ReportAnalyser {
       handOffSentence: handOff.handOffSentence,
       callerNumber: report.customerNumber ?? "",
     });
+    return { ...analysis, isHandedOff: analysis.isHandedOff || report.handOffReason !== null };
   }
 }
