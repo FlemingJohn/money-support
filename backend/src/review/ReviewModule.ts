@@ -7,13 +7,11 @@ import { ReviewPresenter } from "./presenters/ReviewPresenter";
 import { ReviewRepository } from "./repositories/ReviewRepository";
 import { ReviewService } from "./services/ReviewService";
 import { ReviewTriage } from "./services/ReviewTriage";
-import { UnmaskedReportController } from "./controllers/UnmaskedReportController";
-import { UnmaskedReportService } from "./services/UnmaskedReportService";
 
 @Module({
   imports: [ActivityModule, CallsModule, GuardrailsModule],
-  controllers: [ReviewController, UnmaskedReportController],
-  providers: [ReviewPresenter, ReviewRepository, ReviewService, ReviewTriage, UnmaskedReportService],
+  controllers: [ReviewController],
+  providers: [ReviewPresenter, ReviewRepository, ReviewService, ReviewTriage],
   exports: [ReviewPresenter, ReviewRepository, ReviewTriage],
 })
 export class ReviewModule {}
