@@ -93,7 +93,7 @@ class ServiceContainer:
     def make_assistant_router(self) -> APIRouter:
         configuration_builder = AssistantConfigurationBuilder(
             self.configuration,
-            ToolCatalog(),
+            ToolCatalog(self.template_renderer),
             HookCatalog(),
             CompliancePlanFactory(),
             VoiceFactory(),
