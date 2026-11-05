@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { CallRepository } from "../../calls/repositories/CallRepository";
 import { Clock } from "../../common/services/Clock";
 import { ReviewTriage } from "../../review/services/ReviewTriage";
-import { HandOffEmailService } from "../../hand-off-email/services/HandOffEmailService";
+import { HandOffAlertService } from "../../hand-off-email/services/HandOffAlertService";
 import type { TriageFacts } from "../../review/types/TriageFacts";
 import { VapiCallArchive } from "../clients/VapiCallArchive";
 import type { CallAnalysis } from "../types/CallAnalysis";
@@ -26,7 +26,7 @@ export class CallRecordingService {
     private readonly callCompletionBuilder: CallCompletionBuilder,
     private readonly finishedCallWriter: FinishedCallWriter,
     private readonly vapiCallArchive: VapiCallArchive,
-    private readonly handOffEmailService: HandOffEmailService,
+    private readonly handOffAlertService: HandOffAlertService,
   ) {}
 
   async recordCallStart(message: VapiMessage): Promise<void> {
@@ -42,7 +42,7 @@ export class CallRecordingService {
     const completion = await this.callCompletionBuilder.build(report, analysis);
     const recording = { report, analysis, reviewReason, completion };
     await this.finishedCallWriter.write(recording);
-    await this.handOffEmailService.sendIfHandedOff(recording);
+    await this.handOffAlertService.alertTeamIfHandedOff(recording);
     if (analysis.isComplete) await this.vapiCallArchive.removeIfEnabled(report.callId);
   }
 
