@@ -34,7 +34,7 @@ class CallAnalysisGraph:
 
     def fan_out_lines(self, state: CallAnalysisState) -> list[Send] | str:
         request = state["request"]
-        if not request.lines:
+        if not request.lines or not request.mask_lines:
             return "join_lines"
         return [Send("mask_line", {"line": line, "mask_kinds": request.mask_kinds, "caller_number": request.caller_number}) for line in request.lines]
 
