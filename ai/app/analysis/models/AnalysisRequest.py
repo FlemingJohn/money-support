@@ -13,3 +13,4 @@ class AnalysisRequest(CamelModel):
     mask_kinds: list[str] = Field(default_factory=lambda: MaskKindCatalog().all_labels)
     faqs: list[FaqSummary] = Field(default_factory=list)
     hand_off_sentence: str = ""
+    caller_number: str = ""
