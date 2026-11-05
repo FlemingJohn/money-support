@@ -36,7 +36,7 @@ class CallAnalysisDeepEvalTest:
 
     def analyse(self, call: dict):
         lines = [CallLine(position=index, speaker=speaker, text=text) for index, (speaker, text) in enumerate(call["lines"])]
-        request = AnalysisRequest(call_id=call["id"], lines=lines, ended_reason=call["endedReason"], faqs=faqs, hand_off_sentence=SampleData.hand_off_sentence)
+        request = AnalysisRequest(call_id=call["id"], lines=lines, ended_reason=call["endedReason"], faqs=faqs, hand_off_sentence=SampleData.hand_off_sentence, caller_number=call.get("callerNumber", ""))
         return asyncio.run(self.service.analyse(request))
 
     @pytest.mark.parametrize("call", calls, ids=[call["id"] for call in calls])
