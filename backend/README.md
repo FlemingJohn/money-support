@@ -143,7 +143,7 @@ Fill in `.env`:
 | `DIRECT_URL` | Supabase pooler in session mode (port 5432) with `?sslmode=verify-full&sslrootcert=certs/supabase-ca.crt`, used for migrations |
 | `VAPI_WEBHOOK_SECRET`, `SERVICE_SECRET`, `CRON_SECRET` | Long random strings |
 | `AI_SERVICE_URL` | Leave empty until ai/ runs |
-| `TWILIO_*` | Leave empty to use the call back simulator |
+| `TWILIO_*` | Needed for real call backs and for ringing the team phone after a hand-off. Leave empty to use the call back simulator and skip the ring. |
 
 Without Supabase, `npx prisma dev` runs a local Postgres and prints a connection string to use for both database variables.
 
