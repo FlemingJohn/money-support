@@ -142,7 +142,7 @@ model Call {
   topic                   String?
   outcome                 CallOutcome?
   maskedCustomerNumber    String?          @map("masked_customer_number")
-  encryptedCustomerNumber String?          @map("encrypted_customer_number")
+  customerNumber          String?          @map("customer_number")
   matchedFaqId            String?          @map("matched_faq_id") @db.Uuid
   promptVersionId         String?          @map("prompt_version_id") @db.Uuid
   createdAt               DateTime         @default(now()) @map("created_at")
