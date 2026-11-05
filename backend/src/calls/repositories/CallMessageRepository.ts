@@ -6,8 +6,6 @@ import { PrismaService } from "../../prisma/services/PrismaService";
 
 @Injectable()
 export class CallMessageRepository {
-  private readonly hiddenMessageText = "[message hidden while it is reviewed]";
-
   constructor(private readonly prismaService: PrismaService) {}
 
   async replaceForCall(transaction: DatabaseTransaction, callId: string, lines: RedactedLine[]): Promise<CallMessage[]> {
@@ -27,8 +25,8 @@ export class CallMessageRepository {
     return this.prismaService.callMessage.findUnique({ where: { id: messageId } });
   }
 
-  async hide(transaction: DatabaseTransaction, messageId: string): Promise<void> {
-    await transaction.callMessage.update({ where: { id: messageId }, data: { redactedText: this.hiddenMessageText } });
+  async replaceText(transaction: DatabaseTransaction, messageId: string, redactedText: string): Promise<void> {
+    await transaction.callMessage.update({ where: { id: messageId }, data: { redactedText } });
   }
 
   async deleteForCallsEndedBefore(cutoff: Date): Promise<number> {
