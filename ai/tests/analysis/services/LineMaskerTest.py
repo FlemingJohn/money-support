@@ -29,3 +29,8 @@ class LineMaskerTest:
         result = asyncio.run(masker.mask("Hi, this is Ananya", []))
         assert result.redacted_text == "Hi, this is Ananya"
         assert model.questions == []
+
+    def test_looks_harder_when_a_reviewer_reported_the_line(self) -> None:
+        masker = self.make_masker({MaskingOutput: ScriptedAnswers().masking})
+        assert "reported that this line still holds personal data" in masker.make_instructions(["name"], True)
+        assert "reported that this line" not in masker.make_instructions(["name"], False)
