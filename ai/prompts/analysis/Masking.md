@@ -12,3 +12,7 @@ Find only these kinds: {{ kinds | join(", ") }}.
 These are never personal data: amounts of money, dates, times, durations, countries or cities on their own, company names such as Wise, transfer numbers and bank reference numbers such as a UTR.
 
 Return only the personal value itself, never the words around it such as "card number", "sort code", "expiry", "account" or "my name is". Return every piece exactly as it is written in the line, character for character, with its kind. Return an empty list when there is none.
+{% if is_reported %}
+
+A person reviewing this call reported that this line still holds personal data that an earlier check missed. Look closely, including numbers on their own and words spelled out letter by letter, and return every personal piece you find.
+{% endif %}
