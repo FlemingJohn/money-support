@@ -15,6 +15,7 @@ import { MaskingModule } from "./masking/MaskingModule";
 import { OverviewModule } from "./overview/OverviewModule";
 import { PrismaModule } from "./prisma/PrismaModule";
 import { RetentionModule } from "./retention/RetentionModule";
+import { ReportsModule } from "./reports/ReportsModule";
 import { ReviewModule } from "./review/ReviewModule";
 import { SettingsModule } from "./settings/SettingsModule";
 import { VapiModule } from "./vapi/VapiModule";
@@ -38,6 +39,7 @@ import { VapiModule } from "./vapi/VapiModule";
     RetentionModule,
     HealthModule,
     MaskingModule,
+    ReportsModule,
   ],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
 })
