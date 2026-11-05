@@ -22,6 +22,7 @@ from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
 from app.assistant.clients.VapiAssistantClient import VapiAssistantClient
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
+from app.assistant.factories.HandOffToolFactory import HandOffToolFactory
 from app.assistant.factories.NoisePlanFactory import NoisePlanFactory
 from app.assistant.factories.SpeakingPlanFactory import SpeakingPlanFactory
 from app.assistant.factories.TranscriberFactory import TranscriberFactory
@@ -32,6 +33,7 @@ from app.assistant.services.AssistantSyncService import AssistantSyncService
 from app.assistant.services.PromptBuilder import PromptBuilder
 from app.backend.clients.BackendClient import BackendClient
 from app.common.guards.ServiceSecretGuard import ServiceSecretGuard
+from app.common.guards.VapiSecretGuard import VapiSecretGuard
 from app.common.services.RunPoller import RunPoller
 from app.common.services.TemplateRenderer import TemplateRenderer
 from app.configuration.AppConfiguration import AppConfiguration
@@ -41,6 +43,12 @@ from app.evaluation.factories.MockConversationFactory import MockConversationFac
 from app.evaluation.routes.EvaluationRouter import EvaluationRouter
 from app.evaluation.services.EvaluationCaseLoader import EvaluationCaseLoader
 from app.evaluation.services.EvaluationRunner import EvaluationRunner
+from app.handoff.catalogs.HandOffReasonCatalog import HandOffReasonCatalog
+from app.handoff.routes.HandOffToolRouter import HandOffToolRouter
+from app.handoff.services.HandOffGraph import HandOffGraph
+from app.handoff.services.HandOffToolService import HandOffToolService
+from app.handoff.services.ReasonNode import ReasonNode
+from app.handoff.services.RingTeamNode import RingTeamNode
 from app.health.routes.HealthRouter import HealthRouter
 from app.simulation.clients.VapiSimulationClient import VapiSimulationClient
 from app.simulation.factories.SimulationEntryFactory import SimulationEntryFactory
@@ -88,12 +96,17 @@ class ServiceContainer:
             self.make_analysis_router(),
             self.make_evaluation_router(),
             self.make_simulation_router(),
+            self.make_hand_off_tool_router(),
         ]
+
+    def make_hand_off_tool_router(self) -> APIRouter:
+        graph = HandOffGraph(ReasonNode(HandOffReasonCatalog()), RingTeamNode(self.backend_client))
+        return HandOffToolRouter(HandOffToolService(graph), VapiSecretGuard(self.configuration)).make()
 
     def make_assistant_router(self) -> APIRouter:
         configuration_builder = AssistantConfigurationBuilder(
             self.configuration,
-            ToolCatalog(self.template_renderer),
+            ToolCatalog(self.template_renderer, self.configuration, HandOffToolFactory(self.configuration, HandOffReasonCatalog())),
             HookCatalog(),
             CompliancePlanFactory(),
             VoiceFactory(),
@@ -103,7 +116,7 @@ class ServiceContainer:
         )
         sync_service = AssistantSyncService(
             self.backend_client,
-            PromptBuilder(self.template_renderer),
+            PromptBuilder(self.template_renderer, self.configuration),
             configuration_builder,
             self.assistant_client,
         )
