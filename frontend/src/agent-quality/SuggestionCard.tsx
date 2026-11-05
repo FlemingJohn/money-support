@@ -28,7 +28,6 @@ export function SuggestionCard({ suggestion }: SuggestionCardProps) {
           <TestGaugeSvg passedCount={suggestion.passedBefore ?? 0} totalCount={totalTests} label="Before the rule" />
           <span aria-hidden="true" className="text-xl text-ink-muted">→</span>
           <TestGaugeSvg passedCount={suggestion.passedAfter ?? 0} totalCount={totalTests} label="With the rule" />
-          <span className="text-sm text-ink-muted">tests passed, before and with the rule</span>
         </div>
       )}
       {isPending && (
