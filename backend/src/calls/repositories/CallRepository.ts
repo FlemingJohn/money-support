@@ -61,16 +61,16 @@ export class CallRepository {
 
   async clearStoredNumbersForResolvedReviews(): Promise<number> {
     const result = await this.prismaService.call.updateMany({
-      where: { encryptedCustomerNumber: { not: null }, review: { status: ReviewStatus.done } },
-      data: { encryptedCustomerNumber: null },
+      where: { customerNumber: { not: null }, review: { status: ReviewStatus.done } },
+      data: { customerNumber: null },
     });
     return result.count;
   }
 
   async clearStoredNumbersEndedBefore(cutoff: Date): Promise<number> {
     const result = await this.prismaService.call.updateMany({
-      where: { encryptedCustomerNumber: { not: null }, endedAt: { lt: cutoff } },
-      data: { encryptedCustomerNumber: null },
+      where: { customerNumber: { not: null }, endedAt: { lt: cutoff } },
+      data: { customerNumber: null },
     });
     return result.count;
   }
