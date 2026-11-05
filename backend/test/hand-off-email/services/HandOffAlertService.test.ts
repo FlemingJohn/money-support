@@ -7,6 +7,7 @@ import type { TeamPhoneRinger } from "../../../src/hand-off-email/clients/TeamPh
 import { HandOffAlertService } from "../../../src/hand-off-email/services/HandOffAlertService";
 import { HandOffEmailBuilder } from "../../../src/hand-off-email/services/HandOffEmailBuilder";
 import { HandOffOutcomeResolver } from "../../../src/hand-off-email/services/HandOffOutcomeResolver";
+import { TeamAlertSpeechBuilder } from "../../../src/hand-off-email/services/TeamAlertSpeechBuilder";
 import { TeamHoursChecker } from "../../../src/hand-off-email/services/TeamHoursChecker";
 import type { ReviewRepository } from "../../../src/review/repositories/ReviewRepository";
 import type { SettingsService } from "../../../src/settings/services/SettingsService";
@@ -30,6 +31,7 @@ describe("HandOffAlertService", () => {
     new HandOffEmailBuilder(),
     mailer as unknown as HandOffMailer,
     ringer as unknown as TeamPhoneRinger,
+    new TeamAlertSpeechBuilder(),
   );
 
   beforeEach(() => {
@@ -67,13 +69,19 @@ describe("HandOffAlertService", () => {
 
   it("rings the team phone and emails for a handed-off call", async () => {
     await service.alertTeamIfHandedOff(makeRecording(true, "assistant-said-end-call-phrase"));
-    expect(ringer.ring).toHaveBeenCalledWith("+447700900123");
+    expect(ringer.ring).toHaveBeenCalledWith("+447700900123", expect.stringContaining("A customer needs help"));
     expect(mailer.send).toHaveBeenCalledTimes(1);
   });
 
   it("does not ring for a transfer someone already answered", async () => {
     await service.alertTeamIfHandedOff(makeRecording(true, "assistant-forwarded-call"));
     expect(ringer.ring).not.toHaveBeenCalled();
+  });
+
+  it("does not ring again after the call when the tool already rang during it", async () => {
+    await service.alertTeamIfHandedOff(makeRecording(true, "assistant-ended-call-after-message-spoken", "askedForPerson"));
+    expect(ringer.ring).not.toHaveBeenCalled();
+    expect(mailer.send.mock.calls[0][0].text).toContain("Why: Asked to speak to a person");
   });
 
   it("still rings when emails are off", async () => {
@@ -104,9 +112,9 @@ describe("HandOffAlertService", () => {
   });
 });
 
-function makeRecording(isHandedOff: boolean, endedReason: string): FinishedCallRecording {
+function makeRecording(isHandedOff: boolean, endedReason: string, handOffReason: string | null = null): FinishedCallRecording {
   return {
-    report: { callId: "call-1", channel: "phone", customerNumber: null, startedAt: new Date("2026-11-04T15:23:52Z"), endedAt: new Date("2026-11-04T15:25:09Z"), endedReason, lines: [] },
+    report: { callId: "call-1", channel: "phone", customerNumber: null, startedAt: new Date("2026-11-04T15:23:52Z"), endedAt: new Date("2026-11-04T15:25:09Z"), endedReason, lines: [], handOffReason },
     analysis: { lines: [], summary: "Summary.", topic: "Topic", matchedFaqNumber: null, isHandedOff, fields: [], suggestedReviewReason: null, isComplete: true },
     reviewReason: isHandedOff ? "handOff" : null,
     completion: { maskedCustomerNumber: "+91 ••••• ••363" },
