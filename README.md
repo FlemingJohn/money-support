@@ -1,6 +1,8 @@
 # Money Support Agent
 
-A phone and web voice agent that answers questions about money that is on its way, and hands every other question to a person. A dashboard shows each call, its redacted transcript, and the calls a person still needs to follow up.
+A voice agent that answers Wise customers' "Where is my money?" questions over the phone or in the browser, and hands every other question to a person. A dashboard shows each call with personal data masked, and emails the team when a caller needs a human.
+
+Live dashboard: [money-support-frontend.vercel.app](https://money-support-frontend.vercel.app)
 
 ## Problem statement
 
@@ -11,15 +13,15 @@ Build a simple voice agent that can handle incoming calls, using any open-source
 
 ## Solution
 
-The voice part runs on **Vapi** with its built-in **gpt-4o**. Vapi answers the phone, turns speech into text, runs the model, speaks the reply and hangs up. None of our code sits on the live call, so a slow or failed service of ours can never stall a caller.
+**Vapi runs the live call.** Speech to text (Deepgram), the model (gpt-4o) and the voice all run inside Vapi, so none of our services sit between the caller and the agent. A slow or failed service of ours can never stall a caller.
 
-Our code does the work around the call:
+**Our code works around the call:**
 
-- **ai/** builds what the agent knows and how it behaves (the prompt with the six FAQs, the hand-off rule, tools, hooks and privacy filters) and pushes it to Vapi. It also removes personal data from transcripts and tests the agent's behaviour.
-- **backend/** owns the database. It receives Vapi's call events, saves redacted calls, runs the review queue and call backs, and serves the dashboard.
-- **frontend/** is the dashboard: overview, calls, call detail, review queue, FAQ editor, test call and settings.
+- **ai/** builds the agent from the FAQs and settings and pushes it to Vapi. That covers the prompt, the hand-off rule, tools, speaking and noise settings, and guardrails. After each call it runs a **LangGraph** graph on **Azure OpenAI**, which masks personal data and writes the summary, topic, matched FAQ, fields and checks.
+- **backend/** receives Vapi's call events, saves the masked call, decides whether a person must review it, and emails the team after a hand-off. It also serves the dashboard.
+- **frontend/** is the dashboard: overview, calls, review queue with call backs, FAQ editor, test call and settings.
 
-The six topics the agent answers:
+The agent answers six topics, the "Where is my money?" section:
 
 1. How do I check my transfer's status?
 2. When will my money arrive?
@@ -28,220 +30,144 @@ The six topics the agent answers:
 5. What is a proof of payment?
 6. What's a banking partner reference number?
 
-## Functional requirements
-
-| # | Requirement |
-|---|---|
-| F1 | Answer incoming phone calls and browser calls. |
-| F2 | Answer the six "Where is my money?" topics in short spoken replies. |
-| F3 | For any other question, say the hand-off sentence and end the call. |
-| F4 | End the call when the caller says goodbye, or after a long silence. |
-| F5 | Remove card numbers, account numbers and other personal data before the model sees them and before anything is stored. |
-| F6 | Save every call with its redacted transcript, summary, outcome and extracted fields. |
-| F7 | Put handed-off calls, and calls where a guardrail fired, into a review queue. |
-| F8 | Let a reviewer confirm extracted fields, mark the agent correct or wrong, add a note and resolve the call. |
-| F9 | Let a reviewer call a caller back without ever seeing their full number. |
-| F10 | Let an admin edit the FAQs and update the agent from the dashboard. |
-| F11 | Let an admin place a test call and watch the live transcript. |
-| F12 | Show today's calls, outcomes and hand-off reasons on an overview. |
-| F13 | Keep an activity log of views, edits, hand-offs and call backs. |
-
-## Non-functional requirements
-
-| Area | Requirement |
-|---|---|
-| Latency | The agent starts speaking within about one second of the caller finishing. Nothing of ours is called during a turn. |
-| Privacy | Raw personal data is never stored or shown. Caller numbers appear as the last four digits. Recording is off. |
-| Reliability | Calls keep working if the backend or ai/ is down; only saving and the dashboard wait. |
-| Security | Webhooks are checked with a shared secret. API keys stay on the server. Inputs are validated with Zod and Pydantic. |
-| Accessibility | Keyboard reachable controls, visible focus, 44 px touch targets, text contrast of at least 4.5:1. |
-| Maintainability | One thing per file, no comments, plain names, as set out in the project's coding rules. |
-| Observability | Health checks for backend and ai/, an activity log, and behaviour tests that run before each agent update. |
+Anything else gets the hand-off sentence, *"Please contact the Wise support team through the Help section of the Wise app or website."* Saying it ends the call. In transfer mode the call goes to the team's number instead.
 
 ## Architecture
 
-```
- Caller ─phone─▶ ┌──────────────────── Vapi ────────────────────┐
- Browser ─web──▶ │ speech to text · gpt-4o · voice · hang-up    │
-                 │ live PII filter · hooks · post-call analysis │
-                 └──────┬──────────────────────────────▲────────┘
-                        │ webhooks (call events)       │ assistant update
-                        ▼                              │
- ┌─────────── backend/ (NestJS) ──────────┐     ┌──────┴──── ai/ (Python) ────────┐
- │ webhooks · calls · review queue        │────▶│ prompt and agent builder        │
- │ call backs · FAQs · settings · activity│◀────│ LangGraph call analysis · tests │
- └───────────┬────────────────────────────┘     └─────────────────────────────────┘
-             │ Prisma
-             ▼
-      Supabase Postgres
-             ▲
- ┌───────────┴──────── frontend/ (Next.js) ────────────────────────────────┐
- │ overview · calls · call detail · review queue · FAQs · test call · settings │
- └─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    caller(["Caller"])
+    twilio["Twilio number"]
+    browser["Test call page"]
+    subgraph vapi["Vapi"]
+        stt["Deepgram nova-3"] --> llm["gpt-4o + system prompt"] --> tts["Vapi voice"]
+    end
+    subgraph ours["Our services on Vercel"]
+        backend["backend/ NestJS"]
+        ai["ai/ FastAPI + LangGraph"]
+        frontend["frontend/ Next.js"]
+    end
+    azure[("Azure OpenAI gpt-4o")]
+    db[("Supabase Postgres")]
+    gmail["Gmail SMTP"]
+    team(["Support team"])
+
+    caller -- "1 phone call" --> twilio --> vapi
+    caller -.->|"1 web call"| browser -.-> vapi
+    vapi -- "2 answers or hands off" --> caller
+    vapi -- "3 end-of-call report" --> backend
+    backend -- "4 analyse the call" --> ai
+    ai -- "5 mask, summarise, classify" --> azure
+    backend -- "6 save masked call and review" --> db
+    backend -- "7 hand-off email" --> gmail --> team
+    team -- "8 review and call back" --> frontend --> backend
+    frontend -- "A edit FAQs or settings" --> backend
+    backend -- "B sync the agent" --> ai
+    ai -- "C update the assistant" --> vapi
 ```
 
-**When an admin edits an FAQ:** frontend → backend saves it → ai/ rebuilds the prompt → Vapi is updated.
+### A call, step by step
 
-**When a customer calls:** Vapi handles the whole call → backend receives the end-of-call report → ai/'s LangGraph graph masks personal data and writes the summary, topic, matched FAQ and fields on Azure OpenAI → backend saves it → the dashboard shows it.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Caller
+    participant Vapi
+    participant Backend as backend/
+    participant AI as ai/
+    participant Azure as Azure OpenAI
+    participant DB as Supabase
+    participant Mail as Gmail
+    Caller->>Vapi: Calls the Twilio number or starts a web call
+    Vapi->>Caller: Greets, listens, answers from the six FAQs
+    alt Out of scope, or asks for a person
+        Vapi->>Caller: Says the hand-off sentence, then hangs up or transfers
+    else Done
+        Caller->>Vapi: "No, that's all, bye"
+        Vapi->>Caller: "Thanks for calling Wise. Take care." and hangs up
+    end
+    Vapi->>Backend: end-of-call report (secret checked)
+    Backend->>AI: POST /analysis with transcript, FAQs, privacy settings
+    AI->>Azure: mask each line, then summary, topic and fields in parallel, then checks
+    AI-->>Backend: masked lines, summary, topic, matched FAQ, fields, suggested review
+    Backend->>DB: save call, masked lines, fields, review, activity
+    opt Handed off, missed transfer or out of hours
+        Backend->>Mail: one email to the team, masked details only
+    end
+    Backend->>Vapi: delete Vapi's own copy when that privacy setting is on
+```
+
+### The call analysis graph in ai/
+
+```mermaid
+flowchart LR
+    start(["START"]) --> fan["fan out lines"]
+    fan -- "Send x each line" --> mask["mask_line"]
+    mask --> join["join_lines"]
+    join --> summary["summarise"]
+    join --> topic["classify_topic"]
+    join --> fields["extract_fields"]
+    summary --> check["check_call"]
+    topic --> check
+    fields --> check
+    check --> finish(["END"])
+```
+
+## Components
+
+| Component | What it does |
+|---|---|
+| **Vapi** | Runs the live call. Deepgram nova-3 hears the caller, with Wise key terms such as "bank account" and "IBAN". gpt-4o replies at temperature 0, and the Vapi voice speaks at 0.9 speed. LiveKit smart endpointing waits for the caller to finish, and Krisp removes background noise. Vapi also enforces the end-call rules. |
+| **Twilio** | Gives the agent a real phone number (+1 978 951 4979), connected to the Vapi assistant. |
+| **ai/ assistant builder** | `PromptBuilder` renders [SystemPrompt.md](ai/prompts/assistant/SystemPrompt.md) from the active FAQs and settings. `AssistantConfigurationBuilder` adds tools, hooks, voice, transcriber, speaking and noise plans, and the prompt-injection filter. `VapiAssistantClient` updates only the assistant tagged `money-support`. |
+| **ai/ call analysis** | The LangGraph graph above. Each node calls Azure OpenAI with a strict JSON schema and three retries. The masking node returns the exact personal pieces, and code replaces them, so the model never rewrites what the caller said. |
+| **ai/ tests** | Vapi Evals (25 scripted replies), Vapi Simulations (5 full conversations with a pretend caller), and DeepEval (52 masking lines and 4 whole calls). |
+| **backend/ webhook** | Checks Vapi's secret, reads the report, sends it to ai/ for analysis, and saves everything in one transaction. |
+| **backend/ review triage** | Puts a call in the review queue for a hand-off, masked or unchecked data, a field under 75% confidence, or a possible mistake. |
+| **backend/ hand-off email** | Emails the team after a hand-off, a missed transfer, a caller who hung up during a transfer, or an out-of-hours call. It sends once per call with masked details only, through `@nestjs-modules/mailer` and Gmail. |
+| **backend/ call backs** | Rings the reviewer first, then the caller, so the full number is never shown. The number is stored encrypted. |
+| **backend/ live masking** | Masks the test call's live transcript while the caller speaks, through ai/. |
+| **backend/ retention** | Supabase Cron calls it every hour to delete old calls and stored numbers. |
+| **Supabase** | Postgres for calls, masked lines, fields, reviews, call backs, FAQs, settings, prompt versions and activity. Also Vault and Cron. |
+| **frontend/** | Overview, Calls, Call detail, Review (verdicts, notes, call back), FAQs, Test call with the live masked transcript, and Settings. |
+
+## Functional requirements
+
+These come straight from the problem statement.
+
+| # | Requirement | How it is met |
+|---|---|---|
+| F1 | Handle incoming calls | Phone calls through the Twilio number, and web calls from the Test call page, both answered by the Vapi assistant |
+| F2 | Act as a Wise customer support representative | A calm, kind, professional agent. It acknowledges problems, checks what it misheard, asks one question at a time, and says it is an automated assistant if asked. |
+| F3 | Answer questions from the "Where is my money?" section | The six FAQs are the agent's only knowledge. It answers in under 40 words, never invents facts, and never claims to look up an account. |
+| F4 | Deflect any other question to a human agent | Out-of-scope questions, requests for a person, scams, abuse after one warning, and other languages all get the hand-off sentence, or a transfer in transfer mode |
+| F5 | Say so and end the call | Saying the hand-off sentence ends the call through Vapi's end-call phrase. Goodbyes end it through the endCall tool, which Vapi blocks until the agent has asked "anything else?" or the caller has said goodbye. |
+
+## Non-functional requirements
+
+| Area | Requirement and how it is met |
+|---|---|
+| **Latency** | Nothing of ours is called during a turn. A real phone call measured about 3.7 s per turn: 1.7 s waiting for the caller to finish, 1.0 s model, 0.7 s voice, 0.4 s speech to text. Replies stay short so speaking starts sooner. |
+| **Prompt caching** | The 2,577-token agent prompt keeps its fixed text first and the live UK time last, and sends a `promptCacheKey` per prompt version. On the last phone call, 48% of prompt tokens were served from OpenAI's cache. The Azure analysis prompts are under Azure's 1,024-token minimum, so Azure doesn't cache them. |
+| **Guardrails** | Scope limited to the six FAQs. Vapi's prompt-injection filter. Refuses card numbers, even a few digits. Never repeats personal details. One calm warning for insults. Hand-off sentence spoken word for word. endCall rejection rules. Every agent change is checked by Evals and Simulations. |
+| **Data masking** | Every caller line is masked by gpt-4o reading it in context, with no regular expressions. It covers names, card and account numbers (even partial), emails, phone numbers and addresses. A line that can't be checked is saved as "[waiting for privacy check]", never raw. The test call shows lines masked while the caller is still speaking. |
+| **Privacy** | Recording is off. Raw transcripts are never stored. Vapi's copy is deleted after analysis. Caller numbers show as the last digits only, and are kept encrypted only when a call back may be needed. Retention deletes old data every hour. Emails carry masked details only. |
+| **Reliability** | Calls keep working if our services are down. If ai/ is down, lines are saved as waiting. A failed email never stops a call being saved, and is retried and logged. Repeated Vapi reports never save or email twice. |
+| **Security** | Vapi webhooks, internal routes and the retention job each check their own secret. API keys stay on the server. Inputs are validated with Zod and Pydantic. Database connections verify Supabase's certificate. |
+| **Observability** | Health checks for the database, ai/ and call backs. An activity log of calls, hand-offs, emails, reviews and edits. Prompt versions saved with a hash. |
 
 ## Tech stack
 
 | Part | Technology |
 |---|---|
-| Voice and model | Vapi, gpt-4o, Deepgram speech to text |
-| frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, lucide-react |
-| backend | NestJS 11, TypeScript, Prisma 7, Zod 4, nestjs-zod, Twilio, Jest |
-| ai | Python 3.12, FastAPI, Pydantic, Jinja2, LangGraph, LangChain Azure OpenAI, pytest, DeepEval |
-| Call analysis model | Azure OpenAI gpt-4o |
-| Database | Supabase Postgres, Supabase Cron |
-| Hosting | Vercel, three projects from this one repository |
-
-## Project structure
-
-```
-money-support/
-├── frontend/          Next.js dashboard
-│   └── src/
-│       ├── app/          routes
-│       ├── components/   shared components, one per file
-│       ├── overview/     overview page parts
-│       ├── calls/        calls list and call detail
-│       ├── review/       review queue and call backs
-│       ├── faqs/         FAQ list and editor
-│       ├── settings/     settings tabs
-│       ├── test-call/    browser test call with live transcript
-│       ├── hooks/        one hook per file
-│       ├── types/        one type per file
-│       ├── navigation/   sidebar items
-│       ├── icons/        custom SVG marks
-│       ├── lib/          logic with no screen attached
-│       └── styles/       theme.css, the only place colours and fonts are defined
-├── backend/           NestJS API
-├── ai/                Python agent builder, LangGraph call analysis and agent tests
-├── LICENSE
-└── README.md
-```
-
-## Local setup
-
-### Requirements
-
-- Node.js 24 or later and npm 11 or later
-- Python 3.12 or later, for ai/
-- A Vapi account and a Supabase project, for the backend and ai/
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:3000. The dashboard reads live data from the backend at `BACKEND_URL` (default `http://localhost:4000`), so start the backend first.
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Starts the development server |
-| `npm run build` | Builds for production |
-| `npm run start` | Serves the production build |
-| `npm run lint` | Checks the code |
-
-### Backend
-
-```bash
-cd backend
-npm install
-cp .env.example .env
-npx prisma migrate dev
-npm run dev
-```
-
-The API listens on http://localhost:4000. Fill in `.env` first; [backend/README.md](backend/README.md) explains each variable, the endpoints and how to run a local database without Supabase.
-
-### ai/
-
-```bash
-cd ai
-uv sync
-cp .env.example .env
-uv run uvicorn app.main:app --port 8000
-```
-
-The service listens on http://localhost:8000. Set `AI_SERVICE_URL=http://localhost:8000` in `backend/.env` so the backend uses it. [ai/README.md](ai/README.md) explains each variable, the endpoints and the agent tests.
-
-## Deployment
-
-Everything runs in Tokyo, next to the database.
-
-```
-GitHub: this repository, branch main
-        │ every push
-        ▼
-Vercel ─┬─ money-support-frontend   Root Directory: frontend   Next.js
-        ├─ money-support-backend    Root Directory: backend    NestJS
-        └─ money-support-ai         Root Directory: ai         FastAPI
-                     │
-                     ▼
-Supabase (ap-northeast-1) ── Postgres · Vault · Cron
-```
-
-**How a deploy works.** Each push to `main` builds only the projects whose folder changed; the check is the `ignoreCommand` in each `vercel.json`. A build that fails never replaces production. To roll back, promote the previous deployment:
-
-```bash
-vercel promote <previous-deployment-url> --scope <team>
-```
-
-**Database.** Tables and the six FAQs come from the Prisma migrations:
-
-```bash
-cd backend
-DIRECT_URL="<session pooler url>?sslmode=verify-full&sslrootcert=certs/supabase-ca.crt" npx prisma migrate deploy
-```
-
-The backend connects through the transaction pooler and verifies Supabase's certificate from `DATABASE_CA_CERTIFICATE`.
-
-**Environment variables**, set per project with `vercel env add <name> production`:
-
-| Project | Variables |
-|---|---|
-| backend | `DATABASE_URL`, `DATABASE_CA_CERTIFICATE`, `VAPI_WEBHOOK_SECRET`, `VAPI_API_KEY`, `SERVICE_SECRET`, `CRON_SECRET`, `ENCRYPTION_KEY`, `AI_SERVICE_URL`, `FRONTEND_ORIGIN` |
-| ai | `SERVICE_SECRET`, `BACKEND_URL`, `VAPI_API_KEY`, `VAPI_WEBHOOK_URL`, `VAPI_WEBHOOK_SECRET`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT`, `AZURE_OPENAI_API_VERSION` |
-| frontend | `BACKEND_URL` for the `/api` rewrite, `VAPI_PUBLIC_KEY` and `VAPI_ASSISTANT_ID` for the Test call page |
-
-**Retention.** Supabase Cron calls the backend's retention endpoint every hour. [backend/README.md](backend/README.md#retention-on-supabase) has the setup.
-
-**Vapi.** Saving FAQs or agent settings in the dashboard syncs the assistant. The first sync creates it; later syncs update only the assistant tagged `money-support`.
-
-## Agent test results
-
-Run on 4 November 2026 against the live assistant.
-
-| Test | Result |
-|---|---|
-| Evals, 11 cases | 10 to 11 passing per run. E03 and E05 sometimes answer longer than the three-sentence limit. |
-| Simulations, 4 scenarios | 4 passing |
-| DeepEval: masking (52 lines) and whole-call analysis (4 calls) | 56 passing |
-
-## Status
-
-| Part | State |
-|---|---|
-| Dashboard shell: sidebar with collapse, header, theme | Done |
-| Overview page | Done, with live data from the backend |
-| Calls, call detail, review queue, FAQs, test call, settings | Done, with live data from the backend |
-| backend/ | Done: webhooks, calls, review queue, call backs, FAQs, settings, overview, activity, retention, health |
-| ai/ | Done: prompt and assistant sync, LangGraph call analysis, live masking, Vapi Evals, Simulations and DeepEval |
-| Deployment | Done: Vercel and Supabase, deploys from `main` |
-
-## Known limitations
-
-| Limitation | Effect |
-|---|---|
-| No login yet | The dashboard and its API are open to anyone with the URL. The webhook, internal and retention routes are protected by secrets. |
-| Team hours are fixed | In transfer mode with weekday hours, the agent transfers Monday to Friday, 9am to 5pm UK time. |
-| Call backs use the simulator | Real call backs need the Twilio variables. |
-| No phone number attached | Calls are made from the dashboard's Test call page until a Vapi number is assigned. |
+| Voice | Vapi, gpt-4o, Deepgram nova-3, Vapi voice, LiveKit smart endpointing, Krisp denoising |
+| Telephony | Twilio |
+| Call analysis | Python 3.12, FastAPI, LangGraph, LangChain, Azure OpenAI gpt-4o, Pydantic, Jinja2 |
+| Agent tests | Vapi Evals and Simulations, DeepEval, pytest |
+| backend | NestJS 11, TypeScript, Prisma 7, Zod 4, `@nestjs-modules/mailer` with nodemailer and Gmail SMTP, Jest |
+| frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, `@vapi-ai/web`, lucide-react |
+| Database | Supabase Postgres, Vault, Cron |
+| Hosting | Vercel: three projects from this repository, deployed from `main` |
 
 ## License
 
