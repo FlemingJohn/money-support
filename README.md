@@ -17,9 +17,9 @@ Build a simple voice agent that can handle incoming calls, using any open-source
 
 **Our code works around the call:**
 
-- **ai/** builds the agent from the FAQs and settings and pushes it to Vapi. That covers the prompt, the hand-off rule, tools, speaking and noise settings, and guardrails. After each call it runs a **LangGraph** graph on **Azure OpenAI**, which masks personal data and writes the summary, topic, matched FAQ, fields and checks.
-- **backend/** receives Vapi's call events, saves the masked call, decides whether a person must review it, and emails the team after a hand-off. It also serves the dashboard.
-- **frontend/** is the dashboard: overview, calls, review queue with call backs, FAQ editor, test call and settings.
+- **ai** builds the agent from the FAQs and settings and pushes it to Vapi. That covers the prompt, the hand-off rule, tools, speaking and noise settings, and guardrails. After each call it runs a **LangGraph** graph on **Azure OpenAI**, which masks personal data and writes the summary, topic, matched FAQ, fields and checks. It also masks the test call's live transcript.
+- **backend** receives Vapi's call events, saves the masked call, decides whether a person must review it, and emails the team after a hand-off. It also serves the dashboard.
+- **frontend** is the dashboard: overview, calls, review queue with call backs, FAQ editor, test call and settings.
 
 The agent answers six topics, the "Where is my money?" section:
 
@@ -34,7 +34,28 @@ Anything else gets the hand-off sentence, *"Please contact the Wise support team
 
 ## Architecture
 
-![Money Support Agent architecture: caller, Twilio, Vapi, backend, ai, Azure OpenAI, Supabase, Gmail and the dashboard, with numbered steps](docs/architecture.svg)
+![Money Support Agent architecture: caller, Twilio, Vapi, backend, ai, Azure OpenAI, Supabase, Gmail, the dashboard and the live transcript, with numbered steps](docs/architecture.svg)
+
+**One call**
+
+1. The caller rings the Twilio number, or starts a test call in the browser.
+2. Vapi hears, thinks and speaks. It answers from the six FAQs, or says the hand-off sentence and hangs up.
+3. When the call ends, Vapi sends the end-of-call report to the backend.
+4. The backend asks ai to analyse the call.
+5. ai masks each line and writes the summary, topic and fields on Azure OpenAI.
+6. The backend saves the masked call and opens a review if a person is needed.
+7. After a hand-off, a missed transfer or an out-of-hours call, the backend emails the team through Gmail.
+8. The team opens the call on the Review page and calls the customer back.
+
+**An admin change**
+
+- **A** An admin edits the FAQs or settings in the dashboard.
+- **B** The backend asks ai to rebuild the agent.
+- **C** ai updates the Vapi assistant.
+
+**The live transcript**
+
+- **L** During a test call, each caller line goes to the backend and on to ai, which masks it on Azure every 1.5 seconds. Personal data is hidden before the line appears on screen.
 
 ### A call, step by step
 
@@ -43,8 +64,8 @@ sequenceDiagram
     autonumber
     actor Caller
     participant Vapi
-    participant Backend as backend/
-    participant AI as ai/
+    participant Backend as backend
+    participant AI as ai
     participant Azure as Azure OpenAI
     participant DB as Supabase
     participant Mail as Gmail
@@ -57,7 +78,7 @@ sequenceDiagram
         Vapi->>Caller: "Thanks for calling Wise. Take care." and hangs up
     end
     Vapi->>Backend: end-of-call report (secret checked)
-    Backend->>AI: POST /analysis with transcript, FAQs, privacy settings
+    Backend->>AI: analyse the transcript with the FAQs and privacy settings
     AI->>Azure: mask each line, then summary, topic and fields in parallel, then checks
     AI-->>Backend: masked lines, summary, topic, matched FAQ, fields, suggested review
     Backend->>DB: save call, masked lines, fields, review, activity
@@ -67,7 +88,7 @@ sequenceDiagram
     Backend->>Vapi: delete Vapi's own copy when that privacy setting is on
 ```
 
-### The call analysis graph in ai/
+### The call analysis graph in ai
 
 ```mermaid
 flowchart LR
@@ -85,21 +106,16 @@ flowchart LR
 
 ## Components
 
-| Component | What it does |
+| Component | Role |
 |---|---|
-| **Vapi** | Runs the live call. Deepgram nova-3 hears the caller, with Wise key terms such as "bank account" and "IBAN". gpt-4o replies at temperature 0, and the Vapi voice speaks at 0.9 speed. LiveKit smart endpointing waits for the caller to finish, and Krisp removes background noise. Vapi also enforces the end-call rules. |
-| **Twilio** | Gives the agent a real phone number (+1 978 951 4979), connected to the Vapi assistant. |
-| **ai/ assistant builder** | `PromptBuilder` renders [SystemPrompt.md](ai/prompts/assistant/SystemPrompt.md) from the active FAQs and settings. `AssistantConfigurationBuilder` adds tools, hooks, voice, transcriber, speaking and noise plans, and the prompt-injection filter. `VapiAssistantClient` updates only the assistant tagged `money-support`. |
-| **ai/ call analysis** | The LangGraph graph above. Each node calls Azure OpenAI with a strict JSON schema and three retries. The masking node returns the exact personal pieces, and code replaces them, so the model never rewrites what the caller said. |
-| **ai/ tests** | Vapi Evals (25 scripted replies), Vapi Simulations (5 full conversations with a pretend caller), and DeepEval (52 masking lines and 4 whole calls). |
-| **backend/ webhook** | Checks Vapi's secret, reads the report, sends it to ai/ for analysis, and saves everything in one transaction. |
-| **backend/ review triage** | Puts a call in the review queue for a hand-off, masked or unchecked data, a field under 75% confidence, or a possible mistake. |
-| **backend/ hand-off email** | Emails the team after a hand-off, a missed transfer, a caller who hung up during a transfer, or an out-of-hours call. It sends once per call with masked details only, through `@nestjs-modules/mailer` and Gmail. |
-| **backend/ call backs** | Rings the reviewer first, then the caller, so the full number is never shown. The number is stored encrypted. |
-| **backend/ live masking** | Masks the test call's live transcript while the caller speaks, through ai/. |
-| **backend/ retention** | Supabase Cron calls it every hour to delete old calls and stored numbers. |
-| **Supabase** | Postgres for calls, masked lines, fields, reviews, call backs, FAQs, settings, prompt versions and activity. Also Vault and Cron. |
-| **frontend/** | Overview, Calls, Call detail, Review (verdicts, notes, call back), FAQs, Test call with the live masked transcript, and Settings. |
+| **Vapi** | Runs the live call: Deepgram hears, gpt-4o answers, the Vapi voice speaks, and Vapi applies the guardrails. |
+| **Twilio** | The phone number callers ring, connected to the Vapi assistant. |
+| **ai** | Builds the agent's prompt and settings, analyses each finished call with LangGraph, and masks the live transcript. |
+| **Azure OpenAI** | The gpt-4o model ai uses for masking, summaries, topics, fields and checks. |
+| **backend** | Receives call reports, saves masked calls, runs the review queue and call backs, and sends hand-off emails. |
+| **Supabase** | The database for calls, reviews, FAQs, settings and activity, plus the hourly retention job. |
+| **Gmail** | Sends the hand-off emails to the support team. |
+| **frontend** | The dashboard where the team reviews calls, calls customers back, edits FAQs and places test calls. |
 
 ## Functional requirements
 
@@ -122,9 +138,9 @@ These come straight from the problem statement.
 | **Guardrails** | Scope limited to the six FAQs. Vapi's prompt-injection filter. Refuses card numbers, even a few digits. Never repeats personal details. One calm warning for insults. Hand-off sentence spoken word for word. endCall rejection rules. Every agent change is checked by Evals and Simulations. |
 | **Data masking** | Every caller line is masked by gpt-4o reading it in context, with no regular expressions. It covers names, card and account numbers (even partial), emails, phone numbers and addresses. A line that can't be checked is saved as "[waiting for privacy check]", never raw. The test call shows lines masked while the caller is still speaking. |
 | **Privacy** | Recording is off. Raw transcripts are never stored. Vapi's copy is deleted after analysis. Caller numbers show as the last digits only, and are kept encrypted only when a call back may be needed. Retention deletes old data every hour. Emails carry masked details only. |
-| **Reliability** | Calls keep working if our services are down. If ai/ is down, lines are saved as waiting. A failed email never stops a call being saved, and is retried and logged. Repeated Vapi reports never save or email twice. |
+| **Reliability** | Calls keep working if our services are down. If ai is down, lines are saved as waiting. A failed email never stops a call being saved, and is retried and logged. Repeated Vapi reports never save or email twice. |
 | **Security** | Vapi webhooks, internal routes and the retention job each check their own secret. API keys stay on the server. Inputs are validated with Zod and Pydantic. Database connections verify Supabase's certificate. |
-| **Observability** | Health checks for the database, ai/ and call backs. An activity log of calls, hand-offs, emails, reviews and edits. Prompt versions saved with a hash. |
+| **Observability** | Health checks for the database, ai and call backs. An activity log of calls, hand-offs, emails, reviews and edits. Prompt versions saved with a hash. |
 
 ## Tech stack
 
@@ -134,8 +150,8 @@ These come straight from the problem statement.
 | Telephony | Twilio |
 | Call analysis | Python 3.12, FastAPI, LangGraph, LangChain, Azure OpenAI gpt-4o, Pydantic, Jinja2 |
 | Agent tests | Vapi Evals and Simulations, DeepEval, pytest |
-| backend | NestJS 11, TypeScript, Prisma 7, Zod 4, `@nestjs-modules/mailer` with nodemailer and Gmail SMTP, Jest |
-| frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, `@vapi-ai/web`, lucide-react |
+| backend | NestJS 11, TypeScript, Prisma 7, Zod 4, Nest mailer with nodemailer and Gmail SMTP, Jest |
+| frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4, TanStack Table, Recharts, Vapi web SDK, lucide-react |
 | Database | Supabase Postgres, Vault, Cron |
 | Hosting | Vercel: three projects from this repository, deployed from `main` |
 
