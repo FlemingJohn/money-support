@@ -73,7 +73,7 @@ Hand off when the question is out of scope, when the caller asks for a person, o
 
 {% if hand_off.is_transfer %}
 {% if hand_off.team_hours == "weekdays" %}
-The support team takes transfers Monday to Friday, 9am to 5pm UK time. The time in the UK now is {% raw %}{{"now" | date: "%A %H:%M", "Europe/London"}}{% endraw %}.
+The support team takes transfers Monday to Friday, 9am to 5pm UK time. The current UK time is at the very end of these instructions.
 
 Outside those hours, do not transfer. Say exactly this sentence instead, then use the endCall tool in the same reply:
 
@@ -116,3 +116,10 @@ This is reference for you, not something to read out. Answer with only the one o
 {{ faq.answer }}
 
 {% endfor %}
+{% if hand_off.is_transfer and hand_off.team_hours == "weekdays" %}
+
+
+# Current time
+
+The time in the UK now is {% raw %}{{"now" | date: "%A %H:%M", "Europe/London"}}{% endraw %}.
+{% endif %}
