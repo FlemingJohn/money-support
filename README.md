@@ -17,8 +17,8 @@ Build a simple voice agent that can handle incoming calls, using any open-source
 
 **Our code works around the call:**
 
-- **ai** builds the agent from the FAQs and settings and pushes it to Vapi. That covers the prompt, the hand-off rule, tools, speaking and noise settings, and guardrails. After each call it runs a **LangGraph** graph on **Azure OpenAI**, which masks personal data and writes the summary, topic, matched FAQ, fields and checks. It also masks the test call's live transcript.
-- **backend** receives Vapi's call events, saves the masked call, decides whether a person must review it, and emails the team after a hand-off. It also serves the dashboard.
+- **ai** builds the agent from the FAQs and settings and pushes it to Vapi. During a call it runs the **hand-off tool**: when the agent decides a caller needs a person, a small LangGraph graph rings the support team straight away. That covers the prompt, the hand-off rule, tools, speaking and noise settings, and guardrails. After each call it runs a **LangGraph** graph on **Azure OpenAI**, which masks personal data and writes the summary, topic, matched FAQ, fields and checks. It also masks the test call's live transcript.
+- **backend** receives Vapi's call events, saves the masked call, decides whether a person must review it, rings the team's phone and emails the team after a hand-off. It also serves the dashboard.
 - **frontend** is the dashboard: overview, calls, review queue with call backs, FAQ editor, test call and settings.
 
 The agent answers six topics, the "Where is my money?" section:
@@ -30,7 +30,7 @@ The agent answers six topics, the "Where is my money?" section:
 5. What is a proof of payment?
 6. What's a banking partner reference number?
 
-Anything else gets the hand-off sentence, *"Please contact the Wise support team through the Help section of the Wise app or website."* Saying it ends the call. In transfer mode the call goes to the team's number instead.
+Anything else is handed to a person. The agent calls the `handOffToHuman` tool with the reason, the team's phone rings during the call, the caller hears *"I've passed this to our support team, and someone will be in touch with you shortly."*, and the call ends. In transfer mode the call goes to the team's number instead, and the person who answers is briefed first.
 
 ## Architecture
 
@@ -44,7 +44,7 @@ Anything else gets the hand-off sentence, *"Please contact the Wise support team
 4. The backend asks ai to analyse the call.
 5. ai masks each line and writes the summary, topic and fields on Azure OpenAI.
 6. The backend saves the masked call and opens a review if a person is needed.
-7. After a hand-off, a missed transfer or an out-of-hours call, the backend emails the team through Gmail.
+7. After a hand-off, a missed transfer or an out-of-hours call, the team's phone rings and the backend emails the team through Gmail. A hand-off through the tool rings the team during the call, not after it.
 8. The team opens the call on the Review page and calls the customer back.
 
 **An admin change**
@@ -109,10 +109,10 @@ flowchart LR
 | Component | Role |
 |---|---|
 | **Vapi** | Runs the live call: Deepgram hears, gpt-4o answers, the Vapi voice speaks, and Vapi applies the guardrails. |
-| **Twilio** | The phone number callers ring, connected to the Vapi assistant. |
-| **ai** | Builds the agent's prompt and settings, analyses each finished call with LangGraph, and masks the live transcript. |
+| **Twilio** | The phone number callers ring, the ring to the team's phone after a hand-off, and call backs. |
+| **ai** | Builds the agent's prompt and settings, runs the hand-off tool during calls, analyses each finished call with LangGraph, and masks the live transcript. |
 | **Azure OpenAI** | The gpt-4o model ai uses for masking, summaries, topics, fields and checks. |
-| **backend** | Receives call reports, saves masked calls, runs the review queue and call backs, and sends hand-off emails. |
+| **backend** | Receives call reports, saves masked calls, runs the review queue and call backs, rings the team phone and sends hand-off emails. |
 | **Supabase** | The database for calls, reviews, FAQs, settings and activity, plus the hourly retention job. |
 | **Gmail** | Sends the hand-off emails to the support team. |
 | **frontend** | The dashboard where the team reviews calls, calls customers back, edits FAQs and places test calls. |
@@ -126,8 +126,8 @@ These come straight from the problem statement.
 | F1 | Handle incoming calls | Phone calls through the Twilio number, and web calls from the Test call page, both answered by the Vapi assistant |
 | F2 | Act as a Wise customer support representative | A calm, kind, professional agent. It acknowledges problems, checks what it misheard, asks one question at a time, and says it is an automated assistant if asked. |
 | F3 | Answer questions from the "Where is my money?" section | The six FAQs are the agent's only knowledge. It answers in under 40 words, never invents facts, and never claims to look up an account. |
-| F4 | Deflect any other question to a human agent | Out-of-scope questions, requests for a person, scams, abuse after one warning, and other languages all get the hand-off sentence, or a transfer in transfer mode |
-| F5 | Say so and end the call | Saying the hand-off sentence ends the call through Vapi's end-call phrase. Goodbyes end it through the endCall tool, which Vapi blocks until the agent has asked "anything else?" or the caller has said goodbye. |
+| F4 | Deflect any other question to a human agent | Out-of-scope questions, requests for a person, scams, abuse after one warning, and other languages all make the agent call the `handOffToHuman` tool. The team's phone rings during the call and the team is emailed. In transfer mode the caller is connected to the team instead. |
+| F5 | Say so and end the call | After the hand-off tool runs, Vapi speaks the hand-off sentence and ends the call, even if ringing the team failed. Goodbyes end it through the endCall tool, which Vapi blocks until the agent has asked "anything else?" or the caller has said goodbye. |
 
 ## Non-functional requirements
 
@@ -138,7 +138,7 @@ These come straight from the problem statement.
 | **Guardrails** | Scope limited to the six FAQs. Vapi's prompt-injection filter. Refuses card numbers, even a few digits. Never repeats personal details. One calm warning for insults. Hand-off sentence spoken word for word. endCall rejection rules. Every agent change is checked by Evals and Simulations. |
 | **Data masking** | Every caller line is masked by gpt-4o reading it in context, with no regular expressions. It covers names, card and account numbers (even partial), emails, phone numbers and addresses. The caller's own phone number is kept, and any other phone number is masked. A line that can't be checked is saved as "[waiting for privacy check]", never raw. The test call shows lines masked while the caller is still speaking. |
 | **Privacy** | Recording is off. Raw transcripts are never stored. Vapi's copy is deleted after analysis. Caller numbers show as the last digits in lists and emails. The full number is kept for call backs until retention removes it. Retention deletes old data every hour. Emails carry masked details only. |
-| **Reliability** | Calls keep working if our services are down. If ai is down, lines are saved as waiting. A failed email never stops a call being saved, and is retried and logged. Repeated Vapi reports never save or email twice. |
+| **Reliability** | Calls keep working if our services are down. If ai is down, lines are saved as waiting. A failed ring or email never stops a call being saved or the caller being told. Failures are logged. Repeated Vapi reports never save or email twice. |
 | **Security** | Vapi webhooks, internal routes and the retention job each check their own secret. API keys stay on the server. Inputs are validated with Zod and Pydantic. Database connections verify Supabase's certificate. |
 | **Observability** | Health checks for the database, ai and call backs. An activity log of calls, hand-offs, emails, reviews and edits. Prompt versions saved with a hash. |
 
@@ -147,7 +147,7 @@ These come straight from the problem statement.
 | Part | Technology |
 |---|---|
 | Voice | Vapi, gpt-4o, Deepgram nova-3, Vapi voice, LiveKit smart endpointing, Krisp denoising |
-| Telephony | Twilio |
+| Telephony | Twilio: phone number, team alerts and call backs |
 | Call analysis | Python 3.12, FastAPI, LangGraph, LangChain, Azure OpenAI gpt-4o, Pydantic, Jinja2 |
 | Agent tests | Vapi Evals and Simulations, DeepEval, pytest |
 | backend | NestJS 11, TypeScript, Prisma 7, Zod 4, Nest mailer with nodemailer and Gmail SMTP, Jest |
