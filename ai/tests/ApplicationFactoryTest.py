@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -131,3 +133,18 @@ class ApplicationFactoryTest:
         vapi = FakeHttpServer({("GET", "/assistant"): []})
         response = self.make_client(analyzer, self.make_backend(), vapi).post("/evaluations/run", headers=secret_header)
         assert response.status_code == 409
+
+    def test_evaluations_stream_each_result_as_it_finishes(self, analyzer: ScriptedStructuredModel) -> None:
+        vapi = FakeHttpServer(
+            {
+                ("GET", "/assistant"): [our_assistant],
+                ("POST", "/eval/run"): {"evalRunId": "run-1"},
+                ("GET", "/eval/run/run-1"): {"id": "run-1", "status": "ended", "endedReason": "mockConversation.done", "results": [{"status": "pass"}]},
+            }
+        )
+        response = self.make_client(analyzer, self.make_backend(), vapi).post("/evaluations/run/stream", headers=secret_header)
+        events = [json.loads(line.removeprefix("data: ")) for line in response.text.splitlines() if line.startswith("data: ")]
+        assert events[0] == {"type": "started", "total": 25}
+        assert sum(event["type"] == "result" for event in events) == 25
+        assert events[-1]["type"] == "finished" and events[-1]["report"]["passedCount"] == 25
+
