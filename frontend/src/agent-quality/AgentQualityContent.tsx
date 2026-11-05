@@ -1,4 +1,5 @@
 import { AgentQualityTabs } from "@/agent-quality/AgentQualityTabs";
+import { getLastTestRun } from "@/agent-quality/getLastTestRun";
 import { getPromptRules } from "@/agent-quality/getPromptRules";
 import { getReviewTests } from "@/agent-quality/getReviewTests";
 import { getSuggestions } from "@/agent-quality/getSuggestions";
@@ -23,5 +24,6 @@ export async function AgentQualityContent({ searchParams }: SearchParamsProps) {
 async function renderPanel(tab: AgentQualityTab) {
   if (tab === "suggestions") return <SuggestionsPanel suggestions={(await getSuggestions()).suggestions} />;
   if (tab === "rules") return <LearnedRulesPanel rules={(await getPromptRules()).rules} />;
-  return <ReviewTestsPanel tests={(await getReviewTests()).tests} />;
+  const [{ tests }, { run }] = await Promise.all([getReviewTests(), getLastTestRun()]);
+  return <ReviewTestsPanel tests={tests} lastRun={run} />;
 }
