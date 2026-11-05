@@ -49,12 +49,13 @@ export class ReviewService {
   }
 
   async saveVerdict(callId: string, verdict: ReviewVerdictDto): Promise<ReviewResponse> {
-    await this.requireReview(callId);
+    const current = await this.requireReview(callId);
     const review = await this.reviewRepository.update(callId, {
       verdict: verdict.verdict,
       verdictReason: verdict.verdictReason ?? null,
       expectedBehaviour: verdict.expectedBehaviour ?? null,
       verdictMessage: verdict.verdictMessageId ? { connect: { id: verdict.verdictMessageId } } : { disconnect: true },
+      ...(current.status === ReviewStatus.open ? { status: ReviewStatus.inProgress } : {}),
     });
     await this.recordActivity(ActivityAction.reviewVerdictSaved, callId);
     return this.reviewPresenter.toResponse(review, await this.saveReviewTest(callId, verdict));
