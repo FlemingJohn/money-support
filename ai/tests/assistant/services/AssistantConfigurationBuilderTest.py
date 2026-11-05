@@ -7,6 +7,7 @@ from app.assistant.factories.TranscriberFactory import TranscriberFactory
 from app.assistant.factories.VoiceFactory import VoiceFactory
 from app.assistant.models.AssistantDraft import AssistantDraft
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
+from app.common.services.TemplateRenderer import TemplateRenderer
 from tests.support.SampleData import SampleData
 
 
@@ -17,7 +18,7 @@ class AssistantConfigurationBuilderTest:
         configuration = self.sample_data.make_configuration(**configuration_overrides)
         builder = AssistantConfigurationBuilder(
             configuration,
-            ToolCatalog(),
+            ToolCatalog(TemplateRenderer(configuration.prompts_folder)),
             HookCatalog(),
             CompliancePlanFactory(),
             VoiceFactory(),
@@ -45,6 +46,8 @@ class AssistantConfigurationBuilderTest:
         assert assistant["endCallPhrases"] == []
         assert transfer_tool["destinations"][0]["number"] == "+447700900123"
         assert transfer_tool["destinations"][0]["transferPlan"]["fallbackPlan"]["endCallEnabled"] is True
+        assert "Hi, this is the Wise voice agent." in transfer_tool["destinations"][0]["transferPlan"]["summaryPlan"]["messages"][0]["content"]
+        assert transfer_tool["destinations"][0]["message"] == ""
 
     def test_keeps_recording_off_and_tags_the_assistant(self) -> None:
         assistant = self.build()
