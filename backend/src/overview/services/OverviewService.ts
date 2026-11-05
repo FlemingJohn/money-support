@@ -5,11 +5,14 @@ import { ReviewStatus } from "../../generated/prisma/client";
 import { ReviewPresenter } from "../../review/presenters/ReviewPresenter";
 import { ReviewRepository } from "../../review/repositories/ReviewRepository";
 import { CallStatistics } from "./CallStatistics";
-import { DayRange } from "./DayRange";
 import type { OverviewResponse } from "../responses/OverviewResponse";
 import type { QualityResponse } from "../responses/QualityResponse";
 import { Clock } from "../../common/services/Clock";
+import { PeriodRange } from "./PeriodRange";
 import { QualityStatistics } from "./QualityStatistics";
+import type { OverviewPeriod } from "../types/OverviewPeriod";
+import type { CallVolumeCount } from "../responses/CallVolumeCount";
+import type { Call } from "../../generated/prisma/client";
 
 @Injectable()
 export class OverviewService {
@@ -23,7 +26,7 @@ export class OverviewService {
     private readonly callPresenter: CallPresenter,
     private readonly reviewPresenter: ReviewPresenter,
     private readonly callStatistics: CallStatistics,
-    private readonly dayRange: DayRange,
+    private readonly periodRange: PeriodRange,
     private readonly qualityStatistics: QualityStatistics,
     private readonly clock: Clock,
   ) {}
@@ -33,22 +36,28 @@ export class OverviewService {
     return this.qualityStatistics.summarise(await this.reviewRepository.findJudgedSince(since));
   }
 
-  async getOverview(): Promise<OverviewResponse> {
-    const today = this.dayRange.today();
-    const yesterday = this.dayRange.yesterday();
-    const [todayCalls, yesterdayCalls, recentCalls, openReviews] = await Promise.all([
-      this.callRepository.findEndedBetween(today.start, today.end),
-      this.callRepository.findEndedBetween(yesterday.start, yesterday.end),
+  async getOverview(period: OverviewPeriod): Promise<OverviewResponse> {
+    const current = this.periodRange.current(period);
+    const previous = this.periodRange.previous(period);
+    const [currentCalls, previousCalls, recentCalls, openReviews] = await Promise.all([
+      this.callRepository.findEndedBetween(current.start, current.end),
+      this.callRepository.findEndedBetween(previous.start, previous.end),
       this.callRepository.findRecent(this.recentCallLimit),
       this.reviewRepository.findList(ReviewStatus.open, this.needsReviewLimit),
     ]);
     return {
-      today: this.callStatistics.totals(todayCalls),
-      yesterday: this.callStatistics.totals(yesterdayCalls),
-      callsPerHour: this.callStatistics.countByHour(todayCalls),
-      handOffReasons: this.callStatistics.countHandOffReasons(todayCalls),
+      period,
+      current: this.callStatistics.totals(currentCalls),
+      previous: this.callStatistics.totals(previousCalls),
+      callVolume: this.countCallVolume(period, currentCalls),
+      handOffReasons: this.callStatistics.countHandOffReasons(currentCalls),
       recentCalls: recentCalls.map((call) => this.callPresenter.toSummary(call)),
       needsReview: openReviews.map((review) => this.reviewPresenter.toListItem(review)),
     };
+  }
+
+  private countCallVolume(period: OverviewPeriod, calls: Call[]): CallVolumeCount[] {
+    if (period === "today") return this.callStatistics.countByHour(calls);
+    return this.callStatistics.countByDay(calls, this.periodRange.getDayStarts(period));
   }
 }
