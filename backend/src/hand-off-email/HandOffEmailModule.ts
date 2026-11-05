@@ -6,8 +6,11 @@ import { ReviewModule } from "../review/ReviewModule";
 import { SettingsModule } from "../settings/SettingsModule";
 import { GmailHandOffMailer } from "./clients/GmailHandOffMailer";
 import { HandOffMailer } from "./clients/HandOffMailer";
+import { SkippedTeamPhoneRinger } from "./clients/SkippedTeamPhoneRinger";
+import { TeamPhoneRinger } from "./clients/TeamPhoneRinger";
+import { TwilioTeamPhoneRinger } from "./clients/TwilioTeamPhoneRinger";
+import { HandOffAlertService } from "./services/HandOffAlertService";
 import { HandOffEmailBuilder } from "./services/HandOffEmailBuilder";
-import { HandOffEmailService } from "./services/HandOffEmailService";
 import { HandOffOutcomeResolver } from "./services/HandOffOutcomeResolver";
 import { TeamHoursChecker } from "./services/TeamHoursChecker";
 
@@ -30,7 +33,19 @@ import { TeamHoursChecker } from "./services/TeamHoursChecker";
       }),
     }),
   ],
-  providers: [HandOffEmailBuilder, HandOffEmailService, HandOffOutcomeResolver, TeamHoursChecker, { provide: HandOffMailer, useClass: GmailHandOffMailer }],
-  exports: [HandOffEmailService],
+  providers: [
+    HandOffAlertService,
+    HandOffEmailBuilder,
+    HandOffOutcomeResolver,
+    TeamHoursChecker,
+    { provide: HandOffMailer, useClass: GmailHandOffMailer },
+    {
+      provide: TeamPhoneRinger,
+      inject: [AppConfiguration],
+      useFactory: (appConfiguration: AppConfiguration) =>
+        appConfiguration.isTwilioConfigured ? new TwilioTeamPhoneRinger(appConfiguration) : new SkippedTeamPhoneRinger(),
+    },
+  ],
+  exports: [HandOffAlertService],
 })
 export class HandOffEmailModule {}
