@@ -1,3 +1,3 @@
 export abstract class TeamPhoneRinger {
-  abstract ring(teamPhone: string): Promise<void>;
+  abstract ring(teamPhone: string, spokenAlert: string): Promise<void>;
 }
