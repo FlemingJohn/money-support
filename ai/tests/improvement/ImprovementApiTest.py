@@ -1,3 +1,5 @@
+import json
+
 from fastapi.testclient import TestClient
 
 from app.ApplicationFactory import ApplicationFactory
@@ -52,3 +54,21 @@ class ImprovementApiTest:
     def test_says_there_is_nothing_to_learn_without_wrong_verdicts(self) -> None:
         response = self.make_client([], self.make_vapi()).post("/improvements/suggest", headers=secret_header)
         assert response.status_code == 409
+
+    def read_events(self, response) -> list[dict]:
+        return [json.loads(line.removeprefix("data: ")) for line in response.text.splitlines() if line.startswith("data: ")]
+
+    def test_streams_each_step_progress_and_the_result(self) -> None:
+        feedback = [{"reviewCallId": "call-1", "callerLine": "What are your fees to India?", "reason": "shouldHaveHandedOff", "expectation": "Hand off."}]
+        response = self.make_client(feedback, self.make_vapi()).post("/improvements/suggest/stream", headers=secret_header)
+        events = self.read_events(response)
+        assert response.headers["content-type"].startswith("text/event-stream")
+        assert [event["step"] for event in events if event["type"] == "step" and event["status"] == "done"] == ["feedback", "rule", "tests"]
+        progress = [event for event in events if event["type"] == "progress"]
+        assert progress and progress[-1]["done"] == progress[-1]["total"]
+        assert events[-1]["type"] == "result" and events[-1]["suggestion"]["ruleText"] == rule_text
+
+    def test_streams_nothing_to_learn_without_wrong_verdicts(self) -> None:
+        events = self.read_events(self.make_client([], self.make_vapi()).post("/improvements/suggest/stream", headers=secret_header))
+        assert events[-1] == {"type": "nothing"}
+
