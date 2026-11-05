@@ -9,9 +9,12 @@ import { HandOffMailer } from "./clients/HandOffMailer";
 import { SkippedTeamPhoneRinger } from "./clients/SkippedTeamPhoneRinger";
 import { TeamPhoneRinger } from "./clients/TeamPhoneRinger";
 import { TwilioTeamPhoneRinger } from "./clients/TwilioTeamPhoneRinger";
+import { HandOffRingController } from "./controllers/HandOffRingController";
 import { HandOffAlertService } from "./services/HandOffAlertService";
 import { HandOffEmailBuilder } from "./services/HandOffEmailBuilder";
 import { HandOffOutcomeResolver } from "./services/HandOffOutcomeResolver";
+import { HandOffRingService } from "./services/HandOffRingService";
+import { TeamAlertSpeechBuilder } from "./services/TeamAlertSpeechBuilder";
 import { TeamHoursChecker } from "./services/TeamHoursChecker";
 
 @Module({
@@ -33,8 +36,11 @@ import { TeamHoursChecker } from "./services/TeamHoursChecker";
       }),
     }),
   ],
+  controllers: [HandOffRingController],
   providers: [
     HandOffAlertService,
+    HandOffRingService,
+    TeamAlertSpeechBuilder,
     HandOffEmailBuilder,
     HandOffOutcomeResolver,
     TeamHoursChecker,
