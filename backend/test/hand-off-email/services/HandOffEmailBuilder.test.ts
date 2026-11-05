@@ -17,6 +17,7 @@ describe("HandOffEmailBuilder", () => {
       { position: 1, speaker: "agent", redactedText: "Please contact the Wise support team.", secondsFromStart: 5, removedEntityTypes: [] },
     ],
     transferNumber: "+447700900123",
+    handOffReason: "askedForPerson",
     callUrl: "https://dashboard.example.com/review?call=call-1",
   };
 
@@ -29,6 +30,7 @@ describe("HandOffEmailBuilder", () => {
     expect(email.text).toContain("transfer this caller to +447700900123, but nobody answered");
     expect(email.text).toContain("When: 4 Nov 2026, 15:23 UK time, 77 seconds");
     expect(email.text).toContain("Caller: +91 ••••• ••363");
+    expect(email.text).toContain("Why: Asked to speak to a person");
     expect(email.text).toContain("https://dashboard.example.com/review?call=call-1");
   });
 
