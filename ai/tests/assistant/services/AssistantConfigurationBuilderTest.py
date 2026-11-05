@@ -1,6 +1,7 @@
 from app.assistant.catalogs.HookCatalog import HookCatalog
 from app.assistant.catalogs.ToolCatalog import ToolCatalog
 from app.assistant.factories.CompliancePlanFactory import CompliancePlanFactory
+from app.assistant.factories.HandOffToolFactory import HandOffToolFactory
 from app.assistant.factories.NoisePlanFactory import NoisePlanFactory
 from app.assistant.factories.SpeakingPlanFactory import SpeakingPlanFactory
 from app.assistant.factories.TranscriberFactory import TranscriberFactory
@@ -8,6 +9,7 @@ from app.assistant.factories.VoiceFactory import VoiceFactory
 from app.assistant.models.AssistantDraft import AssistantDraft
 from app.assistant.services.AssistantConfigurationBuilder import AssistantConfigurationBuilder
 from app.common.services.TemplateRenderer import TemplateRenderer
+from app.handoff.catalogs.HandOffReasonCatalog import HandOffReasonCatalog
 from tests.support.SampleData import SampleData
 
 
@@ -18,7 +20,7 @@ class AssistantConfigurationBuilderTest:
         configuration = self.sample_data.make_configuration(**configuration_overrides)
         builder = AssistantConfigurationBuilder(
             configuration,
-            ToolCatalog(TemplateRenderer(configuration.prompts_folder)),
+            ToolCatalog(TemplateRenderer(configuration.prompts_folder), configuration, HandOffToolFactory(configuration, HandOffReasonCatalog())),
             HookCatalog(),
             CompliancePlanFactory(),
             VoiceFactory(),
