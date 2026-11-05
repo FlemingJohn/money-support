@@ -39,7 +39,7 @@ export function ReviewWorkspace({ detail, callbacks, phone }: ReviewWorkspacePro
         </SectionCard>
       </div>
 
-      <ReviewActionsCard review={review} callbacks={callbacks} />
+      <ReviewActionsCard review={review} callbacks={callbacks} agentReplies={call.messages.filter((message) => message.speaker === "agent")} />
     </div>
   );
 }
