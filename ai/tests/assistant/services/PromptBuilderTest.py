@@ -27,7 +27,7 @@ class PromptBuilderTest:
 
     def test_only_transfers_in_team_hours_on_weekdays(self) -> None:
         prompt = self.make_builder().build(self.sample_data.make_faqs(), self.sample_data.make_settings("transfer"))
-        assert '{{"now" | date: "%A %H:%M", "Europe/London"}}' in prompt
+        assert prompt.rstrip().endswith('The time in the UK now is {{"now" | date: "%A %H:%M", "Europe/London"}}.')
         assert "Outside those hours, do not transfer." in prompt
 
     def test_transfers_any_time_when_the_team_is_always_open(self) -> None:
