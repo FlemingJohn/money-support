@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PromptVersionRepository } from "../../assistant/repositories/PromptVersionRepository";
 import type { CallCompletion } from "../../calls/types/CallCompletion";
-import { CustomerNumberProtector } from "../../calls/services/CustomerNumberProtector";
+import { CustomerNumberMasker } from "../../calls/services/CustomerNumberMasker";
 import { FaqRepository } from "../../faqs/repositories/FaqRepository";
 import { CallChannel, CallOutcome, type Faq } from "../../generated/prisma/client";
 import { SettingsService } from "../../settings/services/SettingsService";
@@ -14,17 +14,16 @@ export class CallCompletionBuilder {
     private readonly settingsService: SettingsService,
     private readonly faqRepository: FaqRepository,
     private readonly promptVersionRepository: PromptVersionRepository,
-    private readonly customerNumberProtector: CustomerNumberProtector,
+    private readonly customerNumberMasker: CustomerNumberMasker,
   ) {}
 
-  async build(report: FinishedCallReport, analysis: CallAnalysis, needsReview: boolean): Promise<CallCompletion> {
+  async build(report: FinishedCallReport, analysis: CallAnalysis): Promise<CallCompletion> {
     const [privacy, matchedFaq, promptVersion] = await Promise.all([
       this.settingsService.getPrivacy(),
       this.findMatchedFaq(analysis.matchedFaqNumber),
       this.promptVersionRepository.findCurrent(),
     ]);
-    const shouldKeepNumber = needsReview && privacy.keepNumbersForCallbacks && report.channel === CallChannel.phone;
-    const customerNumber = this.customerNumberProtector.protect(report.customerNumber, shouldKeepNumber);
+    const shouldKeepNumber = privacy.keepNumbersForCallbacks && report.channel === CallChannel.phone;
     return {
       callId: report.callId,
       channel: report.channel,
@@ -34,8 +33,8 @@ export class CallCompletionBuilder {
       summary: analysis.summary,
       topic: analysis.topic,
       outcome: analysis.isHandedOff ? CallOutcome.handedOff : CallOutcome.resolved,
-      maskedCustomerNumber: customerNumber.masked,
-      encryptedCustomerNumber: customerNumber.encrypted,
+      maskedCustomerNumber: this.customerNumberMasker.mask(report.customerNumber),
+      customerNumber: shouldKeepNumber ? report.customerNumber : null,
       matchedFaqId: matchedFaq?.id ?? null,
       promptVersionId: promptVersion?.id ?? null,
     };
