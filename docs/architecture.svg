@@ -135,6 +135,10 @@
     <path d="M128 612 q4 14 18 14" fill="none" stroke="#17140c" stroke-width="2"/>
     <path d="M118 668 C118 632 182 632 182 668 Z" fill="#17140c"/>
     <text x="150" y="692" font-size="15" font-weight="700" fill="#17140c" text-anchor="middle">Support team</text>
+    <rect x="196" y="548" width="16" height="28" rx="4" fill="#fff8db" stroke="#17140c" stroke-width="2"/>
+    <circle cx="204" cy="570" r="1.8" fill="#17140c"/>
+    <path d="M218 552 q6 8 0 16 M224 546 q12 14 0 28" fill="none" stroke="#e3a600" stroke-width="2.2" stroke-linecap="round"/>
+    <text x="204" y="540" font-size="11" font-weight="700" fill="#8a4300" text-anchor="middle">ringing</text>
   </g>
 
   <g id="gmail" filter="url(#shadow)">
@@ -168,7 +172,7 @@
     <text x="690" y="634" font-size="11" fill="#5f594b">Emailed the team at 15:25 · +91 ••••• ••363</text>
     <rect x="672" y="646" width="268" height="40" rx="6" fill="#eeeae0"/>
     <text x="682" y="662" font-size="10.5" fill="#3d372a">Caller: my account is [bank account number removed]</text>
-    <text x="682" y="678" font-size="10.5" fill="#3d372a">Agent: Please contact the Wise support team…</text>
+    <text x="682" y="678" font-size="10.5" fill="#3d372a">Agent: I've passed this to our support team…</text>
     <rect x="672" y="696" width="96" height="24" rx="6" fill="#17140c"/>
     <text x="720" y="712" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">Call back</text>
     <rect x="776" y="696" width="80" height="24" rx="6" fill="#ffffff" stroke="#e8e4d8"/>
@@ -199,7 +203,7 @@
     <text x="1001" y="210" font-size="11" fill="#5f594b" text-anchor="middle">analyse</text>
     <text x="1001" y="254" font-size="11" fill="#5f594b" text-anchor="middle">masked</text>
     <text x="1052" y="366" font-size="11" fill="#5f594b">save</text>
-    <text x="604" y="476" font-size="11" fill="#5f594b">hand-off, missed transfer, out of hours</text>
+    <text x="604" y="476" font-size="11" fill="#5f594b">rings the team phone and emails</text>
     <text x="248" y="606" font-size="11" fill="#5f594b" text-anchor="middle">inbox</text>
     <text x="360" y="790" font-size="11" fill="#5f594b">opens the Review page, calls the customer back</text>
     <text x="890" y="420" font-size="11" fill="#5f594b">edits, reviews</text>
