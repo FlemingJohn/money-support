@@ -23,7 +23,7 @@ export class HandOffEmailBuilder {
   }
 
   private findWording(input: HandOffEmailInput): HandOffEmailWording {
-    const wording = handOffEmailWordings[input.outcome === "transferAnswered" ? "handedOff" : input.outcome];
+    const wording = handOffEmailWordings[input.outcome];
     return { ...wording, explanation: wording.explanation.replace("{transferNumber}", input.transferNumber || "the team") };
   }
 
