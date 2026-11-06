@@ -1,11 +1,13 @@
 import { EmptyState } from "@/components/EmptyState";
+import { getFaqs } from "@/faqs/getFaqs";
 import { getSettings } from "@/lib/getSettings";
 import { TestCallPanel } from "@/test-call/TestCallPanel";
 
 export async function TestCallContent() {
   const publicKey = process.env.VAPI_PUBLIC_KEY ?? "";
   const assistantId = process.env.VAPI_ASSISTANT_ID ?? "";
-  const settings = await getSettings();
+  const [settings, faqs] = await Promise.all([getSettings(), getFaqs()]);
+  const faqQuestions = faqs.filter((faq) => faq.isActive).map((faq) => faq.question);
 
   if (!publicKey || !assistantId) {
     return (
@@ -15,5 +17,5 @@ export async function TestCallContent() {
     );
   }
 
-  return <TestCallPanel setup={{ publicKey, assistantId }} agent={settings.agent} />;
+  return <TestCallPanel setup={{ publicKey, assistantId }} agent={settings.agent} faqQuestions={faqQuestions} />;
 }
