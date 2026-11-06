@@ -34,6 +34,7 @@ export class UnmaskedReportService {
     const message = await this.callMessageRepository.findById(report.messageId);
     if (!message || message.callId !== callId) throw new MessageNotFoundException(callId, report.messageId);
     const decision = this.reportDecider.decide(message.redactedText, await this.reportedLineMasker.mask(message.redactedText), report);
+    if (decision.outcome === "unchanged") return { text: decision.text, outcome: decision.outcome, isReanalysed: false };
     await this.save(callId, message.id, decision);
     const isReanalysed = await this.callReanalysisService.reanalyse(callId).catch((error: unknown) => {
       this.logger.error(`Re-analysing call ${callId} failed: ${String(error)}`);
