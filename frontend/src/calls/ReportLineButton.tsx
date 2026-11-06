@@ -11,7 +11,7 @@ import type { UnmaskedReportResult } from "@/types/UnmaskedReportResult";
 
 const doneMessages: Partial<Record<ReportState, string>> = {
   masked: "Masked, and the summary and fields were checked again",
-  hidden: "Nothing specific found, so the line is hidden",
+  unchanged: "Those words are not in this line, so nothing changed",
 };
 
 export function ReportLineButton({ callId, messageId, lineText }: ReportLineButtonProps) {
