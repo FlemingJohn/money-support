@@ -28,7 +28,7 @@ class HandOffToolFactory:
     def make_function(self) -> dict:
         return {
             "name": self.tool_name,
-            "description": "Hands the caller to the human support team. The team's phone rings straight away, then the caller is told and the call ends.",
+            "description": "Hands the caller to the human support team. Before calling it, always say one short sentence to the caller telling them why and that you are passing them to the support team. The team's phone rings straight away, then the caller hears the hand-off sentence and the call ends.",
             "parameters": {
                 "type": "object",
                 "properties": {
