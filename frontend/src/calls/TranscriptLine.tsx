@@ -14,7 +14,7 @@ export function TranscriptLine({ callId, message, fields }: TranscriptLineProps)
         <p className={`w-full rounded-card border px-3.5 py-2.5 text-sm leading-relaxed wrap-anywhere ${isAgent ? "border-line-soft bg-surface" : "border-yellow-soft bg-yellow-wash"}`}>
           <TranscriptText text={message.text} fields={fields} />
         </p>
-        <ReportLineButton callId={callId} messageId={message.id} />
+        <ReportLineButton callId={callId} messageId={message.id} lineText={message.text} />
       </div>
     </li>
   );
