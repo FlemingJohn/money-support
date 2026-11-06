@@ -9,7 +9,7 @@ import { LiveTranscript } from "@/test-call/LiveTranscript";
 import { TestScenarioList } from "@/test-call/TestScenarioList";
 import type { TestCallPanelProps } from "@/types/TestCallPanelProps";
 
-export function TestCallPanel({ setup, agent }: TestCallPanelProps) {
+export function TestCallPanel({ setup, agent, faqQuestions }: TestCallPanelProps) {
   const testCall = useTestCall(setup);
 
   return (
@@ -19,7 +19,7 @@ export function TestCallPanel({ setup, agent }: TestCallPanelProps) {
           <CallControls testCall={testCall} />
         </SectionCard>
         <SectionCard title="Try saying" icon={ListChecks}>
-          <TestScenarioList />
+          <TestScenarioList faqQuestions={faqQuestions} />
         </SectionCard>
         <SectionCard title="Agent" icon={Info}>
           <AgentFactList agent={agent} />
