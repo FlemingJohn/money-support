@@ -9,7 +9,7 @@
     {
       "role": "assistant",
       "check": "handsOff",
-      "expectation": "Before handing off, it tells the caller it can't help with that on this line."
+      "expectation": "It uses the outOfScope reason."
     }
   ]
 }
