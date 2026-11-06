@@ -1,1 +1,1 @@
-export type ReportState = "closed" | "open" | "sending" | "masked" | "hidden" | "failed";
+export type ReportState = "closed" | "open" | "sending" | "masked" | "unchanged" | "failed";
