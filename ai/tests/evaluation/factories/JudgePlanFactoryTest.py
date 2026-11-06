@@ -44,3 +44,11 @@ class JudgePlanFactoryTest:
         plan = factory.make(EvaluationTurn(role="assistant", check="handsOff"), self.sample_data.make_settings().hand_off)
         assert plan["type"] == "ai"
         assert "handOffToHuman" in plan["model"]["messages"][0]["content"]
+        assert "passing them to the support team" in plan["model"]["messages"][0]["content"]
+
+    def test_adds_the_case_expectation_to_the_hand_off_check(self) -> None:
+        configuration = self.sample_data.make_configuration(ai_public_url="https://ai.example.org", vapi_webhook_secret="hook-secret")
+        factory = JudgePlanFactory(configuration, TemplateRenderer(configuration.prompts_folder))
+        turn = EvaluationTurn(role="assistant", check="handsOff", expectation="It says it can't help with that on this line.")
+        plan = factory.make(turn, self.sample_data.make_settings().hand_off)
+        assert "It says it can't help with that on this line." in plan["model"]["messages"][0]["content"]
