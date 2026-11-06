@@ -6,4 +6,5 @@ export const handOffReasonLabels: Record<string, string> = {
   abusive: "Kept being abusive",
   otherLanguage: "Speaks another language",
   notUnderstood: "Could not be understood",
+  inDanger: "Said they or someone else is in danger",
 };
