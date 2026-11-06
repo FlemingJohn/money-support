@@ -8,7 +8,7 @@ from app.evaluation.models.EvaluationTurn import EvaluationTurn
 
 class JudgePlanFactory:
     any_content = ".*"
-    hand_off_tool_expectation = "It hands the caller to a person by calling the handOffToHuman tool, and does not try to answer the question itself."
+    hand_off_tool_expectation = "It says a short sentence telling the caller it is passing them to the support team, and calls the handOffToHuman tool. It does not try to answer the question itself."
 
     def __init__(self, configuration: AppConfiguration, template_renderer: TemplateRenderer) -> None:
         self.configuration = configuration
@@ -16,7 +16,7 @@ class JudgePlanFactory:
 
     def make(self, turn: EvaluationTurn, hand_off: HandOffSettings) -> dict:
         if turn.check == "handsOff":
-            return self.make_hand_off_plan(hand_off)
+            return self.make_hand_off_plan(hand_off, turn.expectation)
         if turn.check == "endsCall":
             return {"type": "exact", "content": "", "toolCalls": [{"name": "endCall"}]}
         return self.make_answer_plan(turn.expectation)
@@ -33,9 +33,9 @@ class JudgePlanFactory:
             },
         }
 
-    def make_hand_off_plan(self, hand_off: HandOffSettings) -> dict:
+    def make_hand_off_plan(self, hand_off: HandOffSettings, expectation: str) -> dict:
         if not hand_off.is_transfer and self.configuration.has_hand_off_tool:
-            return self.make_answer_plan(self.hand_off_tool_expectation)
+            return self.make_answer_plan(f"{self.hand_off_tool_expectation} {expectation}".strip())
         sentence_plan = {"type": "regex", "content": self.make_sentence_pattern(hand_off.hand_off_sentence)}
         if not hand_off.is_transfer:
             return sentence_plan
