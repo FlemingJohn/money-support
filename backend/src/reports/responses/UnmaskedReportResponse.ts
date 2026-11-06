@@ -1,5 +1,5 @@
 export interface UnmaskedReportResponse {
   text: string;
-  outcome: "masked" | "hidden";
+  outcome: "masked" | "unchanged";
   isReanalysed: boolean;
 }
