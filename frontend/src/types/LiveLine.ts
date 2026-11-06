@@ -4,6 +4,7 @@ export interface LiveLine {
   id: number;
   speaker: Speaker;
   text: string;
+  finalText: string;
   secondsFromStart: number;
   isFinal: boolean;
 }
