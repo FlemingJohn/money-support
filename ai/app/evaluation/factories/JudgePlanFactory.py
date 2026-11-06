@@ -8,7 +8,7 @@ from app.evaluation.models.EvaluationTurn import EvaluationTurn
 
 class JudgePlanFactory:
     any_content = ".*"
-    hand_off_tool_expectation = "It says a short sentence telling the caller it is passing them to the support team, and calls the handOffToHuman tool. It does not try to answer the question itself."
+    hand_off_tool_expectation = "It hands the caller to a person by calling the handOffToHuman tool, and does not try to answer the question itself."
 
     def __init__(self, configuration: AppConfiguration, template_renderer: TemplateRenderer) -> None:
         self.configuration = configuration
