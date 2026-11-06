@@ -44,7 +44,8 @@ class PromptBuilderTest:
     def test_hands_off_with_the_tool_when_the_ai_service_can_take_tool_calls(self) -> None:
         builder = self.make_builder(ai_public_url="https://ai.example.org", vapi_webhook_secret="hook-secret")
         prompt = builder.build(self.sample_data.make_faqs(), self.sample_data.make_settings())
-        assert "use the handOffToHuman tool straight away" in prompt
+        assert "Then use the handOffToHuman tool in the same reply" in prompt
+        assert "first say one short, kind sentence" in prompt
         assert "The call ends by itself as soon as you say it" not in prompt
 
     def test_adds_learned_rules_at_the_end_so_the_start_stays_cached(self) -> None:
