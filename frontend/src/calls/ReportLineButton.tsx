@@ -14,15 +14,14 @@ const doneMessages: Partial<Record<ReportState, string>> = {
   hidden: "Nothing specific found, so the line is hidden",
 };
 
-export function ReportLineButton({ callId, messageId }: ReportLineButtonProps) {
+export function ReportLineButton({ callId, messageId, lineText }: ReportLineButtonProps) {
   const router = useRouter();
   const [reportState, setReportState] = useState<ReportState>("closed");
 
   async function report(selectedText: string, kind: string) {
     setReportState("sending");
     try {
-      const body = selectedText ? { messageId, selectedText, kind } : { messageId };
-      const result = await sendToBackend<UnmaskedReportResult>("POST", `/calls/${encodeURIComponent(callId)}/unmasked-reports`, body);
+      const result = await sendToBackend<UnmaskedReportResult>("POST", `/calls/${encodeURIComponent(callId)}/unmasked-reports`, { messageId, selectedText, kind });
       setReportState(result.outcome);
       router.refresh();
     } catch {
@@ -40,7 +39,7 @@ export function ReportLineButton({ callId, messageId }: ReportLineButtonProps) {
     );
   }
   if (reportState === "open" || reportState === "sending") {
-    return <ReportLineForm isSending={reportState === "sending"} onReport={report} onCancel={() => setReportState("closed")} />;
+    return <ReportLineForm lineText={lineText} isSending={reportState === "sending"} onReport={report} onCancel={() => setReportState("closed")} />;
   }
 
   return (
