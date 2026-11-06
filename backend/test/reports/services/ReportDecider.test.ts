@@ -6,7 +6,7 @@ describe("ReportDecider", () => {
 
   it("masks only what the stricter re-check found", () => {
     const masking = { redactedText: "My transfer to India is late. My account is [bank account number removed].", removedKinds: ["bank account number"], isChecked: true };
-    expect(decider.decide(line, masking, { messageId: "m" })).toEqual({ text: masking.redactedText, kinds: ["bank account number"], outcome: "masked" });
+    expect(decider.decide(line, masking, { messageId: "m", selectedText: "12345678", kind: "bank account number" })).toEqual({ text: masking.redactedText, kinds: ["bank account number"], outcome: "masked" });
   });
 
   it("masks the words the reviewer selected when the re-check finds nothing", () => {
@@ -15,7 +15,13 @@ describe("ReportDecider", () => {
     expect(decision).toEqual({ text: "My transfer to India is late. My account is [bank account number removed].", kinds: ["bank account number"], outcome: "masked" });
   });
 
-  it("hides the line only as a last resort", () => {
-    expect(decider.decide(line, null, { messageId: "m" })).toEqual({ text: "[message hidden while it is reviewed]", kinds: [], outcome: "hidden" });
+  it("masks the selected words when the re-check could not run", () => {
+    const decision = decider.decide(line, null, { messageId: "m", selectedText: "12345678", kind: "bank account number" });
+    expect(decision.text).toBe("My transfer to India is late. My account is [bank account number removed].");
+  });
+
+  it("leaves the line unchanged when the words are not in it", () => {
+    const masking = { redactedText: line, removedKinds: [], isChecked: true };
+    expect(decider.decide(line, masking, { messageId: "m", selectedText: "87654321", kind: "bank account number" })).toEqual({ text: line, kinds: [], outcome: "unchanged" });
   });
 });
