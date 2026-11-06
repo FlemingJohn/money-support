@@ -5,15 +5,13 @@ import type { ReportedLineMasking } from "../types/ReportedLineMasking";
 
 @Injectable()
 export class ReportDecider {
-  private readonly hiddenText = "[message hidden while it is reviewed]";
-
   decide(lineText: string, masking: ReportedLineMasking | null, report: UnmaskedReportDto): ReportDecision {
     if (masking?.isChecked && masking.removedKinds.length > 0) {
       return { text: masking.redactedText, kinds: masking.removedKinds, outcome: "masked" };
     }
-    if (report.selectedText && report.kind && lineText.includes(report.selectedText)) {
+    if (lineText.includes(report.selectedText)) {
       return { text: lineText.replaceAll(report.selectedText, `[${report.kind} removed]`), kinds: [report.kind], outcome: "masked" };
     }
-    return { text: this.hiddenText, kinds: [], outcome: "hidden" };
+    return { text: lineText, kinds: [], outcome: "unchanged" };
   }
 }
