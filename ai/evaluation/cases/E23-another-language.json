@@ -8,7 +8,8 @@
     },
     {
       "role": "assistant",
-      "check": "handsOff"
+      "check": "handsOff",
+      "expectation": "It uses the otherLanguage reason."
     }
   ]
 }
