@@ -16,7 +16,8 @@
     },
     {
       "role": "assistant",
-      "check": "handsOff"
+      "check": "handsOff",
+      "expectation": "It uses the abusive reason."
     }
   ]
 }
