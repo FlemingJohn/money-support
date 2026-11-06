@@ -21,6 +21,17 @@ class HandOffToolFactoryTest:
         assert "possibleScam" in reason["enum"]
 
     def test_says_the_hand_off_sentence_and_ends_the_call_even_if_the_tool_fails(self) -> None:
-        messages = self.make_tool()["messages"]
+        messages = [message for message in self.make_tool()["messages"] if message["type"] != "request-start"]
         assert [message["type"] for message in messages] == ["request-complete", "request-failed"]
         assert all(message["content"] == self.sample_data.hand_off_sentence and message["endCallAfterSpokenEnabled"] for message in messages)
+
+    def test_tells_the_caller_why_for_every_reason(self) -> None:
+        openings = [message for message in self.make_tool()["messages"] if message["type"] == "request-start"]
+        reasons = [message["conditions"][0]["value"] for message in openings]
+        assert reasons == HandOffReasonCatalog().reasons
+        assert all(message["conditions"][0]["param"] == "reason" and message["conditions"][0]["operator"] == "eq" for message in openings)
+
+    def test_points_a_caller_in_danger_to_emergency_services(self) -> None:
+        openings = {message["conditions"][0]["value"]: message["content"] for message in self.make_tool()["messages"] if message["type"] == "request-start"}
+        assert "emergency services" in openings["inDanger"]
+        assert "can't help with that" in openings["outOfScope"]
